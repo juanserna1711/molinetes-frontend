@@ -1,0 +1,414 @@
+.tallas-page {
+    width: 100%;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.primary-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border: none;
+    background: #26364d;
+    color: white;
+
+    padding: 9px 16px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.search-box {
+    flex: 1;
+
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 1px solid #cfd5dc;
+    background: white;
+
+    padding: 0 10px;
+
+    color: #9aa5b1;
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 12px;
+}
+
+.filters select {
+    height: 30px;
+
+    border: 1px solid #cfd5dc;
+    background: white;
+
+    padding: 0 12px;
+
+    color: #4d5968;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tallas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.tallas-table th {
+    background: #f0f2f4;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tallas-table td {
+    border-bottom: 1px solid #d5dae0;
+    padding: 10px 12px;
+    white-space: nowrap;
+}
+
+.talla-name {
+    font-weight: 600;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 3px 7px;
+
+    border: 1px solid #d0d5db;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.status.active {
+    background: #f7f8f9;
+}
+
+.status.inactive {
+    background: #e6eaf0;
+    color: #8a96a5;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    color: #4d5968;
+
+    cursor: pointer;
+
+    padding: 3px;
+}
+
+.action-button:hover {
+    background: #eef1f4;
+}
+
+.message {
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+}
+
+.message.error {
+    color: #b42318;
+}
+
+.form-panel {
+    position: fixed;
+    top: 62px;
+    right: 0;
+    bottom: 0;
+
+    width: 340px;
+
+    background: white;
+
+    border-left: 1px solid #cfd5dc;
+
+    padding: 24px 18px;
+
+    overflow-y: auto;
+
+    z-index: 100;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+.form-header h2 {
+    margin: 0;
+
+    font-size: 16px;
+}
+
+.close-button {
+    border: none;
+    background: transparent;
+
+    color: #26364d;
+
+    cursor: pointer;
+
+    padding: 4px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #26364d;
+}
+
+.form-group input,
+.form-group select {
+    height: 32px;
+
+    border: 1px solid #cfd5dc;
+
+    padding: 0 9px;
+
+    font-size: 12px;
+
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #26364d;
+}
+
+.form-error {
+    margin-bottom: 16px;
+
+    padding: 10px;
+
+    background: #fff1f0;
+    border: 1px solid #f0c7c4;
+
+    color: #b42318;
+
+    font-size: 11px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 28px;
+}
+
+.cancel-button,
+.save-button {
+    height: 32px;
+
+    padding: 0 14px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.cancel-button {
+    border: 1px solid #cfd5dc;
+    background: white;
+    color: #26364d;
+}
+
+.save-button {
+    border: 1px solid #26364d;
+    background: #26364d;
+    color: white;
+}
+
+.cancel-button:disabled,
+.save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.snackbar {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 280px;
+    max-width: 420px;
+
+    padding: 14px 18px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+    z-index: 1000;
+}
+
+.snackbar.success {
+    background-color: #2e7d32;
+    color: white;
+}
+
+.snackbar.error {
+    background-color: #c62828;
+    color: white;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 1100;
+}
+
+.confirm-modal {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.confirm-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.confirm-modal h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #222;
+}
+
+.confirm-modal p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.secondary-button,
+.danger-button {
+    min-width: 100px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.secondary-button {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.secondary-button:hover {
+    background-color: #e2e2e2;
+}
+
+.danger-button {
+    background-color: #c62828;
+    color: white;
+}
+
+.danger-button:hover {
+    background-color: #a91f1f;
+}
+
+.secondary-button:disabled,
+.danger-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
