@@ -1,7 +1,7 @@
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function TallaForm({ onClose, onSubmit, talla }) {
 
@@ -14,6 +14,20 @@ function TallaForm({ onClose, onSubmit, talla }) {
         rolloRendtall: talla?.pesoRollo ?? '',
         usuarioRendtall: 1
     });
+
+    useEffect(() => {
+        setFormData({
+            codTalla: talla?.codigo ?? '',
+            nomTalla: talla?.nombre ?? '',
+            estaTalla: talla?.estado ?? 'A',
+            anchoRendtall: talla?.ancho ?? '',
+            pesoRendtall: talla?.pesoM2 ?? '',
+            rolloRendtall: talla?.pesoRollo ?? '',
+            usuarioRendtall: 1
+        });
+
+        setError(null);
+    }, [talla]);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
