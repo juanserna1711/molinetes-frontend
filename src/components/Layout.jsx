@@ -1,26 +1,38 @@
-import { Menu } from 'lucide-react';
+import { useState } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+
 import Sidebar from './Sidebar';
 
 function Layout({ children }) {
+    const [sidebarAbierto, setSidebarAbierto] = useState(true);
+
+    function alternarSidebar() {
+        setSidebarAbierto((estado) => !estado);
+    }
 
     return (
         <div className="app-container">
 
-            <header className="topbar">
+            <Sidebar abierto={sidebarAbierto} />
 
-                <button className="menu-button">
-                    <Menu size={20} />
-                </button>
+            <div className="workspace">
 
-                <span className="topbar-title">
-                    Textiles
-                </span>
+                <header className="topbar">
 
-            </header>
+                    <button
+                        type="button"
+                        className="menu-button"
+                        onClick={alternarSidebar}
+                        title={sidebarAbierto ? 'Ocultar menú' : 'Mostrar menú'}
+                    >
+                        <MenuIcon />
+                    </button>
 
-            <div className="main-container">
+                    <span className="topbar-title">
+                        Textiles
+                    </span>
 
-                <Sidebar />
+                </header>
 
                 <main className="content">
                     {children}

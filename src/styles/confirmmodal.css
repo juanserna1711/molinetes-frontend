@@ -1,0 +1,184 @@
+/* =========================================================
+   MODAL DE CONFIRMACIÓN
+   ========================================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background-color: rgba(38, 54, 77, 0.42);
+
+    z-index: 1100;
+}
+
+/* =========================================================
+   CONTENEDOR
+   ========================================================= */
+
+.confirm-modal {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 28px;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e2e7ed;
+    border-radius: 10px;
+
+    box-shadow: 0 12px 32px rgba(38, 54, 77, 0.18);
+
+    text-align: center;
+}
+
+/* =========================================================
+   ICONO
+   ========================================================= */
+
+.confirm-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    background-color: #fff4e5;
+    color: #b54708;
+}
+
+.confirm-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.confirm-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.confirm-content h2 {
+    margin: 0;
+
+    color: #26364d;
+
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.confirm-content p {
+    margin: 0;
+
+    color: #667085;
+
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 24px;
+    padding-top: 18px;
+
+    border-top: 1px solid #edf0f3;
+}
+
+.secondary-button,
+.danger-button {
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-width: 94px;
+
+    padding: 0 14px;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        opacity 0.15s ease;
+}
+
+/* =========================================================
+   CANCELAR
+   ========================================================= */
+
+.secondary-button {
+    background-color: #ffffff;
+    border: 1px solid #d9dee6;
+    color: #475467;
+}
+
+.secondary-button:hover:not(:disabled) {
+    background-color: #f5f7fa;
+    border-color: #c7ced8;
+}
+
+/* =========================================================
+   ELIMINAR
+   ========================================================= */
+
+.danger-button {
+    background-color: #c62828;
+    border: 1px solid #c62828;
+    color: #ffffff;
+}
+
+.danger-button:hover:not(:disabled) {
+    background-color: #ad2424;
+    border-color: #ad2424;
+}
+
+/* =========================================================
+   ESTADO DESHABILITADO
+   ========================================================= */
+
+.secondary-button:disabled,
+.danger-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.danger-button .MuiCircularProgress-root {
+    color: #ffffff;
+}
+
+.danger-button svg {
+    width: 16px;
+    height: 16px;
+}

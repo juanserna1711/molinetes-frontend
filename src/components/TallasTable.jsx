@@ -1,7 +1,16 @@
-import { Pencil, Trash2, Check, X } from 'lucide-react';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
-function TallasTable({ tallas, onEdit, onActivate, onDeactivate, onDelete, operation }) {
-
+function TallasTable({
+    tallas,
+    onEdit,
+    onActivate,
+    onDeactivate,
+    onDelete,
+    operation
+}) {
     return (
         <div className="table-container">
 
@@ -23,106 +32,117 @@ function TallasTable({ tallas, onEdit, onActivate, onDeactivate, onDelete, opera
 
                 <tbody>
 
-                    {tallas.map((talla) => (
+                    {tallas.map((talla) => {
 
-                        <tr key={talla.codigo}>
+                        const estaActiva = talla.estado === 'A';
 
-                            <td>
-                                {talla.codigo}
-                            </td>
+                        const operacionEstado = estaActiva
+                            ? `desactivar-${talla.codigo}`
+                            : `activar-${talla.codigo}`;
 
-                            <td className="talla-name">
-                                {talla.nombre}
-                            </td>
+                        const procesandoEstado =
+                            operation === operacionEstado;
 
-                            <td>
-                                {talla.ancho}
-                            </td>
+                        return (
+                            <tr key={talla.codigo}>
 
-                            <td>
-                                {talla.pesoM2}
-                            </td>
+                                <td className="codigo-cell">
+                                    {talla.codigo}
+                                </td>
 
-                            <td>
-                                {talla.pesoRollo}
-                            </td>
+                                <td className="talla-name">
+                                    {talla.nombre}
+                                </td>
 
-                            <td>
-                                {talla.metrosRollo}
-                            </td>
+                                <td>
+                                    {talla.ancho}
+                                </td>
 
-                            <td>
-                                {talla.rendimiento}
-                            </td>
+                                <td>
+                                    {talla.pesoM2}
+                                </td>
 
-                            <td>
+                                <td>
+                                    {talla.pesoRollo}
+                                </td>
 
-                                <span
-                                    className={
-                                        talla.estado === 'A'
-                                            ? 'status active'
-                                            : 'status inactive'
-                                    }
-                                >
-                                    {talla.estado === 'A'
-                                        ? 'Activo'
-                                        : 'Inactivo'}
-                                </span>
+                                <td>
+                                    {talla.metrosRollo}
+                                </td>
 
-                            </td>
+                                <td>
+                                    {talla.rendimiento}
+                                </td>
 
-                            <td>
-
-                                <div className="actions">
+                                <td>
 
                                     <button
                                         type="button"
-                                        onClick={() => onEdit(talla)}
-                                        title="Editar"
+                                        className={`status-button ${
+                                            estaActiva
+                                                ? 'status-active'
+                                                : 'status-inactive'
+                                        }`}
+                                        onClick={() => {
+                                            if (estaActiva) {
+                                                onDeactivate(talla.codigo);
+                                            } else {
+                                                onActivate(talla.codigo);
+                                            }
+                                        }}
+                                        disabled={procesandoEstado}
+                                        title={
+                                            estaActiva
+                                                ? 'Desactivar talla'
+                                                : 'Activar talla'
+                                        }
                                     >
-                                        <Pencil size={16} />
+
+                                        {estaActiva ? (
+                                            <CheckCircleOutlineOutlinedIcon />
+                                        ) : (
+                                            <RadioButtonUncheckedIcon />
+                                        )}
+
+                                        <span>
+                                            {estaActiva
+                                                ? 'Activo'
+                                                : 'Inactivo'}
+                                        </span>
+
                                     </button>
 
-                                    {talla.estado === 'A' ? (
+                                </td>
+
+                                <td>
+
+                                    <div className="actions">
 
                                         <button
                                             type="button"
-                                            onClick={() => onDeactivate(talla.codigo)}
-                                            title="Desactivar"
-                                            disabled={operation === `desactivar-${talla.codigo}`}
+                                            className="table-action edit"
+                                            onClick={() => onEdit(talla)}
+                                            title="Editar"
                                         >
-                                            <X size={16} />
+                                            <EditOutlinedIcon />
                                         </button>
 
-                                    ) : (
-
                                         <button
                                             type="button"
-                                            onClick={() => onActivate(talla.codigo)}
-                                            title="Activar"
-                                            disabled={operation === `activar-${talla.codigo}`}
-                                        >
-                                            <Check size={16} />
-                                        </button>
-
-                                    )}
-
-                                        <button
-                                            type="button"
-                                            className="action-button"
-                                            title="Eliminar"
+                                            className="table-action delete"
                                             onClick={() => onDelete(talla)}
+                                            title="Eliminar"
                                         >
-                                        <Trash2 size={16} />
-                                    </button>
+                                            <DeleteOutlinedIcon />
+                                        </button>
 
-                                </div>
+                                    </div>
 
-                            </td>
+                                </td>
 
-                        </tr>
-
-                    ))}
+                            </tr>
+                        );
+                    })}
 
                 </tbody>
 

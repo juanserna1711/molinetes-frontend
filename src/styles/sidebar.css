@@ -1,44 +1,98 @@
 .sidebar {
-    width: 215px;
+    width: 250px;
+    min-height: 100vh;
     flex-shrink: 0;
-    background: #f1f5f9;
-    border-right: 1px solid #cfd5dc;
-    padding: 18px 10px;
-}
-
-.sidebar-title {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.user-card {
-    height: 118px;
-    border: 1px solid #cfd5dc;
-    border-radius: 26px;
-    background: #f8fafc;
 
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
 
-    gap: 5px;
-    margin-bottom: 0;
+    padding: 28px 18px;
+
+    background: #26364d;
+    color: #ffffff;
 }
 
-.user-card span {
+/* Marca */
+
+.sidebar-brand {
+    padding: 0 12px;
+    margin-bottom: 42px;
+}
+
+.sidebar-brand-name {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-brand-subtitle {
+    margin-top: 5px;
+
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 400;
+
+    color: #aeb9c8;
+    letter-spacing: 0.3px;
 }
 
-.sidebar-section {
-    border: 1px solid #c4ccd5;
-    padding: 10px;
+/* Usuario */
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 12px;
+    margin-bottom: 38px;
+}
+
+.sidebar-user-icon {
+    width: 42px !important;
+    height: 42px !important;
+
+    color: #d7dee8;
+}
+
+.sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.sidebar-user-label {
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #ffffff;
+}
+
+.sidebar-user-role {
+    font-size: 12px;
+    font-weight: 400;
+
+    color: #aeb9c8;
+}
+
+/* Navegación */
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-section-title {
+    padding: 0 12px;
+    margin-bottom: 10px;
+
     font-size: 11px;
     font-weight: 700;
-    margin-top: 0;
+
+    color: #8f9daf;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .sidebar-item {
@@ -47,23 +101,79 @@
 
     display: flex;
     align-items: center;
-    gap: 10px;
 
-    border: 1px solid #c4ccd5;
-    border-top: none;
+    gap: 12px;
+
+    padding: 0 14px;
+
+    border: none;
+    border-radius: 8px;
 
     background: transparent;
 
-    padding: 0 10px;
+    color: #c7d0dc;
 
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
+
+    text-align: left;
 
     cursor: pointer;
 
-    color: #26364d;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.sidebar-item svg {
+    width: 21px;
+    height: 21px;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
 }
 
 .sidebar-item.active {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px;
+    background: #26364d;
+    color: #ffffff;
+
+    transition: width 0.25s ease, padding 0.25s ease;
+    overflow: hidden;
+}
+
+.sidebar-open {
+    width: 250px;
+}
+
+.sidebar-closed {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar-closed .sidebar-brand,
+.sidebar-closed .sidebar-user,
+.sidebar-closed .sidebar-navigation {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-brand,
+.sidebar-user,
+.sidebar-navigation {
+    transition: opacity 0.15s ease;
 }

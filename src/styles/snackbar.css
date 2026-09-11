@@ -1,0 +1,64 @@
+/* =========================================================
+   SNACKBAR
+   ========================================================= */
+
+.snackbar {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 280px;
+    max-width: 420px;
+
+    padding: 13px 16px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    box-shadow: 0 6px 20px rgba(38, 54, 77, 0.16);
+
+    z-index: 1000;
+}
+
+.snackbar svg {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   ÉXITO
+   ========================================================= */
+
+.snackbar-success {
+    background-color: #f0f9f2;
+    border-color: #b7d8c0;
+    color: #28743d;
+}
+
+.snackbar-success svg {
+    color: #28743d;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.snackbar-error {
+    background-color: #fff7f6;
+    border-color: #f0c7c4;
+    color: #b42318;
+}
+
+.snackbar-error svg {
+    color: #b42318;
+}

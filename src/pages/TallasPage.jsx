@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Plus, Search } from 'lucide-react';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import AddIcon from '@mui/icons-material/Add';
+import CircularProgress from '@mui/material/CircularProgress';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
 import {
     consultarTallas,
@@ -37,6 +41,7 @@ function TallasPage() {
         type: 'success'
     });
 
+
     function solicitarEliminarTalla(talla) {
         setTallaAEliminar(talla);
     }
@@ -53,12 +58,25 @@ function TallasPage() {
         });
     }
 
-    function cerrarSnackbar() {
-        setSnackbar({
-            message: '',
-            type: 'success'
-        });
+    function obtenerFiltros() {
+        const filtros = {};
+        const valor = busqueda.trim();
+
+        if (valor !== '') {
+            if (!isNaN(valor)) {
+                filtros.codigo = Number(valor);
+            } else {
+                filtros.nombre = valor;
+            }
+        }
+
+        if (estado !== '') {
+            filtros.estado = estado;
+        }
+
+        return filtros;
     }
+
 
     useEffect(() => {
 
@@ -78,6 +96,15 @@ function TallasPage() {
         return () => clearTimeout(timer);
 
     }, [snackbar.message]);
+
+    useEffect(() => {
+        cargarTallas();
+    }, []);
+
+    useEffect(() => {
+        cargarTallas(obtenerFiltros());
+    }, [busqueda, estado]);
+
 
     async function cargarTallas(filtros = {}) {
 
@@ -105,34 +132,6 @@ function TallasPage() {
 
         }
     }
-
-    useEffect(() => {
-        cargarTallas();
-    }, []);
-
-    useEffect(() => {
-
-        const filtros = {};
-        const valor = busqueda.trim();
-
-        if (valor !== '') {
-
-            if (!isNaN(valor)) {
-                filtros.codigo = Number(valor);
-            } else {
-                filtros.nombre = valor;
-            }
-
-        }
-
-        if (estado !== '') {
-            filtros.estado = estado;
-        }
-
-        cargarTallas(filtros);
-
-    }, [busqueda, estado]);
-
 
     async function actualizarTalla(talla, data) {
         await actualizarTallaService(talla.codigo, data);
@@ -236,6 +235,8 @@ function TallasPage() {
         }
     }
 
+    const hayFiltros = busqueda.trim() !== '' || estado !== '';
+
 
     return (
 
@@ -243,15 +244,20 @@ function TallasPage() {
 
             <div className="page-header">
 
-                <h1>
-                    Gestión de Tallas y Rendimiento
-                </h1>
+                <div className="page-header-info">
+                    <h1>Gestión de Tallas y Rendimiento</h1>
+
+                    <p>
+                        Administración de tallas, parámetros de rendimiento y estado operativo.
+                    </p>
+                </div>
 
                 <button
+                    type="button"
                     className="primary-button"
                     onClick={() => setMostrarFormulario(true)}
                 >
-                    <Plus size={18} />
+                    <AddIcon />
                     Nueva Talla
                 </button>
 
@@ -260,8 +266,7 @@ function TallasPage() {
             <div className="filters">
 
                 <div className="search-box">
-
-                    <Search size={18} />
+                    <SearchOutlinedIcon />
 
                     <input
                         type="text"
@@ -271,7 +276,6 @@ function TallasPage() {
                             setBusqueda(event.target.value);
                         }}
                     />
-
                 </div>
 
                 <select
@@ -280,55 +284,108 @@ function TallasPage() {
                         setEstado(event.target.value);
                     }}
                 >
-                    <option value="">
-                        Todos
-                    </option>
-
-                    <option value="A">
-                        Activo
-                    </option>
-
-                    <option value="I">
-                        Inactivo
-                    </option>
-
+                    <option value="">Todos los estados</option>
+                    <option value="A">Activos</option>
+                    <option value="I">Inactivos</option>
                 </select>
 
             </div>
 
             {loading && (
-                <div className="message">
-                    Cargando tallas...
+                <div className="state-container loading-state">
+                    <CircularProgress
+                        size={30}
+                        thickness={4}
+                    />
+
+                    <div className="state-content">
+                        <h2>Cargando tallas</h2>
+                        <p>Consultando la información...</p>
+                    </div>
                 </div>
             )}
 
-            {error && (
-                <div className="message error">
-                    {error}
+            {!loading && error && (
+                <div className="state-container error-state">
+
+                    <div className="state-icon error-icon">
+                        <ErrorOutlineOutlinedIcon />
+                    </div>
+
+                    <div className="state-content">
+                        <h2>No fue posible cargar las tallas</h2>
+
+                        <p>
+                            {error}
+                        </p>
+
+                        <button
+                            type="button"
+                            className="primary-button"
+                            onClick={() => cargarTallas(obtenerFiltros())}
+                        >
+                            Reintentar
+                        </button>
+                    </div>
+
                 </div>
             )}
 
-            {!loading && !error && (
-                <TallasTable
-                    tallas={tallas}
-                    onEdit={editarTalla}
-                    onActivate={activarTalla}
-                    onDeactivate={desactivarTalla}
-                    onDelete={solicitarEliminarTalla}
-                    operation={operacion}
-                />
+            {!loading && !error && tallas.length === 0 && (
+                <div className="state-container empty-state">
+
+                    <div className="state-icon empty-icon">
+                        <SearchOffOutlinedIcon />
+                    </div>
+
+                    <div className="state-content">
+
+                        <h2>
+                            {hayFiltros
+                                ? 'No se encontraron tallas'
+                                : 'No hay tallas registradas'}
+                        </h2>
+
+                        <p>
+                            {hayFiltros
+                                ? 'No hay tallas que coincidan con los criterios de búsqueda.'
+                                : 'Aún no existen tallas registradas en el sistema.'}
+                        </p>
+
+                    </div>
+
+                </div>
             )}
 
-            {mostrarFormulario && (
-                <TallaForm
-                    talla={tallaSeleccionada}
-                    onClose={() => {
-                        setMostrarFormulario(false);
-                        setTallaSeleccionada(null);
-                    }}
-                    onSubmit={guardarTalla}
-                />
-            )}
+            <div className={`tallas-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
+
+                {!loading && !error && tallas.length > 0 && (
+                    <div className="tallas-table-section">
+                        <TallasTable
+                            tallas={tallas}
+                            onEdit={editarTalla}
+                            onActivate={activarTalla}
+                            onDeactivate={desactivarTalla}
+                            onDelete={solicitarEliminarTalla}
+                            operation={operacion}
+                        />
+                    </div>
+                )}
+
+                {mostrarFormulario && (
+                    <aside className="tallas-form-section">
+                        <TallaForm
+                            talla={tallaSeleccionada}
+                            onClose={() => {
+                                setMostrarFormulario(false);
+                                setTallaSeleccionada(null);
+                            }}
+                            onSubmit={guardarTalla}
+                        />
+                    </aside>
+                )}
+
+            </div>
 
             {tallaAEliminar && (
                 <ConfirmModal

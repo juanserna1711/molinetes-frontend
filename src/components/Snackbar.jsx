@@ -1,24 +1,22 @@
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 function Snackbar({ message, type = 'success' }) {
-
     if (!message) {
         return null;
     }
 
-    return (
-        <div className={`snackbar ${type}`}>
+    const isSuccess = type === 'success';
 
-            {type === 'success' ? (
-                <CheckCircle size={20} />
+    return (
+        <div className={`snackbar snackbar-${type}`} role="alert">
+            {isSuccess ? (
+                <CheckCircleOutlineOutlinedIcon />
             ) : (
-                <AlertCircle size={20} />
+                <ErrorOutlineOutlinedIcon />
             )}
 
-            <span>
-                {message}
-            </span>
-
+            <span>{message}</span>
         </div>
     );
 }

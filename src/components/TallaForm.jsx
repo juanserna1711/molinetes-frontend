@@ -1,4 +1,6 @@
-import { X } from 'lucide-react';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useState } from 'react';
 
 function TallaForm({ onClose, onSubmit, talla }) {
@@ -76,13 +78,14 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
             <h2>{talla ? 'Editar Talla' : 'Crear Talla'}</h2>
 
-                <button
-                    type="button"
-                    className="close-button"
-                    onClick={onClose}
-                >
-                    <X size={18} />
-                </button>
+            <button
+                type="button"
+                className="close-button"
+                onClick={onClose}
+                title="Cerrar"
+            >
+                <CloseOutlinedIcon />
+            </button>
 
             </div>
 
@@ -101,6 +104,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
                     onChange={handleChange}
                     required
                     disabled={Boolean(talla)}
+                    className={talla ? 'input-readonly' : ''}
                 />
 
                 </div>
@@ -195,32 +199,49 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
                 </div>
 
-                <div className="form-group">
-                <label>Rendimiento</label>
+                <div className="form-group calculated-group">
+
+                    <label>Rendimiento</label>
+
                     <input
                         type="text"
                         value={rendimiento > 0 ? rendimiento.toFixed(1) : ''}
                         readOnly
                     />
+
                 </div>
 
-                <div className="form-group">
+                <div className="form-group calculated-group">
+
                     <label>Metros/Rollo</label>
+
                     <input
                         type="text"
                         value={metrosRollo > 0 ? metrosRollo.toFixed(1) : ''}
                         readOnly
                     />
+
                 </div>
 
                 {error && (
-                    <div className="form-error">
-                        {error}
+                    <div className="form-error" role="alert">
+
+                        <ErrorOutlineOutlinedIcon />
+
+                        <div className="form-error-content">
+                            <span className="form-error-title">
+                                No fue posible guardar la talla
+                            </span>
+
+                            <span className="form-error-message">
+                                {error}
+                            </span>
+                        </div>
+
                     </div>
                 )}
 
                 <div className="form-actions">
-
                     <button
                         type="button"
                         className="cancel-button"
@@ -235,14 +256,15 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         className="save-button"
                         disabled={loading}
                     >
-                        {loading
-                            ? 'Guardando...'
-                            : talla
-                                ? 'Actualizar'
-                                : 'Guardar'
-                        }
+                        {loading ? (
+                            <>
+                                <CircularProgress size={16} thickness={4} />
+                                Guardando...
+                            </>
+                        ) : (
+                            talla ? 'Actualizar' : 'Guardar'
+                        )}
                     </button>
-
                 </div>
 
             </form>

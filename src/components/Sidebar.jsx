@@ -1,42 +1,52 @@
-import {
-    User,
-    Menu,
-    Settings,
-    Factory,
-    Gauge
-} from 'lucide-react';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined';
+import StraightenIcon from '@mui/icons-material/Straighten';
 
-function Sidebar() {
+function Sidebar({ abierto }) {
     return (
-        <aside className="sidebar">
+        <aside className={`sidebar ${abierto ? 'sidebar-open' : 'sidebar-closed'}`}>
 
-            <div className="sidebar-title">
-                Textiles
+            <div className="sidebar-brand">
+                <div className="sidebar-brand-name">
+                    TEXTILES
+                </div>
+
+                <div className="sidebar-brand-subtitle">
+                    Control Industrial
+                </div>
             </div>
 
-            <div className="user-card">
-                <User size={64} strokeWidth={1.5} />
-                <span>Usuario</span>
+            <div className="sidebar-user">
+                <PersonOutlineIcon className="sidebar-user-icon" />
+
+                <div className="sidebar-user-info">
+                    <span className="sidebar-user-label">
+                        Usuario
+                    </span>
+
+                    <span className="sidebar-user-role">
+                        Operador
+                    </span>
+                </div>
             </div>
 
-            <div className="sidebar-section">
-                Registro Molinetes
-            </div>
+            <nav className="sidebar-navigation">
 
-            <button className="sidebar-item">
-                <Gauge size={18} />
-                T. Giro Molinete
-            </button>
+                <div className="sidebar-section-title">
+                    Operación
+                </div>
 
-            <button className="sidebar-item active">
-                <Factory size={18} />
-                Gestión de Tallas
-            </button>
+                <button
+                    type="button"
+                    className="sidebar-item active"
+                >
+                    <StraightenIcon />
 
-            <button className="sidebar-item">
-                <Settings size={18} />
-                Ajustes
-            </button>
+                    <span>
+                        Gestión de Tallas
+                    </span>
+                </button>
+
+            </nav>
 
         </aside>
     );
