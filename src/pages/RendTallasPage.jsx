@@ -6,28 +6,35 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
 import {
-    consultarTallas,
-    crearTalla as crearTallaService,
-    actualizarTalla as actualizarTallaService,
-    activarTalla as activarTallaService,
-    desactivarTalla as desactivarTallaService
+    consultarRendTallas,
+    crearRendTalla as crearRendTallaService,
+    actualizarRendTalla as actualizarRendTallaService,
+    eliminarRendTalla as eliminarRendTallaService
+} from '../services/rendtallas.service';
+
+import {
+        activarTalla as activarTallaService, 
+        desactivarTalla as desactivarTallaService
 } from '../services/tallas.service';
 
-import TallasTable from '../components/TallasTable';
-import TallaForm from '../components/TallaForm';
+import RendTallasTable from '../components/RendTallasTable';
+import RendTallaForm from '../components/RendTallaForm';
 
 import Snackbar from '../components/Snackbar';
+import ConfirmModal from '../components/ConfirmModal';
 
-function TallasPage() {
+function RendTallasPage() {
 
-    const [tallas, setTallas] = useState([]);
+    const [rendtallas, setRendTallas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
-    const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
+    const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
 
+    const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
+    const [eliminando, setEliminando] = useState(false);
     const [operacion, setOperacion] = useState(null);
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -38,8 +45,12 @@ function TallasPage() {
     });
 
 
-    function editarTalla(talla) {
-        setTallaSeleccionada(talla);
+    function solicitarEliminarRendTalla(rendtalla) {
+        setRendTallaAEliminar(rendtalla);
+    }
+
+    function editarRendTalla(rendtalla) {
+        setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
     }
 
@@ -90,25 +101,25 @@ function TallasPage() {
     }, [snackbar.message]);
 
     useEffect(() => {
-        cargarTallas();
+        cargarRendTallas();
     }, []);
 
     useEffect(() => {
-        cargarTallas(obtenerFiltros());
+        cargarRendTallas(obtenerFiltros());
     }, [busqueda, estado]);
 
 
-    async function cargarTallas(filtros = {}) {
+    async function cargarRendTallas(filtros = {}) {
 
         try {
 
             setLoading(true);
             setError(null);
 
-            const resultado = await consultarTallas(filtros);
+            const resultado = await consultarRendTallas(filtros);
             
 
-            setTallas(resultado.data);
+            setRendTallas(resultado.data);
 
         } catch (error) {
 
@@ -126,27 +137,27 @@ function TallasPage() {
         }
     }
 
-    async function actualizarTalla(talla, data) {
-        await actualizarTallaService(talla.codigo, data);
+    async function actualizarRendTalla(rendtalla, data) {
+        await actualizarRendTallaService(rendtalla.codigo, data);
 
         setMostrarFormulario(false);
-        setTallaSeleccionada(null);
+        setRendTallaSeleccionada(null);
 
-        await cargarTallas();
+        await cargarRendTallas();
         mostrarSnackbar(
             'Talla actualizada correctamente.',
             'success'
         );
     }
 
-    async function guardarTalla(data) {
-        if (tallaSeleccionada) {
-            await actualizarTalla(tallaSeleccionada, data);
+    async function guardarRendTalla(data) {
+        if (rendtallaSeleccionada) {
+            await actualizarRendTalla(rendtallaSeleccionada, data);
         } else {
-            await crearTallaService(data);
+            await crearRendTallaService(data);
 
             setMostrarFormulario(false);
-            await cargarTallas();
+            await cargarRendTallas();
             mostrarSnackbar(
                 'Talla creada correctamente.',
                 'success'
@@ -158,7 +169,7 @@ function TallasPage() {
         try {
             setOperacion(`activar-${codigo}`);
             await activarTallaService(codigo);
-            await cargarTallas();
+            await cargarRendTallas();
                 mostrarSnackbar(
                     'Talla activada correctamente.',
                     'success'
@@ -181,7 +192,7 @@ function TallasPage() {
             setOperacion(`desactivar-${codigo}`);
 
             await desactivarTallaService(codigo);
-            await cargarTallas();
+            await cargarRendTallas();
 
             mostrarSnackbar(
                 'Talla desactivada correctamente.',
@@ -200,6 +211,34 @@ function TallasPage() {
         }
     }
 
+    async function confirmarEliminarTalla() {
+        if (!rendtallaAEliminar) return;
+
+        try {
+            setEliminando(true);
+
+            await eliminarRendTallaService(rendtallaAEliminar.codigo);
+            await cargarRendTallas();
+
+            setRendTallaAEliminar(null);
+
+            mostrarSnackbar(
+                'Talla eliminada correctamente.',
+                'success'
+            );
+        } catch (error) {
+            console.error(error);
+
+            mostrarSnackbar(
+                error.response?.data?.message ||
+                'No fue posible eliminar la talla.',
+                'error'
+            );
+        } finally {
+            setEliminando(false);
+        }
+    }
+
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
 
@@ -210,10 +249,10 @@ function TallasPage() {
             <div className="page-header">
 
                 <div className="page-header-info">
-                    <h1>Gestión de Tallas</h1>
+                    <h1>Gestión de Tallas y Rendimiento</h1>
 
                     <p>
-                        Administración de tallas y estado operativo.
+                        Administración de tallas, parámetros de rendimiento y estado operativo.
                     </p>
                 </div>
 
@@ -287,7 +326,7 @@ function TallasPage() {
                         <button
                             type="button"
                             className="primary-button"
-                            onClick={() => cargarTallas(obtenerFiltros())}
+                            onClick={() => cargarRendTallas(obtenerFiltros())}
                         >
                             Reintentar
                         </button>
@@ -296,7 +335,7 @@ function TallasPage() {
                 </div>
             )}
 
-            {!loading && !error && tallas.length === 0 && (
+            {!loading && !error && rendtallas.length === 0 && (
                 <div className="state-container empty-state">
 
                     <div className="state-icon empty-icon">
@@ -324,13 +363,14 @@ function TallasPage() {
 
             <div className={`tallas-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
 
-                {!loading && !error && tallas.length > 0 && (
+                {!loading && !error && rendtallas.length > 0 && (
                     <div className="tallas-table-section">
-                        <TallasTable
-                            tallas={tallas}
-                            onEdit={editarTalla}
+                        <RendTallasTable
+                            rendtallas={rendtallas}
+                            onEdit={editarRendTalla}
                             onActivate={activarTalla}
                             onDeactivate={desactivarTalla}
+                            onDelete={solicitarEliminarRendTalla}
                             operation={operacion}
                         />
                     </div>
@@ -338,18 +378,28 @@ function TallasPage() {
 
                 {mostrarFormulario && (
                     <aside className="tallas-form-section">
-                        <TallaForm
-                            talla={tallaSeleccionada}
+                        <RendTallaForm
+                            rendtalla={rendtallaSeleccionada}
                             onClose={() => {
                                 setMostrarFormulario(false);
-                                setTallaSeleccionada(null);
+                                setRendTallaSeleccionada(null);
                             }}
-                            onSubmit={guardarTalla}
+                            onSubmit={guardarRendTalla}
                         />
                     </aside>
                 )}
 
             </div>
+
+            {rendtallaAEliminar && (
+                <ConfirmModal
+                    title="Eliminar talla"
+                    message={`¿Está seguro de que desea eliminar la talla "${rendtallaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
+                    onConfirm={confirmarEliminarTalla}
+                    onCancel={() => setRendTallaAEliminar(null)}
+                    loading={eliminando}
+                />
+            )}
 
             <Snackbar
                 message={snackbar.message}
@@ -360,4 +410,4 @@ function TallasPage() {
     );
 }
 
-export default TallasPage;
+export default RendTallasPage;

@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined';
 import StraightenIcon from '@mui/icons-material/Straighten';
 
@@ -9,7 +10,6 @@ function Sidebar({ abierto }) {
                 <div className="sidebar-brand-name">
                     TEXTILES
                 </div>
-
                 <div className="sidebar-brand-subtitle">
                     Control Industrial
                 </div>
@@ -22,7 +22,6 @@ function Sidebar({ abierto }) {
                     <span className="sidebar-user-label">
                         Usuario
                     </span>
-
                     <span className="sidebar-user-role">
                         Operador
                     </span>
@@ -35,16 +34,26 @@ function Sidebar({ abierto }) {
                     Operación
                 </div>
 
-                <button
-                    type="button"
-                    className="sidebar-item active"
+                {/* Usamos NavLink con className dinámico según isActive */}
+                <NavLink
+                    to="/rendimiento-tallas"
+                    className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
                 >
                     <StraightenIcon />
+                    <span>
+                        Gestión de Rendimiento x Tallas
+                    </span>
+                </NavLink>
 
+                <NavLink
+                    to="/tallas"
+                    className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                >
+                    <StraightenIcon />
                     <span>
                         Gestión de Tallas
                     </span>
-                </button>
+                </NavLink>
 
             </nav>
 

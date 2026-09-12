@@ -3,26 +3,47 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
 
-function TallaForm({ onClose, onSubmit, talla }) {
+function RendTallaForm({ onClose, onSubmit, rendtalla }) {
 
     const [formData, setFormData] = useState({
-        codTalla: talla?.codigo ?? '',
-        nomTalla: talla?.nombre ?? '',
-        estaTalla: talla?.estado ?? 'A'
+        codTalla: rendtalla?.codigo ?? '',
+        nomTalla: rendtalla?.nombre ?? '',
+        estaTalla: rendtalla?.estado ?? 'A',
+        anchoRendtall: rendtalla?.ancho ?? '',
+        pesoRendtall: rendtalla?.pesoM2 ?? '',
+        rolloRendtall: rendtalla?.pesoRollo ?? '',
+        usuarioRendtall: 1
     });
 
     useEffect(() => {
         setFormData({
-            codTalla: talla?.codigo ?? '',
-            nomTalla: talla?.nombre ?? '',
-            estaTalla: talla?.estado ?? 'A'
+            codTalla: rendtalla?.codigo ?? '',
+            nomTalla: rendtalla?.nombre ?? '',
+            estaTalla: rendtalla?.estado ?? 'A',
+            anchoRendtall: rendtalla?.ancho ?? '',
+            pesoRendtall: rendtalla?.pesoM2 ?? '',
+            rolloRendtall: rendtalla?.pesoRollo ?? '',
+            usuarioRendtall: 1
         });
 
         setError(null);
-    }, [talla]);
+    }, [rendtalla]);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const ancho = Number(formData.anchoRendtall);
+    const peso = Number(formData.pesoRendtall);
+    const rollo = Number(formData.rolloRendtall);
+
+    const rendimiento =
+        ancho > 0 && peso > 0
+            ? 1000 / ((ancho * 2 / 100) * peso)
+            : 0;
+
+    const metrosRollo =
+        rendimiento > 0 && rollo > 0
+            ? rollo * rendimiento
+            : 0;
 
     function handleChange(event) {
 
@@ -39,7 +60,11 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
         const data = {
             ...formData,
-            codTalla: Number(formData.codTalla)
+            codTalla: Number(formData.codTalla),
+            anchoRendtall: Number(formData.anchoRendtall),
+            pesoRendtall: Number(formData.pesoRendtall),
+            rolloRendtall: Number(formData.rolloRendtall),
+            usuarioRendtall: Number(formData.usuarioRendtall)
         };
 
         try {
@@ -65,7 +90,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
             <div className="form-header">
 
-            <h2>{talla ? 'Editar Talla' : 'Crear Talla'}</h2>
+            <h2>{rendtalla ? 'Editar Talla' : 'Crear Talla'}</h2>
 
             <button
                 type="button"
@@ -92,8 +117,8 @@ function TallaForm({ onClose, onSubmit, talla }) {
                     value={formData.codTalla}
                     onChange={handleChange}
                     required
-                    disabled={Boolean(talla)}
-                    className={talla ? 'input-readonly' : ''}
+                    disabled={Boolean(rendtalla)}
+                    className={rendtalla ? 'input-readonly' : ''}
                 />
 
                 </div>
@@ -108,6 +133,57 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         type="text"
                         name="nomTalla"
                         value={formData.nomTalla}
+                        onChange={handleChange}
+                        required
+                    />
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>
+                        Ancho
+                    </label>
+
+                    <input
+                        type="number"
+                        step="any"
+                        name="anchoRendtall"
+                        value={formData.anchoRendtall}
+                        onChange={handleChange}
+                        required
+                    />
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>
+                        Peso/M2
+                    </label>
+
+                    <input
+                        type="number"
+                        step="any"
+                        name="pesoRendtall"
+                        value={formData.pesoRendtall}
+                        onChange={handleChange}
+                        required
+                    />
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>
+                        Peso/Rollo
+                    </label>
+
+                    <input
+                        type="number"
+                        step="any"
+                        name="rolloRendtall"
+                        value={formData.rolloRendtall}
                         onChange={handleChange}
                         required
                     />
@@ -134,6 +210,30 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         </option>
 
                     </select>
+
+                </div>
+
+                <div className="form-group calculated-group">
+
+                    <label>Rendimiento</label>
+
+                    <input
+                        type="text"
+                        value={rendimiento > 0 ? rendimiento.toFixed(1) : ''}
+                        readOnly
+                    />
+
+                </div>
+
+                <div className="form-group calculated-group">
+
+                    <label>Metros/Rollo</label>
+
+                    <input
+                        type="text"
+                        value={metrosRollo > 0 ? metrosRollo.toFixed(1) : ''}
+                        readOnly
+                    />
 
                 </div>
 
@@ -176,7 +276,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
                                 Guardando...
                             </>
                         ) : (
-                            talla ? 'Actualizar' : 'Guardar'
+                            rendtalla ? 'Actualizar' : 'Guardar'
                         )}
                     </button>
                 </div>
@@ -187,4 +287,4 @@ function TallaForm({ onClose, onSubmit, talla }) {
     );
 }
 
-export default TallaForm;
+export default RendTallaForm;

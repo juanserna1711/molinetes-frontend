@@ -3,11 +3,12 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
-function TallasTable({
-    tallas,
+function RendTallasTable({
+    rendtallas,
     onEdit,
     onActivate,
     onDeactivate,
+    onDelete,
     operation
 }) {
     return (
@@ -19,6 +20,11 @@ function TallasTable({
                     <tr>
                         <th>Código</th>
                         <th>Nombre Talla</th>
+                        <th>Ancho (in)</th>
+                        <th>Peso/M2 (g)</th>
+                        <th>Peso/Rollo (kg)</th>
+                        <th>Metros/Rollo (m)</th>
+                        <th>Rendimiento</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -26,26 +32,46 @@ function TallasTable({
 
                 <tbody>
 
-                    {tallas.map((talla) => {
+                    {rendtallas.map((rendtalla) => {
 
-                        const estaActiva = talla.estado === 'A';
+                        const estaActiva = rendtalla.estado === 'A';
 
                         const operacionEstado = estaActiva
-                            ? `desactivar-${talla.codigo}`
-                            : `activar-${talla.codigo}`;
+                            ? `desactivar-${rendtalla.codigo}`
+                            : `activar-${rendtalla.codigo}`;
 
                         const procesandoEstado =
                             operation === operacionEstado;
 
                         return (
-                            <tr key={talla.codigo}>
+                            <tr key={rendtalla.codigo}>
 
                                 <td className="codigo-cell">
-                                    {talla.codigo}
+                                    {rendtalla.codigo}
                                 </td>
 
                                 <td className="talla-name">
-                                    {talla.nombre}
+                                    {rendtalla.nombre}
+                                </td>
+
+                                <td>
+                                    {rendtalla.ancho}
+                                </td>
+
+                                <td>
+                                    {rendtalla.pesoM2}
+                                </td>
+
+                                <td>
+                                    {rendtalla.pesoRollo}
+                                </td>
+
+                                <td>
+                                    {rendtalla.metrosRollo}
+                                </td>
+
+                                <td>
+                                    {rendtalla.rendimiento}
                                 </td>
 
                                 <td>
@@ -59,9 +85,9 @@ function TallasTable({
                                         }`}
                                         onClick={() => {
                                             if (estaActiva) {
-                                                onDeactivate(talla.codigo);
+                                                onDeactivate(rendtalla.codigo);
                                             } else {
-                                                onActivate(talla.codigo);
+                                                onActivate(rendtalla.codigo);
                                             }
                                         }}
                                         disabled={procesandoEstado}
@@ -95,10 +121,19 @@ function TallasTable({
                                         <button
                                             type="button"
                                             className="table-action edit"
-                                            onClick={() => onEdit(talla)}
+                                            onClick={() => onEdit(rendtalla)}
                                             title="Editar"
                                         >
                                             <EditOutlinedIcon />
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="table-action delete"
+                                            onClick={() => onDelete(rendtalla)}
+                                            title="Eliminar"
+                                        >
+                                            <DeleteOutlinedIcon />
                                         </button>
 
                                     </div>
@@ -117,4 +152,4 @@ function TallasTable({
     );
 }
 
-export default TallasTable;
+export default RendTallasTable;

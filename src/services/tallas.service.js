@@ -43,11 +43,3 @@ export async function desactivarTalla(codigo) {
 
     return response.data;
 }
-
-export async function eliminarTalla(codigo) {
-    const response = await axios.delete(
-        `${API_URL}/tallas/${codigo}`
-    );
-
-    return response.data;
-}
