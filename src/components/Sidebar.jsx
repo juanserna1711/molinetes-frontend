@@ -1,6 +1,10 @@
 import { NavLink } from 'react-router-dom';
+
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined';
 import StraightenIcon from '@mui/icons-material/Straighten';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import PrecisionManufacturingOutlinedIcon from '@mui/icons-material/PrecisionManufacturingOutlined';
 
 function Sidebar({ abierto }) {
     return (
@@ -10,6 +14,7 @@ function Sidebar({ abierto }) {
                 <div className="sidebar-brand-name">
                     TEXTILES
                 </div>
+
                 <div className="sidebar-brand-subtitle">
                     Control Industrial
                 </div>
@@ -22,6 +27,7 @@ function Sidebar({ abierto }) {
                     <span className="sidebar-user-label">
                         Usuario
                     </span>
+
                     <span className="sidebar-user-role">
                         Operador
                     </span>
@@ -34,12 +40,14 @@ function Sidebar({ abierto }) {
                     Operación
                 </div>
 
-                {/* Usamos NavLink con className dinámico según isActive */}
                 <NavLink
                     to="/rendimiento-tallas"
-                    className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
                 >
                     <StraightenIcon />
+
                     <span>
                         Gestión de Rendimiento x Tallas
                     </span>
@@ -47,11 +55,40 @@ function Sidebar({ abierto }) {
 
                 <NavLink
                     to="/tallas"
-                    className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
                 >
-                    <StraightenIcon />
+                    <SettingsOutlinedIcon />
+
                     <span>
                         Gestión de Tallas
+                    </span>
+                </NavLink>
+
+                <NavLink
+                    to="/usuarios"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <GroupsOutlinedIcon />
+
+                    <span>
+                        Gestión de Usuarios
+                    </span>
+                </NavLink>
+
+                <NavLink
+                    to="/molinetes"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <PrecisionManufacturingOutlinedIcon />
+
+                    <span>
+                        Gestión de Molinetes
                     </span>
                 </NavLink>
 

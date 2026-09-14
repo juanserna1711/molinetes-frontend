@@ -3,8 +3,8 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
-function TallasTable({
-    tallas,
+function UsuariosTable({
+    usuarios,
     onEdit,
     onActivate,
     onDeactivate,
@@ -19,7 +19,7 @@ function TallasTable({
                 <thead>
                     <tr>
                         <th>Código</th>
-                        <th>Nombre Talla</th>
+                        <th>Nombre Usuario</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -27,26 +27,26 @@ function TallasTable({
 
                 <tbody>
 
-                    {tallas.map((talla) => {
+                    {usuarios.map((usuario) => {
 
-                        const estaActiva = talla.estado === 'A';
+                        const estaActivo = usuario.estado === 'A';
 
-                        const operacionEstado = estaActiva
-                            ? `desactivar-${talla.codigo}`
-                            : `activar-${talla.codigo}`;
+                        const operacionEstado = estaActivo
+                            ? `desactivar-${usuario.codigo}`
+                            : `activar-${usuario.codigo}`;
 
                         const procesandoEstado =
                             operation === operacionEstado;
 
                         return (
-                            <tr key={talla.codigo}>
+                            <tr key={usuario.codigo}>
 
                                 <td className="codigo-cell">
-                                    {talla.codigo}
+                                    {usuario.codigo}
                                 </td>
 
-                                <td className="talla-name">
-                                    {talla.nombre}
+                                <td className="name">
+                                    {usuario.nombre}
                                 </td>
 
                                 <td>
@@ -54,33 +54,33 @@ function TallasTable({
                                     <button
                                         type="button"
                                         className={`status-button ${
-                                            estaActiva
+                                            estaActivo
                                                 ? 'status-active'
                                                 : 'status-inactive'
                                         }`}
                                         onClick={() => {
-                                            if (estaActiva) {
-                                                onDeactivate(talla.codigo);
+                                            if (estaActivo) {
+                                                onDeactivate(usuario.codigo);
                                             } else {
-                                                onActivate(talla.codigo);
+                                                onActivate(usuario.codigo);
                                             }
                                         }}
                                         disabled={procesandoEstado}
                                         title={
-                                            estaActiva
-                                                ? 'Desactivar talla'
-                                                : 'Activar talla'
+                                            estaActivo
+                                                ? 'Desactivar usuario'
+                                                : 'Activar usuario'
                                         }
                                     >
 
-                                        {estaActiva ? (
+                                        {estaActivo ? (
                                             <CheckCircleOutlineOutlinedIcon />
                                         ) : (
                                             <RadioButtonUncheckedIcon />
                                         )}
 
                                         <span>
-                                            {estaActiva
+                                            {estaActivo
                                                 ? 'Activo'
                                                 : 'Inactivo'}
                                         </span>
@@ -96,7 +96,7 @@ function TallasTable({
                                         <button
                                             type="button"
                                             className="table-action edit"
-                                            onClick={() => onEdit(talla)}
+                                            onClick={() => onEdit(usuario)}
                                             title="Editar"
                                         >
                                             <EditOutlinedIcon />
@@ -105,7 +105,7 @@ function TallasTable({
                                         <button
                                             type="button"
                                             className="table-action delete"
-                                            onClick={() => onDelete(talla)}
+                                            onClick={() => onDelete(usuario)}
                                             title="Eliminar"
                                         >
                                             <DeleteOutlinedIcon />
@@ -127,4 +127,4 @@ function TallasTable({
     );
 }
 
-export default TallasTable;
+export default UsuariosTable;

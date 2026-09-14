@@ -1,4 +1,4 @@
-.tallas-page {
+.page {
     width: 100%;
 }
 /* =========================================================
@@ -282,7 +282,7 @@
    ÁREA DE TRABAJO: TABLA + FORMULARIO
    ========================================================= */
 
-.tallas-workspace {
+.page-workspace {
     width: 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -290,20 +290,20 @@
 }
 
 /* Cuando el formulario está cerrado */
-.tallas-workspace:not(.form-open) {
+.page-workspace:not(.form-open) {
     grid-template-columns: minmax(0, 1fr);
 }
 
 /* Cuando el formulario está abierto */
-.tallas-workspace.form-open {
+.page-workspace.form-open {
     grid-template-columns: minmax(0, 1fr) 360px;
     gap: 20px;
 }
 
-.tallas-table-section {
+.table-section {
     min-width: 0;
 }
 
-.tallas-form-section {
+.form-section {
     min-width: 0;
 }
