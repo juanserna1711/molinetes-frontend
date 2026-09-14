@@ -1,6 +1,6 @@
 
 /* =========================================================
-   TABLA DE TALLAS
+   TABLA
    ========================================================= */
 
 .table-container {
@@ -14,7 +14,7 @@
     box-shadow: 0 1px 3px rgba(38, 54, 77, 0.05);
 }
 
-.tallas-table {
+.table {
     width: 100%;
     min-width: 900px;
 
@@ -27,11 +27,11 @@
 
 /* ---------- Encabezado ---------- */
 
-.tallas-table thead {
+.table thead {
     background-color: #f5f7fa;
 }
 
-.tallas-table th {
+.table th {
     height: 46px;
 
     padding: 0 14px;
@@ -54,7 +54,7 @@
 
 /* ---------- Cuerpo ---------- */
 
-.tallas-table td {
+.table td {
     height: 52px;
 
     padding: 0 14px;
@@ -66,17 +66,17 @@
     white-space: nowrap;
 }
 
-.tallas-table tbody tr {
+.table tbody tr {
     background-color: #ffffff;
 
     transition: background-color 0.15s ease;
 }
 
-.tallas-table tbody tr:hover {
+.table tbody tr:hover {
     background-color: #f8fafc;
 }
 
-.tallas-table tbody tr:last-child td {
+.table tbody tr:last-child td {
     border-bottom: none;
 }
 
@@ -89,7 +89,7 @@
 
 /* ---------- Nombre ---------- */
 
-.talla-name {
+.name {
     color: #26364d;
     font-weight: 600;
 }
@@ -234,4 +234,17 @@
 
 .message.error {
     color: #b42318;
+}
+
+.date-cell {
+    color: #667085;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.user-cell {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
 }

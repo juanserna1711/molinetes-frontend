@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import TallasPage from './pages/TallasPage';
 import RendTallasPage from './pages/RendTallasPage';
+import UsuariosPage from './pages/UsuariosPage';
+import MolinetesPage from './pages/MolinetesPage';
 
 function App() {
     return (
@@ -13,6 +15,8 @@ function App() {
                 {/* Rutas principales */}
                 <Route path="/rendimiento-tallas" element={<RendTallasPage />} />
                 <Route path="/tallas" element={<TallasPage />} />
+                <Route path="/usuarios" element={<UsuariosPage />} />
+                <Route path="/molinetes" element={<MolinetesPage />} />
 
                 {/* Ruta por si intentan entrar a una URL que no existe */}
                 <Route path="*" element={<h2>404 - Página no encontrada</h2>} />

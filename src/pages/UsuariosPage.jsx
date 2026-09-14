@@ -6,35 +6,34 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
 import {
-    consultarRendTallas,
-    crearRendTalla as crearRendTallaService,
-    actualizarRendTalla as actualizarRendTallaService,
-    eliminarRendTalla as eliminarRendTallaService
-} from '../services/rendtallas.service';
+    consultarUsuarios,
+    crearUsuario as crearUsuarioService,
+    actualizarUsuario as actualizarUsuarioService,
+    activarUsuario as activarUsuarioService,
+    desactivarUsuario as desactivarUsuarioService,
+    eliminarUsuario as eliminarUsuarioService
+} from '../services/usuarios.service';
 
-import {
-        activarTalla as activarTallaService, 
-        desactivarTalla as desactivarTallaService
-} from '../services/tallas.service';
+import UsuariosTable from '../components/UsuariosTable';
+import UsuarioForm from '../components/UsuarioForm';
 
-import RendTallasTable from '../components/RendTallasTable';
-import RendTallaForm from '../components/RendTallaForm';
-
-import Snackbar from '../components/Snackbar';
 import ConfirmModal from '../components/ConfirmModal';
 
-function RendTallasPage() {
+import Snackbar from '../components/Snackbar';
 
-    const [rendtallas, setRendTallas] = useState([]);
+function UsuariosPage() {
+
+    const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
-    const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
-    const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
+
     const [operacion, setOperacion] = useState(null);
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -44,13 +43,12 @@ function RendTallasPage() {
         type: 'success'
     });
 
-
-    function solicitarEliminarRendTalla(rendtalla) {
-        setRendTallaAEliminar(rendtalla);
+    function solicitarEliminarUsuario(usuario) {
+        setUsuarioAEliminar(usuario);
     }
 
-    function editarRendTalla(rendtalla) {
-        setRendTallaSeleccionada(rendtalla);
+    function editarUsuario(usuario) {
+        setUsuarioSeleccionado(usuario);
         setMostrarFormulario(true);
     }
 
@@ -101,25 +99,25 @@ function RendTallasPage() {
     }, [snackbar.message]);
 
     useEffect(() => {
-        cargarRendTallas();
+        cargarUsuarios();
     }, []);
 
     useEffect(() => {
-        cargarRendTallas(obtenerFiltros());
+        cargarUsuarios(obtenerFiltros());
     }, [busqueda, estado]);
 
 
-    async function cargarRendTallas(filtros = {}) {
+    async function cargarUsuarios(filtros = {}) {
 
         try {
 
             setLoading(true);
             setError(null);
 
-            const resultado = await consultarRendTallas(filtros);
+            const resultado = await consultarUsuarios(filtros);
             
 
-            setRendTallas(resultado.data);
+            setUsuarios(resultado.data);
 
         } catch (error) {
 
@@ -127,7 +125,7 @@ function RendTallasPage() {
 
             setError(
                 error.response?.data?.message ||
-                'No fue posible cargar las tallas.'
+                'No fue posible cargar los usuarios.'
             );
 
         } finally {
@@ -137,41 +135,41 @@ function RendTallasPage() {
         }
     }
 
-    async function actualizarRendTalla(rendtalla, data) {
-        await actualizarRendTallaService(rendtalla.codigo, data);
+    async function actualizarUsuario(usuario, data) {
+        await actualizarUsuarioService(usuario.codigo, data);
 
         setMostrarFormulario(false);
-        setRendTallaSeleccionada(null);
+        setUsuarioSeleccionado(null);
 
-        await cargarRendTallas();
+        await cargarUsuarios();
         mostrarSnackbar(
-            'Talla actualizada correctamente.',
+            'Usuario actualizado correctamente.',
             'success'
         );
     }
 
-    async function guardarRendTalla(data) {
-        if (rendtallaSeleccionada) {
-            await actualizarRendTalla(rendtallaSeleccionada, data);
+    async function guardarUsuario(data) {
+        if (usuarioSeleccionado) {
+            await actualizarUsuario(usuarioSeleccionado, data);
         } else {
-            await crearRendTallaService(data);
+            await crearUsuarioService(data);
 
             setMostrarFormulario(false);
-            await cargarRendTallas();
+            await cargarUsuarios();
             mostrarSnackbar(
-                'Talla creada correctamente.',
+                'Usuario creado correctamente.',
                 'success'
             );
         }
     }
 
-    async function activarTalla(codigo) {
+    async function activarUsuario(codigo) {
         try {
             setOperacion(`activar-${codigo}`);
-            await activarTallaService(codigo);
-            await cargarRendTallas();
+            await activarUsuarioService(codigo);
+            await cargarUsuarios();
                 mostrarSnackbar(
-                    'Talla activada correctamente.',
+                    'Usuario activado correctamente.',
                     'success'
                 );
         } catch (error) {
@@ -179,7 +177,7 @@ function RendTallasPage() {
 
             mostrarSnackbar(
                 error.response?.data?.message ||
-                'No fue posible activar la talla.',
+                'No fue posible activar el usuario.',
                 'error'
             );
         } finally {
@@ -187,15 +185,15 @@ function RendTallasPage() {
     }
     }
 
-    async function desactivarTalla(codigo) {
+    async function desactivarUsuario(codigo) {
         try {
             setOperacion(`desactivar-${codigo}`);
 
-            await desactivarTallaService(codigo);
-            await cargarRendTallas();
+            await desactivarUsuarioService(codigo);
+            await cargarUsuarios();
 
             mostrarSnackbar(
-                'Talla desactivada correctamente.',
+                'Usuario desactivado correctamente.',
                 'success'
             );
         } catch (error) {
@@ -203,7 +201,7 @@ function RendTallasPage() {
 
             mostrarSnackbar(
                 error.response?.data?.message ||
-                'No fue posible desactivar la talla.',
+                'No fue posible desactivar el usuario.',
                 'error'
             );
         } finally {
@@ -211,33 +209,34 @@ function RendTallasPage() {
         }
     }
 
-    async function confirmarEliminarTalla() {
-        if (!rendtallaAEliminar) return;
-
-        try {
-            setEliminando(true);
-
-            await eliminarRendTallaService(rendtallaAEliminar.codigo);
-            await cargarRendTallas();
-
-            setRendTallaAEliminar(null);
-
-            mostrarSnackbar(
-                'Talla eliminada correctamente.',
-                'success'
-            );
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar la talla.',
-                'error'
-            );
-        } finally {
-            setEliminando(false);
+    async function confirmarEliminarUsuario() {
+            if (!usuarioAEliminar) return;
+    
+            try {
+                setEliminando(true);
+    
+                await eliminarUsuarioService(usuarioAEliminar.codigo);
+                await cargarUsuarios();
+    
+                setUsuarioAEliminar(null);
+    
+                mostrarSnackbar(
+                    'Usuario eliminado correctamente.',
+                    'success'
+                );
+            } catch (error) {
+                console.error(error);
+    
+                mostrarSnackbar(
+                    error.response?.data?.message ||
+                    'No fue posible eliminar el usuario.',
+                    'error'
+                );
+            } finally {
+                setEliminando(false);
+            }
         }
-    }
+    
 
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
@@ -249,10 +248,10 @@ function RendTallasPage() {
             <div className="page-header">
 
                 <div className="page-header-info">
-                    <h1>Gestión de Tallas y Rendimiento</h1>
+                    <h1>Gestión de Usuarios</h1>
 
                     <p>
-                        Administración de tallas, parámetros de rendimiento y estado operativo.
+                        Administración de usuarios y estado operativo.
                     </p>
                 </div>
 
@@ -262,7 +261,7 @@ function RendTallasPage() {
                     onClick={() => setMostrarFormulario(true)}
                 >
                     <AddIcon />
-                    Nueva Talla
+                    Nuevo Usuario
                 </button>
 
             </div>
@@ -303,7 +302,7 @@ function RendTallasPage() {
                     />
 
                     <div className="state-content">
-                        <h2>Cargando tallas</h2>
+                        <h2>Cargando usuarios</h2>
                         <p>Consultando la información...</p>
                     </div>
                 </div>
@@ -317,7 +316,7 @@ function RendTallasPage() {
                     </div>
 
                     <div className="state-content">
-                        <h2>No fue posible cargar las tallas</h2>
+                        <h2>No fue posible cargar los usuarios</h2>
 
                         <p>
                             {error}
@@ -326,7 +325,7 @@ function RendTallasPage() {
                         <button
                             type="button"
                             className="primary-button"
-                            onClick={() => cargarRendTallas(obtenerFiltros())}
+                            onClick={() => cargarUsuarios(obtenerFiltros())}
                         >
                             Reintentar
                         </button>
@@ -335,7 +334,7 @@ function RendTallasPage() {
                 </div>
             )}
 
-            {!loading && !error && rendtallas.length === 0 && (
+            {!loading && !error && usuarios.length === 0 && (
                 <div className="state-container empty-state">
 
                     <div className="state-icon empty-icon">
@@ -346,14 +345,14 @@ function RendTallasPage() {
 
                         <h2>
                             {hayFiltros
-                                ? 'No se encontraron tallas'
-                                : 'No hay tallas registradas'}
+                                ? 'No se encontraron usuarios'
+                                : 'No hay usuarios registrados'}
                         </h2>
 
                         <p>
                             {hayFiltros
-                                ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen tallas registradas en el sistema.'}
+                                ? 'No hay usuarios que coincidan con los criterios de búsqueda.'
+                                : 'Aún no existen usuarios registrados en el sistema.'}
                         </p>
 
                     </div>
@@ -363,14 +362,14 @@ function RendTallasPage() {
 
             <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
 
-                {!loading && !error && rendtallas.length > 0 && (
+                {!loading && !error && usuarios.length > 0 && (
                     <div className="table-section">
-                        <RendTallasTable
-                            rendtallas={rendtallas}
-                            onEdit={editarRendTalla}
-                            onActivate={activarTalla}
-                            onDeactivate={desactivarTalla}
-                            onDelete={solicitarEliminarRendTalla}
+                        <UsuariosTable
+                            usuarios={usuarios}
+                            onEdit={editarUsuario}
+                            onActivate={activarUsuario}
+                            onDeactivate={desactivarUsuario}
+                            onDelete={solicitarEliminarUsuario}
                             operation={operacion}
                         />
                     </div>
@@ -378,25 +377,25 @@ function RendTallasPage() {
 
                 {mostrarFormulario && (
                     <aside className="form-section">
-                        <RendTallaForm
-                            rendtalla={rendtallaSeleccionada}
+                        <UsuarioForm
+                            usuario={usuarioSeleccionado}
                             onClose={() => {
                                 setMostrarFormulario(false);
-                                setRendTallaSeleccionada(null);
+                                setUsuarioSeleccionado(null);
                             }}
-                            onSubmit={guardarRendTalla}
+                            onSubmit={guardarUsuario}
                         />
                     </aside>
                 )}
 
             </div>
 
-            {rendtallaAEliminar && (
+            {usuarioAEliminar && (
                 <ConfirmModal
-                    title="Eliminar talla"
-                    message={`¿Está seguro de que desea eliminar la talla "${rendtallaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarTalla}
-                    onCancel={() => setRendTallaAEliminar(null)}
+                    title="Eliminar usuario"
+                    message={`¿Está seguro de que desea eliminar el usuario "${usuarioAEliminar.nombre}"? Esta acción no se puede deshacer.`}
+                    onConfirm={confirmarEliminarUsuario}
+                    onCancel={() => setUsuarioAEliminar(null)}
                     loading={eliminando}
                 />
             )}
@@ -410,4 +409,4 @@ function RendTallasPage() {
     );
 }
 
-export default RendTallasPage;
+export default UsuariosPage;

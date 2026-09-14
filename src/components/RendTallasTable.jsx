@@ -3,6 +3,15 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
+function formatearFecha(fecha) {
+    if (!fecha) return '-';
+
+    return new Intl.DateTimeFormat('es-CO', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    }).format(new Date(fecha));
+}
+
 function RendTallasTable({
     rendtallas,
     onEdit,
@@ -14,7 +23,7 @@ function RendTallasTable({
     return (
         <div className="table-container">
 
-            <table className="tallas-table">
+            <table className="table">
 
                 <thead>
                     <tr>
@@ -25,6 +34,8 @@ function RendTallasTable({
                         <th>Peso/Rollo (kg)</th>
                         <th>Metros/Rollo (m)</th>
                         <th>Rendimiento</th>
+                        <th>Fecha generación</th>
+                        <th>Usuario</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -50,7 +61,7 @@ function RendTallasTable({
                                     {rendtalla.codigo}
                                 </td>
 
-                                <td className="talla-name">
+                                <td className="name">
                                     {rendtalla.nombre}
                                 </td>
 
@@ -72,6 +83,14 @@ function RendTallasTable({
 
                                 <td>
                                     {rendtalla.rendimiento}
+                                </td>
+
+                                <td className="date-cell">
+                                    {formatearFecha(rendtalla.fechaGeneracion)}
+                                </td>
+
+                                <td className="user-cell">
+                                    {rendtalla.usuario || '-'}
                                 </td>
 
                                 <td>

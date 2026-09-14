@@ -6,33 +6,31 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
 import {
-    consultarTallas,
-    crearTalla as crearTallaService,
-    actualizarTalla as actualizarTallaService,
-    activarTalla as activarTallaService,
-    desactivarTalla as desactivarTallaService,
-    eliminarTalla as eliminarTallaService
-} from '../services/tallas.service';
+    consultarMolinetes,
+    crearMolinete as crearMolineteService,
+    actualizarMolinete as actualizarMolineteService,
+    eliminarMolinete as eliminarMolineteService
+} from '../services/molinetes.service';
 
-import TallasTable from '../components/TallasTable';
-import TallaForm from '../components/TallaForm';
+import MolinetesTable from '../components/MolinetesTable';
+import MolineteForm from '../components/MolineteForm';
 
 import ConfirmModal from '../components/ConfirmModal';
+
 import Snackbar from '../components/Snackbar';
 
-function TallasPage() {
+function MolinetesPage() {
 
-    const [tallas, setTallas] = useState([]);
+    const [molinetes, setMolinetes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [busqueda, setBusqueda] = useState('');
-    const [estado, setEstado] = useState('');
-    const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
+    const [molineteSeleccionado, setMolineteSeleccionado] = useState(null);
 
-    const [tallaAEliminar, setTallaAEliminar] = useState(null);
+    const [molineteAEliminar, setMolineteAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
-    const [operacion, setOperacion] = useState(null);
+
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
@@ -41,12 +39,12 @@ function TallasPage() {
         type: 'success'
     });
 
-    function solicitarEliminarTalla(talla) {
-        setTallaAEliminar(talla);
+    function solicitarEliminarMolinete(molinete) {
+        setMolineteAEliminar(molinete);
     }
 
-    function editarTalla(talla) {
-        setTallaSeleccionada(talla);
+    function editarMolinete(molinete) {
+        setMolineteSeleccionado(molinete);
         setMostrarFormulario(true);
     }
 
@@ -67,10 +65,6 @@ function TallasPage() {
             } else {
                 filtros.nombre = valor;
             }
-        }
-
-        if (estado !== '') {
-            filtros.estado = estado;
         }
 
         return filtros;
@@ -97,25 +91,25 @@ function TallasPage() {
     }, [snackbar.message]);
 
     useEffect(() => {
-        cargarTallas();
+        cargarMolinetes();
     }, []);
 
     useEffect(() => {
-        cargarTallas(obtenerFiltros());
-    }, [busqueda, estado]);
+        cargarMolinetes(obtenerFiltros());
+    }, [busqueda]);
 
 
-    async function cargarTallas(filtros = {}) {
+    async function cargarMolinetes(filtros = {}) {
 
         try {
 
             setLoading(true);
             setError(null);
 
-            const resultado = await consultarTallas(filtros);
+            const resultado = await consultarMolinetes(filtros);
             
 
-            setTallas(resultado.data);
+            setMolinetes(resultado.data);
 
         } catch (error) {
 
@@ -123,7 +117,7 @@ function TallasPage() {
 
             setError(
                 error.response?.data?.message ||
-                'No fue posible cargar las tallas.'
+                'No fue posible cargar los molinetes.'
             );
 
         } finally {
@@ -133,109 +127,64 @@ function TallasPage() {
         }
     }
 
-    async function actualizarTalla(talla, data) {
-        await actualizarTallaService(talla.codigo, data);
+    async function actualizarMolinete(molinete, data) {
+        await actualizarMolineteService(molinete.codigo, data);
 
         setMostrarFormulario(false);
-        setTallaSeleccionada(null);
+        setMolineteSeleccionado(null);
 
-        await cargarTallas();
+        await cargarMolinetes();
         mostrarSnackbar(
-            'Talla actualizada correctamente.',
+            'Molinete actualizado correctamente.',
             'success'
         );
     }
 
-    async function guardarTalla(data) {
-        if (tallaSeleccionada) {
-            await actualizarTalla(tallaSeleccionada, data);
+    async function guardarMolinete(data) {
+        if (molineteSeleccionado) {
+            await actualizarMolinete(molineteSeleccionado, data);
         } else {
-            await crearTallaService(data);
+            await crearMolineteService(data);
 
             setMostrarFormulario(false);
-            await cargarTallas();
+            await cargarMolinetes();
             mostrarSnackbar(
-                'Talla creada correctamente.',
+                'Molinete creado correctamente.',
                 'success'
             );
         }
     }
 
-    async function activarTalla(codigo) {
-        try {
-            setOperacion(`activar-${codigo}`);
-            await activarTallaService(codigo);
-            await cargarTallas();
+    async function confirmarEliminarMolinete() {
+            if (!molineteAEliminar) return;
+    
+            try {
+                setEliminando(true);
+    
+                await eliminarMolineteService(molineteAEliminar.codigo);
+                await cargarMolinetes();
+    
+                setMolineteAEliminar(null);
+    
                 mostrarSnackbar(
-                    'Talla activada correctamente.',
+                    'Molinete eliminado correctamente.',
                     'success'
                 );
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible activar la talla.',
-                'error'
-            );
-        } finally {
-        setOperacion(null);
-    }
-    }
-
-    async function desactivarTalla(codigo) {
-        try {
-            setOperacion(`desactivar-${codigo}`);
-
-            await desactivarTallaService(codigo);
-            await cargarTallas();
-
-            mostrarSnackbar(
-                'Talla desactivada correctamente.',
-                'success'
-            );
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible desactivar la talla.',
-                'error'
-            );
-        } finally {
-            setOperacion(null);
+            } catch (error) {
+                console.error(error);
+    
+                mostrarSnackbar(
+                    error.response?.data?.message ||
+                    'No fue posible eliminar el molinete.',
+                    'error'
+                );
+            } finally {
+                setEliminando(false);
+            }
         }
-    }
-
-    async function confirmarEliminarTalla() {
-        if (!tallaAEliminar) return;
-
-        try {
-            setEliminando(true);
-
-            await eliminarTallaService(tallaAEliminar.codigo);
-            await cargarTallas();
-
-            mostrarSnackbar(
-                'Talla eliminada correctamente.',
-                'success'
-            );
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar la talla.',
-                'error'
-            );
-        } finally {
-            setEliminando(false);
-            setTallaAEliminar(null);
-        }
-    }
     
 
-    const hayFiltros = busqueda.trim() !== '' || estado !== '';
+    const hayFiltros = busqueda.trim() !== '';
 
 
     return (
@@ -245,10 +194,10 @@ function TallasPage() {
             <div className="page-header">
 
                 <div className="page-header-info">
-                    <h1>Gestión de Tallas</h1>
+                    <h1>Gestión de Molinetes</h1>
 
                     <p>
-                        Administración de tallas y estado operativo.
+                        Administración de molinetes y su información.
                     </p>
                 </div>
 
@@ -258,7 +207,7 @@ function TallasPage() {
                     onClick={() => setMostrarFormulario(true)}
                 >
                     <AddIcon />
-                    Nueva Talla
+                    Nuevo Molinete
                 </button>
 
             </div>
@@ -278,17 +227,6 @@ function TallasPage() {
                     />
                 </div>
 
-                <select
-                    value={estado}
-                    onChange={(event) => {
-                        setEstado(event.target.value);
-                    }}
-                >
-                    <option value="">Todos los estados</option>
-                    <option value="A">Activos</option>
-                    <option value="I">Inactivos</option>
-                </select>
-
             </div>
 
             {loading && (
@@ -299,7 +237,7 @@ function TallasPage() {
                     />
 
                     <div className="state-content">
-                        <h2>Cargando tallas</h2>
+                        <h2>Cargando molinetes</h2>
                         <p>Consultando la información...</p>
                     </div>
                 </div>
@@ -313,7 +251,7 @@ function TallasPage() {
                     </div>
 
                     <div className="state-content">
-                        <h2>No fue posible cargar las tallas</h2>
+                        <h2>No fue posible cargar los molinetes</h2>
 
                         <p>
                             {error}
@@ -322,7 +260,7 @@ function TallasPage() {
                         <button
                             type="button"
                             className="primary-button"
-                            onClick={() => cargarTallas(obtenerFiltros())}
+                            onClick={() => cargarMolinetes(obtenerFiltros())}
                         >
                             Reintentar
                         </button>
@@ -331,7 +269,7 @@ function TallasPage() {
                 </div>
             )}
 
-            {!loading && !error && tallas.length === 0 && (
+            {!loading && !error && molinetes.length === 0 && (
                 <div className="state-container empty-state">
 
                     <div className="state-icon empty-icon">
@@ -342,14 +280,14 @@ function TallasPage() {
 
                         <h2>
                             {hayFiltros
-                                ? 'No se encontraron tallas'
-                                : 'No hay tallas registradas'}
+                                ? 'No se encontraron molinetes'
+                                : 'No hay molinetes registrados'}
                         </h2>
 
                         <p>
                             {hayFiltros
-                                ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen tallas registradas en el sistema.'}
+                                ? 'No hay molinetes que coincidan con los criterios de búsqueda.'
+                                : 'Aún no existen molinetes registrados en el sistema.'}
                         </p>
 
                     </div>
@@ -359,44 +297,40 @@ function TallasPage() {
 
             <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
 
-                {!loading && !error && tallas.length > 0 && (
+                {!loading && !error && molinetes.length > 0 && (
                     <div className="table-section">
-                        <TallasTable
-                            tallas={tallas}
-                            onEdit={editarTalla}
-                            onActivate={activarTalla}
-                            onDeactivate={desactivarTalla}
-                            onDelete={solicitarEliminarTalla}
-                            operation={operacion}
+                        <MolinetesTable
+                            molinetes={molinetes}
+                            onEdit={editarMolinete}
+                            onDelete={solicitarEliminarMolinete}
                         />
                     </div>
                 )}
 
                 {mostrarFormulario && (
                     <aside className="form-section">
-                        <TallaForm
-                            talla={tallaSeleccionada}
+                        <MolineteForm
+                            molinete={molineteSeleccionado}
                             onClose={() => {
                                 setMostrarFormulario(false);
-                                setTallaSeleccionada(null);
+                                setMolineteSeleccionado(null);
                             }}
-                            onSubmit={guardarTalla}
+                            onSubmit={guardarMolinete}
                         />
                     </aside>
                 )}
 
             </div>
 
-            {tallaAEliminar && (
+            {molineteAEliminar && (
                 <ConfirmModal
-                    title="Eliminar talla"
-                    message={`¿Está seguro de que desea eliminar la talla "${tallaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarTalla}
-                    onCancel={() => setTallaAEliminar(null)}
+                    title="Eliminar molinete"
+                    message={`¿Está seguro de que desea eliminar el molinete "${molineteAEliminar.nombre}"? Esta acción no se puede deshacer.`}
+                    onConfirm={confirmarEliminarMolinete}
+                    onCancel={() => setMolineteAEliminar(null)}
                     loading={eliminando}
                 />
             )}
-
 
             <Snackbar
                 message={snackbar.message}
@@ -407,4 +341,4 @@ function TallasPage() {
     );
 }
 
-export default TallasPage;
+export default MolinetesPage;
