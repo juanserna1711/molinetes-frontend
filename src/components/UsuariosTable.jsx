@@ -20,6 +20,7 @@ function UsuariosTable({
                     <tr>
                         <th>Código</th>
                         <th>Nombre Usuario</th>
+                        <th>Contraseña Usuario</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -47,6 +48,10 @@ function UsuariosTable({
 
                                 <td className="name">
                                     {usuario.nombre}
+                                </td>
+
+                                <td className="name">
+                                    {usuario.password}
                                 </td>
 
                                 <td>

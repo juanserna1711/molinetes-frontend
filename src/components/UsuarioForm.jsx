@@ -8,6 +8,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
     const [formData, setFormData] = useState({
         codUsuario: usuario?.codigo ?? '',
         nomUsuario: usuario?.nombre ?? '',
+        passUsuario: usuario?.password ?? '',
         estaUsuario: usuario?.estado ?? 'A'
     });
 
@@ -15,6 +16,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
         setFormData({
             codUsuario: usuario?.codigo ?? '',
             nomUsuario: usuario?.nombre ?? '',
+            passUsuario: usuario?.password ?? '',
             estaUsuario: usuario?.estado ?? 'A'
         });
 
@@ -108,6 +110,22 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                         type="text"
                         name="nomUsuario"
                         value={formData.nomUsuario}
+                        onChange={handleChange}
+                        required
+                    />
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>
+                        Contraseña Usuario
+                    </label>
+
+                    <input
+                        type="text"
+                        name="passUsuario"
+                        value={formData.passUsuario}
                         onChange={handleChange}
                         required
                     />
