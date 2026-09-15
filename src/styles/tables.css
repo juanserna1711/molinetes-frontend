@@ -50,6 +50,8 @@
     letter-spacing: 0.35px;
 
     white-space: nowrap;
+
+    text-align: center;
 }
 
 /* ---------- Cuerpo ---------- */
@@ -64,6 +66,8 @@
     vertical-align: middle;
 
     white-space: nowrap;
+
+    text-align: center;
 }
 
 .table tbody tr {
@@ -174,7 +178,9 @@
 .actions {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
+    width: 100%;
 }
 
 .table-action {

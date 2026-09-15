@@ -2,8 +2,14 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
+import { consultarMolinetes } from '../services/molinetes.service';
 
 function MolineteForm({ onClose, onSubmit, molinete }) {
+
+    const [codigoDuplicado, setCodigoDuplicado] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const [formData, setFormData] = useState({
         codMolinete: molinete?.codigo ?? '',
@@ -13,31 +19,91 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
     });
 
     useEffect(() => {
+    
+            const codigo = formData.codMolinete;
+    
+            if (!codigo || molinete) {
+                setCodigoDuplicado(false);
+                return;
+            }
+    
+            const temporizador = setTimeout(async () => {
+    
+                try {
+    
+                    const response = await consultarMolinetes({
+                        codigo: Number(codigo)
+                    });
+    
+                    const existe = response.data?.length > 0;
+    
+                    setCodigoDuplicado(existe);
+    
+                } catch (error) {
+    
+                    console.error('Error verificando código:', error);
+    
+                }
+    
+            }, 500);
+    
+            return () => clearTimeout(temporizador);
+    
+    }, [formData.codMolinete, molinete]);
+
+    useEffect(() => {
         setFormData({
             codMolinete: molinete?.codigo ?? '',
-            nomMolinete: molinete?.nombre ?? '',
+            nomMolinete: molinete?.nombre.toUpperCase() ?? '',
             rpmMolinete: molinete?.rpm ?? '',
             periMolinete: molinete?.perimetro ?? ''
         });
 
         setError(null);
+        setFieldErrors({});
+        setCodigoDuplicado(false);
     }, [molinete]);
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     function handleChange(event) {
 
         const { name, value } = event.target;
 
+        if (name === 'codMolinete' && value.length > 3) {
+            return;
+        }
+        if (
+            ['rpmMolinete', 'periMolinete'].includes(name) &&
+            value.length > 3
+        ) {
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: name === 'nomMolinete'
+                ? value.toUpperCase()
+                : value
         }));
+        setFieldErrors(prev => ({
+            ...prev,
+            [name]: null
+        }));
+        setError(null);
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
+
+        if (!validarFormulario()) {
+            return;
+        }
+
+        
+        if (codigoDuplicado) {
+            return;
+        }
+
 
         const data = {
             ...formData,
@@ -47,19 +113,60 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
         try {
             setLoading(true);
             setError(null);
+            setFieldErrors({});
 
             await onSubmit(data);
 
         } catch (error) {
             console.error(error);
 
-            setError(
+            const mensaje =
                 error.response?.data?.message ||
-                'No fue posible guardar el molinete.'
-            );
+                'No fue posible guardar el molinete.';
+
+            const campo =
+                error.response?.data?.field;
+            if (campo) {
+
+                setFieldErrors({
+                    [campo]: mensaje
+                });
+
+                setError(null);
+
+            } else {
+
+                setError(mensaje);
+
+            }
         } finally {
             setLoading(false);
         }
+    }
+    function validarFormulario() {
+
+        const errores = {};
+
+        if (!formData.codMolinete) {
+            errores.codMolinete = 'Completa este campo.';
+        }
+
+        if (!formData.nomMolinete.trim()) {
+            errores.nomMolinete = 'Completa este campo.';
+        }
+
+        if (!formData.rpmMolinete) {
+            errores.rpmMolinete = 'Completa este campo.';
+        }
+
+        if (!formData.periMolinete) {
+            errores.periMolinete = 'Completa este campo.';
+        }
+
+
+        setFieldErrors(errores);
+
+        return Object.keys(errores).length === 0;
     }
     return (
 
@@ -93,10 +200,18 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                     name="codMolinete"
                     value={formData.codMolinete}
                     onChange={handleChange}
-                    required
+                    min={1}
+                    max={999}
                     disabled={Boolean(molinete)}
-                    className={molinete ? 'input-readonly' : ''}
+                    className={`${molinete ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codMolinete ? 'input-error' : ''}`}
                 />
+                    {(codigoDuplicado || fieldErrors.codMolinete) && (
+                        <span className="field-error">
+                            {codigoDuplicado
+                                ? 'El código de molinete ya existe.'
+                                : fieldErrors.codMolinete}
+                        </span>
+                    )}
 
                 </div>
 
@@ -111,8 +226,16 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                         name="nomMolinete"
                         value={formData.nomMolinete}
                         onChange={handleChange}
-                        required
+                        maxLength={60}
+                        className={fieldErrors.nomMolinete ? 'input-error' : ''}
                     />
+
+                    {fieldErrors.nomMolinete && (
+                        <span className="field-error">
+                            {fieldErrors.nomMolinete}
+                        </span>
+                    )}
+
 
                 </div>
 
@@ -128,8 +251,14 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                         name="rpmMolinete"
                         value={formData.rpmMolinete}
                         onChange={handleChange}
-                        required
+                        className={fieldErrors.rpmMolinete ? 'input-error' : ''}
                     />
+
+                    {fieldErrors.rpmMolinete && (
+                        <span className="field-error">
+                            {fieldErrors.rpmMolinete}
+                        </span>
+                    )}
 
                 </div>
 
@@ -145,8 +274,13 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                         name="periMolinete"
                         value={formData.periMolinete}
                         onChange={handleChange}
-                        required
+                        className={fieldErrors.periMolinete ? 'input-error' : ''}
                     />
+                    {fieldErrors.periMolinete && (
+                        <span className="field-error">
+                            {fieldErrors.periMolinete}
+                        </span>
+                    )}
 
                 </div>
 

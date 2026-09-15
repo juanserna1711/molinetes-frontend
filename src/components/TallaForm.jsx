@@ -2,8 +2,14 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
+import { consultarTallas } from '../services/tallas.service';
 
 function TallaForm({ onClose, onSubmit, talla }) {
+
+    const [codigoDuplicado, setCodigoDuplicado] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const [formData, setFormData] = useState({
         codTalla: talla?.codigo ?? '',
@@ -12,30 +18,85 @@ function TallaForm({ onClose, onSubmit, talla }) {
     });
 
     useEffect(() => {
+
+        const codigo = formData.codTalla;
+
+        if (!codigo || talla) {
+            setCodigoDuplicado(false);
+            return;
+        }
+
+        const temporizador = setTimeout(async () => {
+
+            try {
+
+                const response = await consultarTallas({
+                    codigo: Number(codigo)
+                });
+
+                const existe = response.data?.length > 0;
+
+                setCodigoDuplicado(existe);
+
+            } catch (error) {
+
+                console.error('Error verificando código:', error);
+
+            }
+
+        }, 500);
+
+        return () => clearTimeout(temporizador);
+
+    }, [formData.codTalla, talla]);
+
+    useEffect(() => {
         setFormData({
             codTalla: talla?.codigo ?? '',
-            nomTalla: talla?.nombre ?? '',
+            nomTalla: talla?.nombre?.toUpperCase() ?? '',
             estaTalla: talla?.estado ?? 'A'
         });
 
         setError(null);
+        setFieldErrors({});
+        setCodigoDuplicado(false);
     }, [talla]);
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     function handleChange(event) {
 
         const { name, value } = event.target;
 
+        if (name === 'codTalla' && value.length > 3) {
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: name === 'nomTalla'
+                ? value.toUpperCase()
+                : value
         }));
-    }
 
+        setFieldErrors(prev => ({
+            ...prev,
+            [name]: null
+        }));
+
+        setError(null);
+    }
+    
     async function handleSubmit(event) {
         event.preventDefault();
+
+        if (!validarFormulario()) {
+            return;
+        }
+
+        if (codigoDuplicado) {
+            return;
+        }
+
 
         const data = {
             ...formData,
@@ -45,19 +106,57 @@ function TallaForm({ onClose, onSubmit, talla }) {
         try {
             setLoading(true);
             setError(null);
+            setFieldErrors({});
 
             await onSubmit(data);
 
         } catch (error) {
+
             console.error(error);
 
-            setError(
+            const mensaje =
                 error.response?.data?.message ||
-                'No fue posible guardar la talla.'
-            );
+                'No fue posible guardar la talla.';
+
+            const campo =
+                error.response?.data?.field;
+
+            if (campo) {
+
+                setFieldErrors({
+                    [campo]: mensaje
+                });
+
+                setError(null);
+
+            } else {
+
+                setError(mensaje);
+
+            }
         } finally {
             setLoading(false);
         }
+    }
+    function validarFormulario() {
+
+        const errores = {};
+
+        if (!formData.codTalla) {
+            errores.codTalla = 'Completa este campo.';
+        }
+
+        if (!formData.nomTalla.trim()) {
+            errores.nomTalla = 'Completa este campo.';
+        }
+
+        if (!formData.estaTalla) {
+            errores.estaTalla = 'Completa este campo.';
+        }
+
+        setFieldErrors(errores);
+
+        return Object.keys(errores).length === 0;
     }
     return (
 
@@ -86,16 +185,27 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         Código Talla
                     </label>
 
-                <input
-                    type="number"
-                    name="codTalla"
-                    value={formData.codTalla}
-                    onChange={handleChange}
-                    required
-                    disabled={Boolean(talla)}
-                    className={talla ? 'input-readonly' : ''}
-                />
+                    <input
+                        type="number"
+                        name="codTalla"
+                        value={formData.codTalla}
+                        onChange={handleChange}
+                        min={1}
+                        max={999}
+                        disabled={Boolean(talla)}
+                        className={`
+                            ${talla ? 'input-readonly' : ''}
+                            ${codigoDuplicado || fieldErrors.codTalla ? 'input-error' : ''}
+                        `}
+                    />
 
+                    {(codigoDuplicado || fieldErrors.codTalla) && (
+                        <span className="field-error">
+                            {codigoDuplicado
+                                ? 'El código de talla ya existe.'
+                                : fieldErrors.codTalla}
+                        </span>
+                    )}
                 </div>
 
                 <div className="form-group">
@@ -109,8 +219,15 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         name="nomTalla"
                         value={formData.nomTalla}
                         onChange={handleChange}
-                        required
+                        maxLength={60}
+                        className={fieldErrors.nomTalla ? 'input-error' : ''}
                     />
+
+                    {fieldErrors.nomTalla && (
+                        <span className="field-error">
+                            {fieldErrors.nomTalla}
+                        </span>
+                    )}
 
                 </div>
 
@@ -124,6 +241,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         name="estaTalla"
                         value={formData.estaTalla}
                         onChange={handleChange}
+                        className={fieldErrors.estaTalla ? 'input-error' : ''}
                     >
                         <option value="A">
                             Activo
@@ -132,8 +250,13 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         <option value="I">
                             Inactivo
                         </option>
-
                     </select>
+
+                    {fieldErrors.estaTalla && (
+                        <span className="field-error">
+                            {fieldErrors.estaTalla}
+                        </span>
+                    )}
 
                 </div>
 
@@ -168,7 +291,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
                     <button
                         type="submit"
                         className="save-button"
-                        disabled={loading}
+                        disabled={loading || codigoDuplicado}
                     >
                         {loading ? (
                             <>

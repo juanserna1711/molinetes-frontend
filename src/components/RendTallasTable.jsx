@@ -29,10 +29,10 @@ function RendTallasTable({
                     <tr>
                         <th>Código</th>
                         <th>Nombre Talla</th>
-                        <th>Ancho (in)</th>
-                        <th>Peso/M2 (g)</th>
-                        <th>Peso/Rollo (kg)</th>
-                        <th>Metros/Rollo (m)</th>
+                        <th>Ancho</th>
+                        <th>Peso/M2</th>
+                        <th>Peso/Rollo</th>
+                        <th>Metros/Rollo</th>
                         <th>Rendimiento</th>
                         <th>Fecha generación</th>
                         <th>Usuario</th>

@@ -278,6 +278,7 @@ function UsuariosPage() {
                         onChange={(event) => {
                             setBusqueda(event.target.value);
                         }}
+                        maxLength={60}
                     />
                 </div>
 

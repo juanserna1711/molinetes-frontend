@@ -49,7 +49,7 @@ function Sidebar({ abierto }) {
                     <StraightenIcon />
 
                     <span>
-                        Gestión de Rendimiento x Tallas
+                        Gestión de Rendimiento x Talla
                     </span>
                 </NavLink>
 

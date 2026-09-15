@@ -297,3 +297,20 @@
     width: 16px;
     height: 16px;
 }
+
+.input-error {
+    border-color: #b42318 !important;
+}
+
+.input-error:focus {
+    border-color: #b42318 !important;
+    box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.08);
+}
+
+.field-error {
+    display: block;
+    margin-top: 5px;
+    color: #b42318;
+    font-size: 12px;
+    font-weight: 500;
+}

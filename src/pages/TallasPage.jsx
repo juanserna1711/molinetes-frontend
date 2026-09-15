@@ -275,6 +275,7 @@ function TallasPage() {
                         onChange={(event) => {
                             setBusqueda(event.target.value);
                         }}
+                        maxLength={60}
                     />
                 </div>
 

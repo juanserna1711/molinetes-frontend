@@ -249,7 +249,7 @@ function RendTallasPage() {
             <div className="page-header">
 
                 <div className="page-header-info">
-                    <h1>Gestión de Tallas y Rendimiento</h1>
+                    <h1>Gestión de Rendimiento x Talla</h1>
 
                     <p>
                         Administración de tallas, parámetros de rendimiento y estado operativo.
@@ -279,6 +279,7 @@ function RendTallasPage() {
                         onChange={(event) => {
                             setBusqueda(event.target.value);
                         }}
+                        maxLength={60}
                     />
                 </div>
 
