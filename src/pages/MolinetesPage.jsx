@@ -39,6 +39,11 @@ function MolinetesPage() {
         type: 'success'
     });
 
+    // =========================================================
+    // FUNCIONES DE LA TABLA
+    // =========================================================
+
+
     function solicitarEliminarMolinete(molinete) {
         setMolineteAEliminar(molinete);
     }
@@ -48,28 +53,17 @@ function MolinetesPage() {
         setMostrarFormulario(true);
     }
 
+    // =========================================================
+    // SNACKBAR
+    // =========================================================
+
+
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({
             message,
             type
         });
     }
-
-    function obtenerFiltros() {
-        const filtros = {};
-        const valor = busqueda.trim();
-
-        if (valor !== '') {
-            if (!isNaN(valor)) {
-                filtros.codigo = Number(valor);
-            } else {
-                filtros.nombre = valor;
-            }
-        }
-
-        return filtros;
-    }
-
 
     useEffect(() => {
 
@@ -90,9 +84,39 @@ function MolinetesPage() {
 
     }, [snackbar.message]);
 
+    // =========================================================
+    // FILTROS
+    // =========================================================
+
+
+    function obtenerFiltros() {
+        const filtros = {};
+        const valor = busqueda.trim();
+
+        if (valor !== '') {
+            if (!isNaN(valor)) {
+                filtros.codigo = Number(valor);
+            } else {
+                filtros.nombre = valor;
+            }
+        }
+
+        return filtros;
+    }
+
+    
+    // =========================================================
+    // CARGA INICIAL
+    // =========================================================
+
+
     useEffect(() => {
         cargarMolinetes();
     }, []);
+
+    // =========================================================
+    // BÚSQUEDA AUTOMÁTICA
+    // =========================================================
 
     useEffect(() => {
         cargarMolinetes(obtenerFiltros());
@@ -127,11 +151,17 @@ function MolinetesPage() {
         }
     }
 
-    async function actualizarMolinete(molinete, data) {
-        await actualizarMolineteService(molinete.codigo, data);
+    function cerrarFormulario() {
 
         setMostrarFormulario(false);
         setMolineteSeleccionado(null);
+
+    }
+
+    async function actualizarMolinete(molinete, data) {
+        await actualizarMolineteService(molinete.codigo, data);
+
+        cerrarFormulario();
 
         await cargarMolinetes();
         mostrarSnackbar(
@@ -146,7 +176,7 @@ function MolinetesPage() {
         } else {
             await crearMolineteService(data);
 
-            setMostrarFormulario(false);
+            cerrarFormulario();
             await cargarMolinetes();
             mostrarSnackbar(
                 'Molinete creado correctamente.',

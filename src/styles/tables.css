@@ -30,7 +30,6 @@
 .table thead {
     background-color: #f5f7fa;
 }
-
 .table th {
     height: 46px;
 
@@ -38,20 +37,15 @@
 
     border-bottom: 1px solid #dfe4ea;
 
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
 
-    color: #475467;
+    color: #26364d;
 
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
 
-    text-transform: uppercase;
-    letter-spacing: 0.35px;
-
     white-space: nowrap;
-
-    text-align: center;
 }
 
 /* ---------- Cuerpo ---------- */
@@ -254,3 +248,17 @@
     font-weight: 600;
     text-transform: uppercase;
 }
+
+/* =========================================================
+   VALORES AUTOCALCULADOS
+   ========================================================= */
+
+.calculated-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #2563a6;
+    font-weight: 600;
+}
+

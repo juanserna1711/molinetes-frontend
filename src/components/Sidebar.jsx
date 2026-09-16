@@ -41,19 +41,6 @@ function Sidebar({ abierto }) {
                 </div>
 
                 <NavLink
-                    to="/rendimiento-tallas"
-                    className={({ isActive }) =>
-                        `sidebar-item ${isActive ? 'active' : ''}`
-                    }
-                >
-                    <StraightenIcon />
-
-                    <span>
-                        Gestión de Rendimiento x Talla
-                    </span>
-                </NavLink>
-
-                <NavLink
                     to="/tallas"
                     className={({ isActive }) =>
                         `sidebar-item ${isActive ? 'active' : ''}`
@@ -89,6 +76,19 @@ function Sidebar({ abierto }) {
 
                     <span>
                         Gestión de Molinetes
+                    </span>
+                </NavLink>
+
+                <NavLink
+                    to="/rendimiento-tallas"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <StraightenIcon />
+
+                    <span>
+                        Gestión de Rendimiento
                     </span>
                 </NavLink>
 

@@ -43,6 +43,11 @@ function UsuariosPage() {
         type: 'success'
     });
 
+    // =========================================================
+    // FUNCIONES DE LA TABLA
+    // =========================================================
+
+
     function solicitarEliminarUsuario(usuario) {
         setUsuarioAEliminar(usuario);
     }
@@ -52,12 +57,41 @@ function UsuariosPage() {
         setMostrarFormulario(true);
     }
 
+    // =========================================================
+    // SNACKBAR
+    // =========================================================
+
+
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({
             message,
             type
         });
     }
+
+    useEffect(() => {
+
+        if (!snackbar.message) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+
+            setSnackbar({
+                message: '',
+                type: 'success'
+            });
+
+        }, 3000);
+
+        return () => clearTimeout(timer);
+
+    }, [snackbar.message]);
+
+    // =========================================================
+    // FILTROS
+    // =========================================================
+
 
     function obtenerFiltros() {
         const filtros = {};
@@ -79,32 +113,21 @@ function UsuariosPage() {
     }
 
 
-    useEffect(() => {
-
-        if (!snackbar.message) {
-            return;
-        }
-
-        const timer = setTimeout(() => {
-
-            setSnackbar({
-                message: '',
-                type: 'success'
-            });
-
-        }, 3000);
-
-        return () => clearTimeout(timer);
-
-    }, [snackbar.message]);
+    // =========================================================
+    // CARGA INICIAL
+    // =========================================================
 
     useEffect(() => {
         cargarUsuarios();
     }, []);
 
+    // =========================================================
+    // BÚSQUEDA AUTOMÁTICA
+    // =========================================================
+
     useEffect(() => {
         cargarUsuarios(obtenerFiltros());
-    }, [busqueda, estado]);
+    }, [busqueda]);
 
 
     async function cargarUsuarios(filtros = {}) {
@@ -135,11 +158,17 @@ function UsuariosPage() {
         }
     }
 
-    async function actualizarUsuario(usuario, data) {
-        await actualizarUsuarioService(usuario.codigo, data);
+    function cerrarFormulario() {
 
         setMostrarFormulario(false);
         setUsuarioSeleccionado(null);
+
+    }
+
+    async function actualizarUsuario(usuario, data) {
+        await actualizarUsuarioService(usuario.codigo, data);
+
+        cerrarFormulario();
 
         await cargarUsuarios();
         mostrarSnackbar(
@@ -154,7 +183,7 @@ function UsuariosPage() {
         } else {
             await crearUsuarioService(data);
 
-            setMostrarFormulario(false);
+            cerrarFormulario();
             await cargarUsuarios();
             mostrarSnackbar(
                 'Usuario creado correctamente.',

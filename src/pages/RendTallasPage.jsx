@@ -12,11 +12,6 @@ import {
     eliminarRendTalla as eliminarRendTallaService
 } from '../services/rendtallas.service';
 
-import {
-        activarTalla as activarTallaService, 
-        desactivarTalla as desactivarTallaService
-} from '../services/tallas.service';
-
 import RendTallasTable from '../components/RendTallasTable';
 import RendTallaForm from '../components/RendTallaForm';
 
@@ -26,16 +21,17 @@ import ConfirmModal from '../components/ConfirmModal';
 function RendTallasPage() {
 
     const [rendtallas, setRendTallas] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
+
     const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
 
     const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
-    const [operacion, setOperacion] = useState(null);
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
@@ -45,39 +41,43 @@ function RendTallasPage() {
     });
 
 
-    function solicitarEliminarRendTalla(rendtalla) {
-        setRendTallaAEliminar(rendtalla);
-    }
+    // =========================================================
+    // FUNCIONES DE LA TABLA
+    // =========================================================
 
     function editarRendTalla(rendtalla) {
         setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
     }
 
+
+    function agregarRendTalla(rendtalla) {
+        /*
+         * La talla no tiene rendimiento.
+         *
+         * Abrimos el mismo formulario de nuevo rendimiento,
+         * pero enviamos la talla seleccionada para que aparezca
+         * automáticamente en el selector.
+         */
+        setRendTallaSeleccionada(rendtalla);
+        setMostrarFormulario(true);
+    }
+
+
+    function solicitarEliminarRendTalla(rendtalla) {
+        setRendTallaAEliminar(rendtalla);
+    }
+
+
+    // =========================================================
+    // SNACKBAR
+    // =========================================================
+
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({
             message,
             type
         });
-    }
-
-    function obtenerFiltros() {
-        const filtros = {};
-        const valor = busqueda.trim();
-
-        if (valor !== '') {
-            if (!isNaN(valor)) {
-                filtros.codigo = Number(valor);
-            } else {
-                filtros.nombre = valor;
-            }
-        }
-
-        if (estado !== '') {
-            filtros.estado = estado;
-        }
-
-        return filtros;
     }
 
 
@@ -88,25 +88,61 @@ function RendTallasPage() {
         }
 
         const timer = setTimeout(() => {
-
             setSnackbar({
                 message: '',
                 type: 'success'
             });
-
         }, 3000);
 
         return () => clearTimeout(timer);
 
     }, [snackbar.message]);
 
+
+    // =========================================================
+    // FILTROS
+    // =========================================================
+
+    function obtenerFiltros() {
+
+        const filtros = {};
+
+        const valor = busqueda.trim();
+
+        if (valor !== '') {
+
+            if (!isNaN(valor)) {
+                filtros.codigo = Number(valor);
+            } else {
+                filtros.nombre = valor;
+            }
+
+        }
+
+        if (estado !== '') {
+            filtros.estado = estado;
+        }
+
+        return filtros;
+    }
+
+
+    // =========================================================
+    // CARGA INICIAL
+    // =========================================================
+
     useEffect(() => {
         cargarRendTallas();
     }, []);
 
+
+    // =========================================================
+    // BÚSQUEDA AUTOMÁTICA
+    // =========================================================
+
     useEffect(() => {
         cargarRendTallas(obtenerFiltros());
-    }, [busqueda, estado]);
+    }, [busqueda]);
 
 
     async function cargarRendTallas(filtros = {}) {
@@ -117,7 +153,6 @@ function RendTallasPage() {
             setError(null);
 
             const resultado = await consultarRendTallas(filtros);
-            
 
             setRendTallas(resultado.data);
 
@@ -127,7 +162,7 @@ function RendTallasPage() {
 
             setError(
                 error.response?.data?.message ||
-                'No fue posible cargar las tallas.'
+                'No fue posible cargar los rendimientos.'
             );
 
         } finally {
@@ -137,110 +172,102 @@ function RendTallasPage() {
         }
     }
 
-    async function actualizarRendTalla(rendtalla, data) {
-        await actualizarRendTallaService(rendtalla.codigo, data);
+
+    function cerrarFormulario() {
 
         setMostrarFormulario(false);
         setRendTallaSeleccionada(null);
 
-        await cargarRendTallas();
-        mostrarSnackbar(
-            'Talla actualizada correctamente.',
-            'success'
-        );
     }
 
-    async function guardarRendTalla(data) {
-        if (rendtallaSeleccionada) {
-            await actualizarRendTalla(rendtallaSeleccionada, data);
-        } else {
-            await crearRendTallaService(data);
+    async function guardarRendTalla(data, modo) {
 
-            setMostrarFormulario(false);
-            await cargarRendTallas();
-            mostrarSnackbar(
-                'Talla creada correctamente.',
-                'success'
-            );
-        }
-    }
-
-    async function activarTalla(codigo) {
         try {
-            setOperacion(`activar-${codigo}`);
-            await activarTallaService(codigo);
-            await cargarRendTallas();
+
+            if (modo === 'editar') {
+
+                await actualizarRendTallaService(
+                    data.codTalla,
+                    data
+                );
+
                 mostrarSnackbar(
-                    'Talla activada correctamente.',
+                    'Rendimiento actualizado correctamente.',
                     'success'
                 );
+
+            } else {
+
+                await crearRendTallaService(data);
+
+                mostrarSnackbar(
+                    'Rendimiento creado correctamente.',
+                    'success'
+                );
+
+            }
+
+            cerrarFormulario();
+
+            await cargarRendTallas(obtenerFiltros());
+
         } catch (error) {
+
             console.error(error);
 
             mostrarSnackbar(
                 error.response?.data?.message ||
-                'No fue posible activar la talla.',
+                'No fue posible guardar el rendimiento.',
                 'error'
             );
-        } finally {
-        setOperacion(null);
-    }
-    }
 
-    async function desactivarTalla(codigo) {
-        try {
-            setOperacion(`desactivar-${codigo}`);
-
-            await desactivarTallaService(codigo);
-            await cargarRendTallas();
-
-            mostrarSnackbar(
-                'Talla desactivada correctamente.',
-                'success'
-            );
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible desactivar la talla.',
-                'error'
-            );
-        } finally {
-            setOperacion(null);
         }
     }
 
-    async function confirmarEliminarTalla() {
-        if (!rendtallaAEliminar) return;
+    async function confirmarEliminarRendimiento() {
+
+        if (!rendtallaAEliminar) {
+            return;
+        }
 
         try {
+
             setEliminando(true);
 
-            await eliminarRendTallaService(rendtallaAEliminar.codigo);
-            await cargarRendTallas();
+            await eliminarRendTallaService(
+                rendtallaAEliminar.codigo
+            );
+
+            await cargarRendTallas(obtenerFiltros());
 
             setRendTallaAEliminar(null);
 
             mostrarSnackbar(
-                'Talla eliminada correctamente.',
+                'Rendimiento eliminado correctamente.',
                 'success'
             );
+
         } catch (error) {
+
             console.error(error);
 
             mostrarSnackbar(
                 error.response?.data?.message ||
-                'No fue posible eliminar la talla.',
+                'No fue posible eliminar el rendimiento.',
                 'error'
             );
+
         } finally {
+
             setEliminando(false);
+
         }
     }
 
-    const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
+    const hayFiltros =
+        busqueda.trim() !== '' ||
+        estado !== '';
 
     return (
 
@@ -249,20 +276,32 @@ function RendTallasPage() {
             <div className="page-header">
 
                 <div className="page-header-info">
-                    <h1>Gestión de Rendimiento x Talla</h1>
+
+                    <h1>
+                        Gestión de Rendimiento
+                    </h1>
 
                     <p>
-                        Administración de tallas, parámetros de rendimiento y estado operativo.
+                        Administración de parámetros de rendimiento
+                        con la talla asociada.
                     </p>
+
                 </div>
+
 
                 <button
                     type="button"
                     className="primary-button"
-                    onClick={() => setMostrarFormulario(true)}
+                    onClick={() => {
+                        setRendTallaSeleccionada(null);
+                        setMostrarFormulario(true);
+                    }}
                 >
+
                     <AddIcon />
-                    Nueva Talla
+
+                    Nuevo Rendimiento
+
                 </button>
 
             </div>
@@ -270,31 +309,45 @@ function RendTallasPage() {
             <div className="filters">
 
                 <div className="search-box">
+
                     <SearchOutlinedIcon />
 
                     <input
                         type="text"
                         placeholder="Buscar por código o nombre..."
                         value={busqueda}
-                        onChange={(event) => {
-                            setBusqueda(event.target.value);
-                        }}
+                        onChange={(event) =>
+                            setBusqueda(event.target.value)
+                        }
                         maxLength={60}
                     />
+
                 </div>
+
 
                 <select
                     value={estado}
-                    onChange={(event) => {
-                        setEstado(event.target.value);
-                    }}
+                    onChange={(event) =>
+                        setEstado(event.target.value)
+                    }
                 >
-                    <option value="">Todos los estados</option>
-                    <option value="A">Activos</option>
-                    <option value="I">Inactivos</option>
+
+                    <option value="">
+                        Todos los estados
+                    </option>
+
+                    <option value="A">
+                        Activos
+                    </option>
+
+                    <option value="I">
+                        Inactivos
+                    </option>
+
                 </select>
 
             </div>
+
 
             {loading && (
                 <div className="state-container loading-state">
@@ -304,7 +357,7 @@ function RendTallasPage() {
                     />
 
                     <div className="state-content">
-                        <h2>Cargando tallas</h2>
+                        <h2>Cargando rendimientos</h2>
                         <p>Consultando la información...</p>
                     </div>
                 </div>
@@ -318,7 +371,7 @@ function RendTallasPage() {
                     </div>
 
                     <div className="state-content">
-                        <h2>No fue posible cargar las tallas</h2>
+                        <h2>No fue posible cargar los rendimientos</h2>
 
                         <p>
                             {error}
@@ -362,44 +415,78 @@ function RendTallasPage() {
                 </div>
             )}
 
-            <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
+            <div
+                className={`page-workspace ${
+                    mostrarFormulario ? 'form-open' : ''
+                }`}
+            >
+                {!loading &&
+                    !error &&
+                    rendtallas.length > 0 && (
 
-                {!loading && !error && rendtallas.length > 0 && (
-                    <div className="table-section">
-                        <RendTallasTable
-                            rendtallas={rendtallas}
-                            onEdit={editarRendTalla}
-                            onActivate={activarTalla}
-                            onDeactivate={desactivarTalla}
-                            onDelete={solicitarEliminarRendTalla}
-                            operation={operacion}
-                        />
-                    </div>
-                )}
+                        <div className="table-section">
+
+                            <RendTallasTable
+
+                                rendtallas={rendtallas}
+
+                                onEdit={editarRendTalla}
+
+                                onAdd={agregarRendTalla}
+
+                                onDelete={solicitarEliminarRendTalla}
+
+                            />
+
+                        </div>
+
+                    )}
+
 
                 {mostrarFormulario && (
+
                     <aside className="form-section">
+
                         <RendTallaForm
+
+                            rendtallas={rendtallas}
+
                             rendtalla={rendtallaSeleccionada}
-                            onClose={() => {
-                                setMostrarFormulario(false);
-                                setRendTallaSeleccionada(null);
-                            }}
+
+                            onClose={cerrarFormulario}
+
                             onSubmit={guardarRendTalla}
+
                         />
+
                     </aside>
+
                 )}
 
             </div>
 
             {rendtallaAEliminar && (
+
                 <ConfirmModal
-                    title="Eliminar talla"
-                    message={`¿Está seguro de que desea eliminar la talla "${rendtallaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarTalla}
-                    onCancel={() => setRendTallaAEliminar(null)}
+
+                    title="Eliminar rendimiento"
+
+                    message={
+                        `¿Está seguro de que desea eliminar el rendimiento ` +
+                        `asociado a la talla "${rendtallaAEliminar.nombre}"? ` +
+                        `Esta acción no se puede deshacer.`
+                    }
+
+                    onConfirm={confirmarEliminarRendimiento}
+
+                    onCancel={() =>
+                        setRendTallaAEliminar(null)
+                    }
+
                     loading={eliminando}
+
                 />
+
             )}
 
             <Snackbar
@@ -408,6 +495,7 @@ function RendTallasPage() {
             />
 
         </section>
+
     );
 }
 
