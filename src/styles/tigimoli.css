@@ -1,0 +1,387 @@
+/* =========================================================
+   TIGIMOLI
+   DETALLE DE PRODUCCIÓN
+   ========================================================= */
+
+.tigimoli-row-expanded {
+    background: #fffafd;
+}
+
+
+/* =========================================================
+   BOTÓN DETALLE
+   ========================================================= */
+
+.detail-action-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.table-action {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 1px solid #d6dee7;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #52647a;
+
+    cursor: pointer;
+
+    transition:
+        border-color .15s ease,
+        background-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
+}
+
+.table-action:hover {
+    border-color: #ed1685;
+
+    background: #fff5fa;
+
+    color: #ed1685;
+}
+
+.table-action.expanded {
+    border-color: #ed1685;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ed1685 0%,
+            #f02191 100%
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 2px 6px rgba(237, 22, 133, .18);
+}
+
+.table-action svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* =========================================================
+   FILA DEL DETALLE
+   ========================================================= */
+
+.tigimoli-detail-row {
+    background: #f8fafc;
+}
+
+.tigimoli-detail-cell {
+    padding: 0 !important;
+
+    border-top: 1px solid #f0d6e2;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff8fc 0%,
+            #f8fafc 100%
+        );
+}
+
+
+/* =========================================================
+   CONTENEDOR DEL DETALLE
+   ========================================================= */
+
+.tigimoli-detail-container {
+    margin: 0;
+
+    padding: 14px 18px 16px;
+
+    border-left: 3px solid #ed1685;
+}
+
+
+/* =========================================================
+   CABECERA DEL DETALLE
+   ========================================================= */
+
+.tigimoli-detail-header {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 9px;
+}
+
+.tigimoli-detail-header span {
+    color: #ed1685;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    text-transform: none;
+}
+
+/* =========================================================
+   TABLA INTERNA
+   ========================================================= */
+
+.tigimoli-detail-table-wrapper {
+    overflow: hidden;
+
+    border: 1px solid #e4e9ef;
+    border-radius: 6px;
+
+    background: #ffffff;
+}
+
+.tigimoli-detail-table {
+    width: 100%;
+}
+
+.tigimoli-detail-table th {
+    height: 46px;
+
+    padding: 0 14px;
+
+    border-bottom: 1px solid #dfe4ea;
+
+    text-align: center;
+    vertical-align: middle;
+
+    background: #f5f7fa;
+    color: #26364d;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.tigimoli-detail-table td {
+    padding: 11px 12px;
+
+    color: #34445a;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-align: center;
+}
+
+.tigimoli-detail-table th,
+.tigimoli-detail-table td {
+    text-align: center;
+}
+
+.tigimoli-detail-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tigimoli-detail-table .name {
+    color: #26364d;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.detail-total-meters {
+    color: #ed1685 !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+
+/* =========================================================
+   CARGANDO DETALLE
+   ========================================================= */
+
+.tigimoli-detail-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    min-height: 80px;
+
+    color: #7b8797;
+
+    font-size: 10px;
+}
+
+.tigimoli-detail-loading .MuiCircularProgress-root {
+    color: #ed1685;
+}
+
+
+/* =========================================================
+   DETALLE VACÍO
+   ========================================================= */
+
+.tigimoli-detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 70px;
+
+    color: #8995a4;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   TIGIMOLI - FILTRO DE FECHA
+   ========================================================= */
+
+.date-filter {
+    position: relative;
+}
+
+.date-filter input[type="date"] {
+    height: 42px;
+    min-width: 170px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d8e0e8;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #26364d;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.date-filter input[type="date"]:hover {
+    border-color: #b8c4d1;
+}
+
+.date-filter input[type="date"]:focus {
+    border-color: #26364d;
+
+    box-shadow:
+        0 0 0 3px rgba(38, 54, 77, 0.08);
+}
+
+.date-filter input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.65;
+}
+
+.date-filter input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   PAGINACIÓN
+   ========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 18px;
+    padding: 10px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+
+    background: #ffffff;
+}
+
+.pagination-info {
+    color: #718096;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: 1px solid #d8e0e8;
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #52647a;
+
+    cursor: pointer;
+
+    transition:
+        border-color .15s ease,
+        background-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    border-color: #ed1685;
+
+    background: #fff5fa;
+
+    color: #ed1685;
+}
+
+.pagination-button:focus-visible {
+    outline: none;
+
+    border-color: #ed1685;
+
+    box-shadow:
+        0 0 0 3px rgba(237, 22, 133, .10);
+}
+
+.pagination-button svg {
+    width: 19px;
+    height: 19px;
+}
+
+.pagination-button:disabled {
+    opacity: .35;
+
+    cursor: not-allowed;
+
+    background: #f8fafc;
+}

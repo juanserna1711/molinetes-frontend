@@ -329,7 +329,7 @@ function RendTallaForm({
                     >
 
                         <option value="">
-                            Seleccione una talla
+                            Seleccione
                         </option>
 
                         {rendtallas.map((talla) => (
@@ -474,13 +474,13 @@ function RendTallaForm({
 
 
                 {/* =================================================
-                    METROS/ROLLO
+                    METROS
                 ================================================= */}
 
                 <div className="form-group calculated-group">
 
                     <label>
-                        Metros/Rollo
+                        Metros
                     </label>
 
                     <input

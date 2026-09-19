@@ -4,24 +4,29 @@ import TallasPage from './pages/TallasPage';
 import RendTallasPage from './pages/RendTallasPage';
 import UsuariosPage from './pages/UsuariosPage';
 import MolinetesPage from './pages/MolinetesPage';
+import LoginPage from './pages/LoginPage';
+import TigimoliPage from './pages/TigimoliPage'
+import NuevoTigimoliPage from './pages/NuevoTigimoliPage'
 
 function App() {
     return (
-        <Layout>
             <Routes>
                 {/* Redirección inicial a una ruta por defecto al entrar a la app */}
-                <Route path="/" element={<Navigate to="/rendimiento-tallas" replace />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
 
                 {/* Rutas principales */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route element={<Layout />}>
                 <Route path="/rendimiento-tallas" element={<RendTallasPage />} />
                 <Route path="/tallas" element={<TallasPage />} />
                 <Route path="/usuarios" element={<UsuariosPage />} />
                 <Route path="/molinetes" element={<MolinetesPage />} />
-
+                <Route path="/tigimoli" element={<TigimoliPage />} />
+                <Route path="/nuevo-tigimoli" element={<NuevoTigimoliPage />} />
+                </Route>
                 {/* Ruta por si intentan entrar a una URL que no existe */}
                 <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
             </Routes>
-        </Layout>
     );
 }
 

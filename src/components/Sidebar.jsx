@@ -1,44 +1,32 @@
 import { NavLink } from 'react-router-dom';
 
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PrecisionManufacturingOutlinedIcon from '@mui/icons-material/PrecisionManufacturingOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+
+import logoMoliplus from '../assets/logo-moliplus-solo.png';
 
 function Sidebar({ abierto }) {
     return (
-        <aside className={`sidebar ${abierto ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <aside
+            className={`sidebar ${
+                abierto ? 'sidebar-open' : 'sidebar-closed'
+            }`}
+        >
 
-            <div className="sidebar-brand">
-                <div className="sidebar-brand-name">
-                    TEXTILES
-                </div>
-
-                <div className="sidebar-brand-subtitle">
-                    Control Industrial
-                </div>
-            </div>
-
-            <div className="sidebar-user">
-                <PersonOutlineIcon className="sidebar-user-icon" />
-
-                <div className="sidebar-user-info">
-                    <span className="sidebar-user-label">
-                        Usuario
-                    </span>
-
-                    <span className="sidebar-user-role">
-                        Operador
-                    </span>
-                </div>
-            </div>
+            {/* =====================================================
+                NAVEGACIÓN
+            ====================================================== */}
 
             <nav className="sidebar-navigation">
 
                 <div className="sidebar-section-title">
                     Operación
                 </div>
+
 
                 <NavLink
                     to="/tallas"
@@ -53,6 +41,7 @@ function Sidebar({ abierto }) {
                     </span>
                 </NavLink>
 
+
                 <NavLink
                     to="/usuarios"
                     className={({ isActive }) =>
@@ -65,6 +54,7 @@ function Sidebar({ abierto }) {
                         Gestión de Usuarios
                     </span>
                 </NavLink>
+
 
                 <NavLink
                     to="/molinetes"
@@ -79,6 +69,7 @@ function Sidebar({ abierto }) {
                     </span>
                 </NavLink>
 
+
                 <NavLink
                     to="/rendimiento-tallas"
                     className={({ isActive }) =>
@@ -92,7 +83,56 @@ function Sidebar({ abierto }) {
                     </span>
                 </NavLink>
 
+                
+                <NavLink
+                    to="/tigimoli"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <HistoryOutlinedIcon />
+
+                    <span>
+                        Registro de Tiempos de Giro
+                    </span>
+                </NavLink>
+
+
+                <NavLink
+                    to="/nuevo-tigimoli"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <CalculateOutlinedIcon />
+
+                    <span>
+                        Nuevo Tiempo de Giro
+                    </span>
+                </NavLink>
+
             </nav>
+
+
+            {/* =====================================================
+                ELEMENTO DECORATIVO
+            ====================================================== */}
+
+            <div className="sidebar-decoration">
+
+                <img
+                    src={logoMoliplus}
+                    alt=""
+                    className="sidebar-wave"
+                />
+
+                <div className="sidebar-footer-line"/>
+
+                <span className="sidebar-footer-text">
+                    La calidad también se gestiona
+                </span>
+
+            </div>
 
         </aside>
     );

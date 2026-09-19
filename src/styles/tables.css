@@ -64,6 +64,11 @@
     text-align: center;
 }
 
+.table .total-metros-cell {
+    color: #ed1685;
+    font-weight: 700;
+}
+
 .table tbody tr {
     background-color: #ffffff;
 
@@ -261,4 +266,3 @@
     color: #2563a6;
     font-weight: 600;
 }
-

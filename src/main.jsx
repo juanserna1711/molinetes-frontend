@@ -12,6 +12,9 @@ import './styles/tables.css'
 import './styles/forms.css'
 import './styles/snackbar.css'
 import './styles/confirmmodal.css'
+import './styles/login.css'
+import './styles/tigimoli.css'
+import './styles/nuevoTigimoli.css'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
