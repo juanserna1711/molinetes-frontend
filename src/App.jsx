@@ -2,7 +2,7 @@
   Nombre responsabilidad: Definir las rutas de MOLIPLUS
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   App organiza las pantallas con React Router y agrupa la operación dentro de Layout.

@@ -2,7 +2,7 @@
   Nombre responsabilidad: Coordinar la gestión de tallas
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Conecta la tabla, el formulario, la confirmación de borrado y los servicios de tallas.

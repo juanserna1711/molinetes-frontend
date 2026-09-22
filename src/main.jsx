@@ -2,7 +2,7 @@
   Nombre responsabilidad: Montar la aplicación React
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Crea la raíz sobre el elemento root de index.html y renderiza App dentro de StrictMode y BrowserRouter.

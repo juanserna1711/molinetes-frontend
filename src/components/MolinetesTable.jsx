@@ -2,7 +2,7 @@
   Nombre responsabilidad: Presentar el catálogo de molinetes
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Renderiza código, nombre, RPM y perímetro, con acciones delegadas a la página.

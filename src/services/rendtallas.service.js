@@ -2,7 +2,7 @@
   Nombre responsabilidad: Comunicación HTTP de rendimientos por talla
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Expone las operaciones Axios del recurso /rendtallas para páginas y formularios.

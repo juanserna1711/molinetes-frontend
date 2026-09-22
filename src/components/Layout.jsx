@@ -2,7 +2,7 @@
   Nombre responsabilidad: Componer el marco de las pantallas operativas
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Integra Sidebar, la barra superior y el contenido de las rutas anidadas.

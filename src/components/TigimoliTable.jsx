@@ -2,7 +2,7 @@
   Nombre responsabilidad: Presentar el historial y su detalle por talla
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Renderiza los tiempos por molinete y expande el detalle solicitado desde TigimoliPage.

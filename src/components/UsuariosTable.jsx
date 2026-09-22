@@ -2,7 +2,7 @@
   Nombre responsabilidad: Presentar el catálogo de usuarios
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Renderiza los registros de usuarios y permite solicitar edición, cambio de estado o eliminación.

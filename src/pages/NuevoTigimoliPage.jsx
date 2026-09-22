@@ -2,7 +2,7 @@
   Nombre responsabilidad: Preparar y registrar un cálculo TIGIMOLI
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Carga molinetes y rendimientos en paralelo, administra la selección y calcula la vista previa.

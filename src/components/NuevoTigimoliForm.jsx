@@ -2,7 +2,7 @@
   Nombre responsabilidad: Capturar la selección del cálculo TIGIMOLI
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Presenta molinetes, tallas, cantidades de rollos y totales administrados por NuevoTigimoliPage.

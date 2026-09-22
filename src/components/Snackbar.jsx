@@ -2,7 +2,7 @@
   Nombre responsabilidad: Mostrar notificaciones de operación
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Presenta un aviso de éxito o error; devuelve null cuando no hay mensaje.

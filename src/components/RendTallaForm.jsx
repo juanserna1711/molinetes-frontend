@@ -2,7 +2,7 @@
   Nombre responsabilidad: Capturar parámetros de rendimiento por talla
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Selecciona una talla y permite crear o editar sus parámetros con una vista previa calculada.

@@ -2,7 +2,7 @@
   Nombre responsabilidad: Presentar la navegación de los módulos
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Muestra enlaces NavLink a tallas, usuarios, molinetes, rendimientos y las dos pantallas TIGIMOLI.

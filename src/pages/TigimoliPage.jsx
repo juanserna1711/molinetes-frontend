@@ -2,7 +2,7 @@
   Nombre responsabilidad: Consultar el historial paginado TIGIMOLI
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Coordina filtros, paginación y carga del detalle mediante tigimoli.service.

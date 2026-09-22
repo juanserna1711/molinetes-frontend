@@ -2,7 +2,7 @@
   Nombre responsabilidad: Presentar el tiempo calculado por molinete
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Muestra tarjetas con RPM, perímetro, metros totales y tiempo de giro en minutos.

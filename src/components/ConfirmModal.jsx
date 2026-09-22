@@ -2,7 +2,7 @@
   Nombre responsabilidad: Solicitar confirmación de eliminación
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Presenta el diálogo reutilizado por las páginas antes de eliminar registros.
