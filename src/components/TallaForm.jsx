@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Capturar los datos de talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Gestiona el formulario de creación/edición y sus errores de campo y de envío.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -63,6 +79,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
     }, [talla]);
 
 
+    /*
+      Actualiza los datos del formulario y limpia los errores del campo.
+    */
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -86,6 +105,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
         setError(null);
     }
     
+    /*
+      Valida el formulario, solicita el guardado y muestra los errores recibidos.
+    */
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -138,6 +160,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
             setLoading(false);
         }
     }
+    /*
+      Comprueba los campos obligatorios e identifica los errores de captura.
+    */
     function validarFormulario() {
 
         const errores = {};

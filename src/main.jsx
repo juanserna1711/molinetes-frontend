@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Montar la aplicación React
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Crea la raíz sobre el elemento root de index.html y renderiza App dentro de StrictMode y BrowserRouter.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'

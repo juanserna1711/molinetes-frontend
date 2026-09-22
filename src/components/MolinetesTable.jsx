@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentar el catálogo de molinetes
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Renderiza código, nombre, RPM y perímetro, con acciones delegadas a la página.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';

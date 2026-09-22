@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentar la pantalla de acceso
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Muestra el formulario y la identidad visual de MOLIPLUS.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useNavigate } from 'react-router-dom';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';

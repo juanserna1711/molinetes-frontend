@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Coordinar la gestión de rendimientos por talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Conecta la tabla, el formulario, la confirmación de borrado y los servicios de rendimientos por talla.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useEffect, useState } from 'react';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
@@ -41,9 +57,11 @@ function RendTallasPage() {
     });
 
 
-    // =========================================================
-    // FUNCIONES DE LA TABLA
-    // =========================================================
+    /*
+      =========================================================
+      FUNCIONES DE LA TABLA
+      =========================================================
+    */
 
     function editarRendTalla(rendtalla) {
         setRendTallaSeleccionada(rendtalla);
@@ -69,9 +87,11 @@ function RendTallasPage() {
     }
 
 
-    // =========================================================
-    // SNACKBAR
-    // =========================================================
+    /*
+      =========================================================
+      SNACKBAR
+      =========================================================
+    */
 
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({
@@ -99,10 +119,15 @@ function RendTallasPage() {
     }, [snackbar.message]);
 
 
-    // =========================================================
-    // FILTROS
-    // =========================================================
+    /*
+      =========================================================
+      FILTROS
+      =========================================================
+    */
 
+    /*
+      Prepara los filtros de búsqueda de la página.
+    */
     function obtenerFiltros() {
 
         const filtros = {};
@@ -127,24 +152,31 @@ function RendTallasPage() {
     }
 
 
-    // =========================================================
-    // CARGA INICIAL
-    // =========================================================
+    /*
+      =========================================================
+      CARGA INICIAL
+      =========================================================
+    */
 
     useEffect(() => {
         cargarRendTallas();
     }, []);
 
 
-    // =========================================================
-    // BÚSQUEDA AUTOMÁTICA
-    // =========================================================
+    /*
+      =========================================================
+      BÚSQUEDA AUTOMÁTICA
+      =========================================================
+    */
 
     useEffect(() => {
         cargarRendTallas(obtenerFiltros());
     }, [busqueda]);
 
 
+    /*
+      Consulta los registros y actualiza el listado y los mensajes de la página.
+    */
     async function cargarRendTallas(filtros = {}) {
 
         try {
@@ -180,6 +212,9 @@ function RendTallasPage() {
 
     }
 
+    /*
+      Crea o actualiza el registro y recarga el listado al completar la operación.
+    */
     async function guardarRendTalla(data, modo) {
 
         try {
@@ -224,6 +259,9 @@ function RendTallasPage() {
         }
     }
 
+    /*
+      Elimina el registro confirmado y comunica el resultado de la operación.
+    */
     async function confirmarEliminarRendimiento() {
 
         if (!rendtallaAEliminar) {

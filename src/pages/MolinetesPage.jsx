@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Coordinar la gestión de molinetes
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Conecta la tabla, el formulario, la confirmación de borrado y los servicios de molinetes.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useEffect, useState } from 'react';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
@@ -39,9 +55,11 @@ function MolinetesPage() {
         type: 'success'
     });
 
-    // =========================================================
-    // FUNCIONES DE LA TABLA
-    // =========================================================
+    /*
+      =========================================================
+      FUNCIONES DE LA TABLA
+      =========================================================
+    */
 
 
     function solicitarEliminarMolinete(molinete) {
@@ -53,9 +71,11 @@ function MolinetesPage() {
         setMostrarFormulario(true);
     }
 
-    // =========================================================
-    // SNACKBAR
-    // =========================================================
+    /*
+      =========================================================
+      SNACKBAR
+      =========================================================
+    */
 
 
     function mostrarSnackbar(message, type = 'success') {
@@ -84,11 +104,16 @@ function MolinetesPage() {
 
     }, [snackbar.message]);
 
-    // =========================================================
-    // FILTROS
-    // =========================================================
+    /*
+      =========================================================
+      FILTROS
+      =========================================================
+    */
 
 
+    /*
+      Prepara los filtros de búsqueda de la página.
+    */
     function obtenerFiltros() {
         const filtros = {};
         const valor = busqueda.trim();
@@ -105,24 +130,31 @@ function MolinetesPage() {
     }
 
     
-    // =========================================================
-    // CARGA INICIAL
-    // =========================================================
+    /*
+      =========================================================
+      CARGA INICIAL
+      =========================================================
+    */
 
 
     useEffect(() => {
         cargarMolinetes();
     }, []);
 
-    // =========================================================
-    // BÚSQUEDA AUTOMÁTICA
-    // =========================================================
+    /*
+      =========================================================
+      BÚSQUEDA AUTOMÁTICA
+      =========================================================
+    */
 
     useEffect(() => {
         cargarMolinetes(obtenerFiltros());
     }, [busqueda]);
 
 
+    /*
+      Consulta los registros y actualiza el listado y los mensajes de la página.
+    */
     async function cargarMolinetes(filtros = {}) {
 
         try {
@@ -158,6 +190,9 @@ function MolinetesPage() {
 
     }
 
+    /*
+      Guarda los cambios del registro seleccionado y actualiza el listado.
+    */
     async function actualizarMolinete(molinete, data) {
         await actualizarMolineteService(molinete.codigo, data);
 
@@ -170,6 +205,9 @@ function MolinetesPage() {
         );
     }
 
+    /*
+      Crea o actualiza el registro y recarga el listado al completar la operación.
+    */
     async function guardarMolinete(data) {
         if (molineteSeleccionado) {
             await actualizarMolinete(molineteSeleccionado, data);
@@ -185,6 +223,9 @@ function MolinetesPage() {
         }
     }
 
+    /*
+      Elimina el registro confirmado y comunica el resultado de la operación.
+    */
     async function confirmarEliminarMolinete() {
             if (!molineteAEliminar) return;
     

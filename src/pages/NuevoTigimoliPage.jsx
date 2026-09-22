@@ -1,15 +1,30 @@
+/*=============================================================================
+  Nombre responsabilidad: Preparar y registrar un cálculo TIGIMOLI
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Carga molinetes y rendimientos en paralelo, administra la selección y calcula la vista previa.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useEffect, useMemo, useState } from 'react';
 
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import PrecisionManufacturingOutlinedIcon from '@mui/icons-material/PrecisionManufacturingOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
-import '../styles/nuevoTigimoli.css';
+import NuevoTigimoliForm from '../components/NuevoTigimoliForm';
+import NuevoTigimoliResultados from '../components/NuevoTigimoliResultados';
 
 import { consultarMolinetes } from '../services/molinetes.service.js';
 import { consultarRendTallas } from '../services/rendtallas.service.js';
@@ -83,6 +98,9 @@ function NuevoTigimoliPage() {
 
     useEffect(() => {
 
+        /*
+          Carga los molinetes y rendimientos disponibles para preparar el cálculo.
+        */
         async function cargarDatos() {
 
             try {
@@ -131,6 +149,9 @@ function NuevoTigimoliPage() {
        MOLINETES
        ========================================================= */
 
+    /*
+      Agrega o retira un molinete de la selección.
+    */
     function cambiarMolinete(codigo) {
 
         setMolinetesSeleccionados((actuales) => {
@@ -157,6 +178,9 @@ function NuevoTigimoliPage() {
        TALLAS
        ========================================================= */
 
+    /*
+      Actualiza la selección de tallas y retira sus cantidades y errores al desmarcarlas.
+    */
     function cambiarTalla(codigo) {
 
         setTallasSeleccionadas((actuales) => {
@@ -207,6 +231,9 @@ function NuevoTigimoliPage() {
        ROLLOS
        ========================================================= */
 
+    /*
+      Actualiza la cantidad de rollos de una talla y limpia su error.
+    */
     function cambiarRollos(codigoTalla, cantidad) {
 
         const valor = Number(cantidad);
@@ -227,6 +254,9 @@ function NuevoTigimoliPage() {
     }
 
 
+    /*
+      Aumenta en uno la cantidad de rollos de la talla.
+    */
     function agregarRollo(codigoTalla) {
 
         const actual = Number(
@@ -283,6 +313,9 @@ function NuevoTigimoliPage() {
        DETALLE DE CALCULO
        ========================================================= */
 
+    /*
+      Calcula los metros por talla a partir de sus rollos y obtiene los totales.
+    */
     const Calculo = useMemo(() => {
 
         return tallasCalculo.map((talla) => {
@@ -349,6 +382,9 @@ function NuevoTigimoliPage() {
        CALCULO VÁLIDA
        ========================================================= */
 
+    /*
+      Permite guardar cuando la selección y las cantidades de rollos son válidas.
+    */
     const calculoValido =
         molinetesSeleccionados.length > 0 &&
         tallasSeleccionadas.length > 0 &&
@@ -363,6 +399,9 @@ function NuevoTigimoliPage() {
        TIEMPO DE GIRO POR MOLINETE
        ========================================================= */
 
+    /*
+      Calcula el tiempo de giro en minutos según los metros, las RPM y el perímetro del molinete.
+    */
     function calcularTiempoGiro(molinete) {
 
         const rpm = Number(
@@ -391,6 +430,9 @@ function NuevoTigimoliPage() {
        FORMATO DE NÚMEROS
        ========================================================= */
 
+    /*
+      Presenta los números en formato local con un decimal.
+    */
     function formatearNumero(valor) {
 
         return Number(
@@ -410,6 +452,9 @@ function NuevoTigimoliPage() {
        VALIDAR CALCULO
        ========================================================= */
 
+    /*
+      Comprueba que haya molinetes, tallas y cantidades de rollos positivas.
+    */
     function validarCalculo() {
 
         const nuevosErrores = {};
@@ -481,56 +526,56 @@ function NuevoTigimoliPage() {
        GUARDAR CALCULO
        ========================================================= */
 
+    /*
+      Registra el cálculo para las combinaciones de molinetes y tallas seleccionadas.
+    */
     async function guardarCalculo() {
 
         if (!validarCalculo()) {
             return;
         }
 
-
         try {
 
             setGuardando(true);
 
+            const codigosMolinetes = [];
+            const codigosTallas = [];
+            const cantidadesRollos = [];
 
-            for (
-                const molinete
-                of molinetesCalculo
-            ) {
+            for (const molinete of molinetesCalculo) {
 
-                for (
-                    const talla
-                    of Calculo
-                ) {
+                for (const talla of Calculo) {
 
-                    await crearTigimoli({
+                    codigosMolinetes.push(
+                        molinete.codigo
+                    );
 
-                        codMoli:
-                            molinete.codigo,
+                    codigosTallas.push(
+                        talla.codigo
+                    );
 
-                        codTalla:
-                            talla.codigo,
-
-                        rollos:
-                            Number(talla.rollos),
-
-                        usuario
-
-                    });
+                    cantidadesRollos.push(
+                        Number(talla.rollos)
+                    );
 
                 }
 
             }
 
+            await crearTigimoli({
+                codigosMolinetes,
+                codigosTallas,
+                cantidadesRollos,
+                usuario
+            });
 
             mostrarSnackbar(
-                'El Calculo fue registrada correctamente.',
+                'El cálculo fue registrado correctamente.',
                 'success'
             );
 
-
             limpiarCalculo();
-
 
         } catch (error) {
 
@@ -538,7 +583,7 @@ function NuevoTigimoliPage() {
 
             mostrarSnackbar(
                 error?.response?.data?.message ||
-                'No fue posible registrar el calculo.',
+                'No fue posible registrar el cálculo.',
                 'error'
             );
 
@@ -555,6 +600,9 @@ function NuevoTigimoliPage() {
        LIMPIAR
        ========================================================= */
 
+    /*
+      Limpia la selección, las cantidades y los errores del cálculo.
+    */
     function limpiarCalculo() {
 
         setMolinetesSeleccionados([]);
@@ -598,20 +646,16 @@ function NuevoTigimoliPage() {
 
     return (
 
-        <div className="nuevo-tigimoli-page">
+        <div className="page">
 
 
             {/* =================================================
                 CABECERA
                 ================================================= */}
 
-            <header className="nuevo-tigimoli-header">
+            <header className="page-header">
 
-                <div>
-
-                    <span className="nuevo-tigimoli-overline">
-                        CONFIGURACIÓN
-                    </span>
+                <div className="page-header-info">
 
                     <h1>
                         Registrar Calculo
@@ -639,557 +683,28 @@ function NuevoTigimoliPage() {
 
             </header>
 
-
-            {/* =================================================
-                01. MOLINETES
-                ================================================= */}
-
-            <section className="nuevo-tigimoli-section">
-
-                <div className="nuevo-tigimoli-section-header">
-
-                    <div>
-
-                        <span className="section-overline">
-                            01 · MOLINETES
-                        </span>
-
-                        <h2>
-                            Seleccione los molinetes
-                        </h2>
-
-                        <p>
-                            La configuración seleccionada se aplicará
-                            a cada molinete.
-                        </p>
-
-                    </div>
-
-
-                    <span className="selection-counter">
-
-                        {molinetesSeleccionados.length}
-                        {' '}
-                        seleccionados
-
-                    </span>
-
-                </div>
-
-
-                <div className="molinetes-selector">
-
-                    {molinetes.map((molinete) => {
-
-                        const seleccionado =
-                            molinetesSeleccionados.includes(
-                                molinete.codigo
-                            );
-
-                        return (
-
-                            <label
-                                key={molinete.codigo}
-                                className={`molinete-card ${
-                                    seleccionado
-                                        ? 'selected'
-                                        : ''
-                                }`}
-                            >
-
-                                <input
-                                    type="checkbox"
-                                    checked={seleccionado}
-                                    onChange={() =>
-                                        cambiarMolinete(
-                                            molinete.codigo
-                                        )
-                                    }
-                                />
-
-
-                                <span className="molinete-check">
-                                    <span />
-                                </span>
-
-
-                                <span className="molinete-card-icon">
-
-                                    <PrecisionManufacturingOutlinedIcon />
-
-                                </span>
-
-
-                                <span className="molinete-card-info">
-
-                                    <strong>
-                                        {molinete.nombre}
-                                    </strong>
-
-                                    <span>
-                                        {molinete.rpm}
-                                        {' '}RPM
-                                        {' · '}
-                                        {molinete.perimetro}
-                                        {' '}cm
-                                    </span>
-
-                                </span>
-
-                            </label>
-
-                        );
-
-                    })}
-
-                </div>
-
-            </section>
-
-
-            {/* =================================================
-                02. CALCULO
-                ================================================= */}
-
-            <section className="nuevo-tigimoli-section">
-
-                <div className="nuevo-tigimoli-section-header">
-
-                    <div>
-
-                        <span className="section-overline">
-                            02 · CALCULO
-                        </span>
-
-                        <h2>
-                            Configuración de tallas
-                        </h2>
-
-                        <p>
-                            Seleccione las tallas y registre la
-                            cantidad de rollos para cada una.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div className="calculo-config-grid">
-
-
-                    {/* =================================================
-                        TALLAS
-                        ================================================= */}
-
-                    <div className="tallas-panel">
-
-                        <span className="panel-label">
-                            Tallas a utilizar
-                        </span>
-
-
-                        <div className="tallas-selector">
-
-                            {tallas.map((talla) => {
-
-                                const seleccionada =
-                                    tallasSeleccionadas.includes(
-                                        talla.codigo
-                                    );
-
-                                return (
-
-                                    <button
-                                        key={talla.codigo}
-                                        type="button"
-                                        className={`talla-option ${
-                                            seleccionada
-                                                ? 'selected'
-                                                : ''
-                                        }`}
-                                        onClick={() =>
-                                            cambiarTalla(
-                                                talla.codigo
-                                            )
-                                        }
-                                    >
-
-                                        {talla.nombre}
-
-                                    </button>
-
-                                );
-
-                            })}
-
-                        </div>
-
-                    </div>
-
-
-                    {/* =================================================
-                        TABLA
-                        ================================================= */}
-
-                    <div className="calculo-table-panel">
-
-                        <span className="panel-label">
-                            Detalle del Calculo
-                        </span>
-
-
-                        {Calculo.length === 0 ? (
-
-                            <div className="empty-calculo">
-
-                                Seleccione las tallas que harán
-                                parte del Calculo.
-
-                            </div>
-
-                        ) : (
-
-                            <div className="calculo-table-wrapper">
-
-                                <table className="calculo-table">
-
-                                    <thead>
-
-                                        <tr>
-
-                                            <th>
-                                                Talla
-                                            </th>
-
-                                            <th>
-                                                Rollos
-                                            </th>
-
-                                            <th>
-                                                Metros
-                                            </th>
-
-                                        </tr>
-
-                                    </thead>
-
-
-                                    <tbody>
-
-                                        {Calculo.map(
-                                            (talla) => (
-
-                                                <tr
-                                                    key={
-                                                        talla.codigo
-                                                    }
-                                                >
-
-                                                    <td className="calculo-size">
-
-                                                        {talla.nombre}
-
-                                                    </td>
-
-
-                                                    <td>
-
-                                                        <div className="rollos-field">
-
-                                                            <div className="rollos-input">
-
-                                                                <input
-                                                                    type="number"
-                                                                    min="1"
-                                                                    max="9999"
-                                                                    value={talla.rollos}
-                                                                    className={
-                                                                        erroresTallas[talla.codigo]
-                                                                            ? 'input-error'
-                                                                            : ''
-                                                                    }
-                                                                    onChange={(event) => {
-                                                                        const valor = event.target.value;
-
-                                                                        if (valor.length <= 4) {
-                                                                            cambiarRollos(
-                                                                                talla.codigo,
-                                                                                valor
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                />
-
-
-                                                                <button
-                                                                    type="button"
-                                                                    title="Agregar rollo"
-                                                                    onClick={() =>
-                                                                        agregarRollo(
-                                                                            talla.codigo
-                                                                        )
-                                                                    }
-                                                                >
-
-                                                                    <AddOutlinedIcon />
-
-                                                                </button>
-
-                                                            </div>
-
-
-                                                            {erroresTallas[
-                                                                talla.codigo
-                                                            ] && (
-
-                                                                <span className="field-error">
-                                                                    Ingrese una cantidad mayor que 0
-                                                                </span>
-
-                                                            )}
-
-                                                        </div>
-
-                                                    </td>
-
-
-                                                    <td className="calculo-meters">
-
-                                                        {formatearNumero(
-                                                            talla.metros
-                                                        )}
-                                                        {' '}m
-
-                                                    </td>
-
-                                                </tr>
-
-                                            )
-                                        )}
-
-
-                                        <tr className="calculo-total-row">
-
-                                            <td>
-                                                Total
-                                            </td>
-
-                                            <td>
-                                                {totalRollos}
-                                            </td>
-
-                                            <td>
-                                                {formatearNumero(
-                                                    totalMetros
-                                                )}
-                                                {' '}m
-                                            </td>
-
-                                        </tr>
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        )}
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            {/* =================================================
-                03. RESULTADOS
-                ================================================= */}
-
-            <section className="nuevo-tigimoli-section">
-
-                <div className="nuevo-tigimoli-section-header">
-
-                    <div>
-
-                        <span className="section-overline">
-                            03 · RESULTADO
-                        </span>
-
-                        <h2>
-                            Calculo por molinete
-                        </h2>
-
-                        <p>
-                            El tiempo de giro se calcula individualmente
-                            según el RPM y perímetro de cada molinete.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                {molinetesCalculo.length === 0 ? (
-
-                    <div className="empty-results">
-
-                        <PrecisionManufacturingOutlinedIcon />
-
-                        <strong>
-                            Seleccione uno o varios molinetes
-                        </strong>
-
-                        <span>
-                            Aquí aparecerá el cálculo correspondiente
-                            a cada molinete.
-                        </span>
-
-                    </div>
-
-                ) : (
-
-                    <div className="result-molinetes-grid">
-
-                        {molinetesCalculo.map(
-                            (molinete) => {
-
-                                const tiempoGiro =
-                                    calcularTiempoGiro(
-                                        molinete
-                                    );
-
-                                return (
-
-                                    <article
-                                        key={
-                                            molinete.codigo
-                                        }
-                                        className={`molinete-result-card ${
-                                            molinetesCalculo.length === 1
-                                                ? 'single'
-                                                : ''
-                                        }`}
-                                    >
-
-
-                                        {/* CABECERA */}
-
-                                        <div className="result-card-header">
-
-                                            <div className="result-molinete-title">
-
-                                                <span className="result-molinete-icon">
-
-                                                    <PrecisionManufacturingOutlinedIcon />
-
-                                                </span>
-
-
-                                                <div>
-
-                                                    <span>
-                                                        MOLINETE
-                                                    </span>
-
-                                                    <h3>
-                                                        {molinete.nombre}
-                                                    </h3>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        {/* DATOS */}
-
-                                        <div className="result-machine-data">
-
-
-                                            <div>
-
-                                                <span>
-                                                    RPM
-                                                </span>
-
-                                                <strong>
-                                                    {molinete.rpm}
-                                                </strong>
-
-                                            </div>
-
-
-                                            <div>
-
-                                                <span>
-                                                    Perímetro
-                                                </span>
-
-                                                <strong>
-                                                    {molinete.perimetro}
-                                                    {' '}cm
-                                                </strong>
-
-                                            </div>
-
-
-                                            <div>
-
-                                                <span>
-                                                    Total metros
-                                                </span>
-
-                                                <strong>
-                                                    {formatearNumero(
-                                                        totalMetros
-                                                    )}
-                                                    {' '}m
-                                                </strong>
-
-                                            </div>
-
-
-                                        </div>
-
-
-                                        {/* TIEMPO */}
-
-                                        <div className="result-time-box">
-
-                                            <AccessTimeOutlinedIcon />
-
-                                            <div>
-
-                                                <span>
-                                                    Tiempo de giro
-                                                </span>
-
-                                                <strong>
-                                                    {formatearNumero(
-                                                        tiempoGiro
-                                                    )}
-                                                    {' '}min
-                                                </strong>
-
-                                            </div>
-
-                                        </div>
-
-                                    </article>
-
-                                );
-
-                            }
-                        )}
-
-                    </div>
-
-                )}
-
-            </section>
+            <NuevoTigimoliForm
+                molinetes={molinetes}
+                tallas={tallas}
+                molinetesSeleccionados={molinetesSeleccionados}
+                tallasSeleccionadas={tallasSeleccionadas}
+                Calculo={Calculo}
+                erroresTallas={erroresTallas}
+                totalRollos={totalRollos}
+                totalMetros={totalMetros}
+                onCambiarMolinete={cambiarMolinete}
+                onCambiarTalla={cambiarTalla}
+                onCambiarRollos={cambiarRollos}
+                onAgregarRollo={agregarRollo}
+                formatearNumero={formatearNumero}
+            />
+
+            <NuevoTigimoliResultados
+                molinetesCalculo={molinetesCalculo}
+                totalMetros={totalMetros}
+                calcularTiempoGiro={calcularTiempoGiro}
+                formatearNumero={formatearNumero}
+            />
 
 
             {/* =================================================

@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Capturar parámetros de rendimiento por talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Selecciona una talla y permite crear o editar sus parámetros con una vista previa calculada.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -40,10 +56,15 @@ function RendTallaForm({
     });
 
 
-    // =========================================================
-    // CÁLCULOS
-    // =========================================================
+    /*
+      =========================================================
+      CÁLCULOS
+      =========================================================
+    */
 
+    /*
+      Calcula la vista previa del rendimiento y de los metros por rollo.
+    */
     const ancho = Number(formData.anchoRendtall);
     const peso = Number(formData.pesoRendtall);
     const rollo = Number(formData.rolloRendtall);
@@ -59,9 +80,11 @@ function RendTallaForm({
             : 0;
 
 
-    // =========================================================
-    // CARGAR FORMULARIO CUANDO CAMBIA LA TALLA
-    // =========================================================
+    /*
+      =========================================================
+      CARGAR FORMULARIO CUANDO CAMBIA LA TALLA
+      =========================================================
+    */
 
     useEffect(() => {
 
@@ -87,10 +110,15 @@ function RendTallaForm({
     }, [rendtalla]);
 
 
-    // =========================================================
-    // SELECCIONAR TALLA
-    // =========================================================
+    /*
+      =========================================================
+      SELECCIONAR TALLA
+      =========================================================
+    */
 
+    /*
+      Carga los datos de la talla seleccionada y determina si se crea o edita su rendimiento.
+    */
     function handleTallaChange(event) {
 
         const codigo = event.target.value;
@@ -142,10 +170,15 @@ function RendTallaForm({
     }
 
 
-    // =========================================================
-    // CAMBIAR CAMPOS
-    // =========================================================
+    /*
+      =========================================================
+      CAMBIAR CAMPOS
+      =========================================================
+    */
 
+    /*
+      Actualiza los datos del formulario y limpia los errores del campo.
+    */
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -176,10 +209,15 @@ function RendTallaForm({
     }
 
 
-    // =========================================================
-    // ENVIAR FORMULARIO
-    // =========================================================
+    /*
+      =========================================================
+      ENVIAR FORMULARIO
+      =========================================================
+    */
 
+    /*
+      Valida el formulario, solicita el guardado y muestra los errores recibidos.
+    */
     async function handleSubmit(event) {
 
         event.preventDefault();
@@ -245,10 +283,15 @@ function RendTallaForm({
     }
 
 
-    // =========================================================
-    // VALIDACIONES
-    // =========================================================
+    /*
+      =========================================================
+      VALIDACIONES
+      =========================================================
+    */
 
+    /*
+      Comprueba los campos obligatorios e identifica los errores de captura.
+    */
     function validarFormulario() {
 
         const errores = {};
@@ -275,9 +318,11 @@ function RendTallaForm({
     }
 
 
-    // =========================================================
-    // RENDER
-    // =========================================================
+    /*
+      =========================================================
+      RENDER
+      =========================================================
+    */
 
     return (
 

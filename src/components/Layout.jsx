@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Componer el marco de las pantallas operativas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Integra Sidebar, la barra superior y el contenido de las rutas anidadas.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 

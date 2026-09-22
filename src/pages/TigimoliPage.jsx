@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Consultar el historial paginado TIGIMOLI
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Coordina filtros, paginación y carga del detalle mediante tigimoli.service.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
@@ -14,7 +30,6 @@ import {
 } from '../services/tigimoli.service';
 
 import TigimoliTable from '../components/TigimoliTable';
-import { Navigate } from 'react-router-dom';
 
 
 function TigimoliPage() {
@@ -36,10 +51,15 @@ function TigimoliPage() {
     const [loadingDetalle, setLoadingDetalle] = useState(false);
 
 
-    // =========================================================
-    // FILTROS
-    // =========================================================
+    /*
+      =========================================================
+      FILTROS
+      =========================================================
+    */
 
+    /*
+      Prepara los filtros de búsqueda de la página.
+    */
     function obtenerFiltros() {
 
         const filtros = {};
@@ -66,9 +86,11 @@ function TigimoliPage() {
         return filtros;
         }
 
-    // =========================================================
-    // CONTROL DE CAMBIOS DE FILTROS Y PAGINACIÓN
-    // =========================================================
+    /*
+      =========================================================
+      CONTROL DE CAMBIOS DE FILTROS Y PAGINACIÓN
+      =========================================================
+    */
 
     const busquedaAnterior = useRef(busqueda);
     const fechaAnterior = useRef(fecha);
@@ -107,10 +129,15 @@ function TigimoliPage() {
         fecha,
         pagina
     ]);
-    // =========================================================
-    // CONSULTAR TIGIMOLI
-    // =========================================================
+    /*
+      =========================================================
+      CONSULTAR TIGIMOLI
+      =========================================================
+    */
     
+    /*
+      Consulta los registros y actualiza el listado y los mensajes de la página.
+    */
     async function cargarTigimoli(filtros = obtenerFiltros()) {
 
         try {
@@ -143,10 +170,15 @@ function TigimoliPage() {
     }
 
 
-    // =========================================================
-    // CONSULTAR DETALLE
-    // =========================================================
+    /*
+      =========================================================
+      CONSULTAR DETALLE
+      =========================================================
+    */
 
+    /*
+      Abre o cierra el detalle del registro y lo consulta cuando aún no está cargado.
+    */
     async function manejarDetalle(registro) {
 
         const clave =

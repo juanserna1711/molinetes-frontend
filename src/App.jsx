@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Definir las rutas de MOLIPLUS
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  App organiza las pantallas con React Router y agrupa la operación dentro de Layout.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import TallasPage from './pages/TallasPage';

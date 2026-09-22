@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentar el historial y su detalle por talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Renderiza los tiempos por molinete y expande el detalle solicitado desde TigimoliPage.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { Fragment } from 'react';
 
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';

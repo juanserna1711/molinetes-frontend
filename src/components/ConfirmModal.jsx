@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Solicitar confirmación de eliminación
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Presenta el diálogo reutilizado por las páginas antes de eliminar registros.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 

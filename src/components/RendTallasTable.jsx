@@ -1,7 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentar rendimientos asociados a tallas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Muestra parámetros textiles, resultados y fecha de generación de cada talla.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
+/*
+  Presenta la fecha y hora en formato local; muestra un guion si no hay fecha.
+*/
 function formatearFecha(fecha) {
     if (!fecha) return '-';
 

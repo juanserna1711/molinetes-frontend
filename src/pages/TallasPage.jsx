@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Coordinar la gestión de tallas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Conecta la tabla, el formulario, la confirmación de borrado y los servicios de tallas.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { useEffect, useState } from 'react';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
@@ -41,9 +57,11 @@ function TallasPage() {
         type: 'success'
     });
 
-    // =========================================================
-    // FUNCIONES DE LA TABLA
-    // =========================================================
+    /*
+      =========================================================
+      FUNCIONES DE LA TABLA
+      =========================================================
+    */
 
 
     function solicitarEliminarTalla(talla) {
@@ -55,9 +73,11 @@ function TallasPage() {
         setMostrarFormulario(true);
     }
 
-    // =========================================================
-    // SNACKBAR
-    // =========================================================
+    /*
+      =========================================================
+      SNACKBAR
+      =========================================================
+    */
 
 
     function mostrarSnackbar(message, type = 'success') {
@@ -87,10 +107,15 @@ function TallasPage() {
     }, [snackbar.message]);
 
 
-    // =========================================================
-    // FILTROS
-    // =========================================================
+    /*
+      =========================================================
+      FILTROS
+      =========================================================
+    */
 
+    /*
+      Prepara los filtros de búsqueda de la página.
+    */
     function obtenerFiltros() {
         const filtros = {};
         const valor = busqueda.trim();
@@ -111,23 +136,30 @@ function TallasPage() {
     }
 
 
-    // =========================================================
-    // CARGA INICIAL
-    // =========================================================
+    /*
+      =========================================================
+      CARGA INICIAL
+      =========================================================
+    */
 
 
     useEffect(() => {
         cargarTallas();
     }, []);
 
-    // =========================================================
-    // BÚSQUEDA AUTOMÁTICA
-    // =========================================================
+    /*
+      =========================================================
+      BÚSQUEDA AUTOMÁTICA
+      =========================================================
+    */
 
     useEffect(() => {
         cargarTallas(obtenerFiltros());
     }, [busqueda]);
 
+    /*
+      Consulta los registros y actualiza el listado y los mensajes de la página.
+    */
     async function cargarTallas(filtros = {}) {
 
         try {
@@ -163,6 +195,9 @@ function TallasPage() {
 
     }
 
+    /*
+      Guarda los cambios del registro seleccionado y actualiza el listado.
+    */
     async function actualizarTalla(talla, data) {
         await actualizarTallaService(talla.codigo, data);
 
@@ -175,6 +210,9 @@ function TallasPage() {
         );
     }
 
+    /*
+      Crea o actualiza el registro y recarga el listado al completar la operación.
+    */
     async function guardarTalla(data) {
         if (tallaSeleccionada) {
             await actualizarTalla(tallaSeleccionada, data);
@@ -191,6 +229,9 @@ function TallasPage() {
         }
     }
 
+    /*
+      Solicita el cambio de estado del registro y actualiza el listado.
+    */
     async function activarTalla(codigo) {
         try {
             setOperacion(`activar-${codigo}`);
@@ -213,6 +254,9 @@ function TallasPage() {
     }
     }
 
+    /*
+      Solicita el cambio de estado del registro y actualiza el listado.
+    */
     async function desactivarTalla(codigo) {
         try {
             setOperacion(`desactivar-${codigo}`);
@@ -237,6 +281,9 @@ function TallasPage() {
         }
     }
 
+    /*
+      Elimina el registro confirmado y comunica el resultado de la operación.
+    */
     async function confirmarEliminarTalla() {
         if (!tallaAEliminar) return;
 

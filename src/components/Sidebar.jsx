@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentar la navegación de los módulos
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Muestra enlaces NavLink a tallas, usuarios, molinetes, rendimientos y las dos pantallas TIGIMOLI.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { NavLink } from 'react-router-dom';
 
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -83,6 +99,19 @@ function Sidebar({ abierto }) {
                     </span>
                 </NavLink>
 
+                <NavLink
+                    to="/nuevo-tigimoli"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <CalculateOutlinedIcon />
+
+                    <span>
+                        Tiempo de Giro
+                    </span>
+                </NavLink>
+
                 
                 <NavLink
                     to="/tigimoli"
@@ -93,23 +122,10 @@ function Sidebar({ abierto }) {
                     <HistoryOutlinedIcon />
 
                     <span>
-                        Registro de Tiempos de Giro
+                        Consulta de Tiempos de Giro
                     </span>
                 </NavLink>
 
-
-                <NavLink
-                    to="/nuevo-tigimoli"
-                    className={({ isActive }) =>
-                        `sidebar-item ${isActive ? 'active' : ''}`
-                    }
-                >
-                    <CalculateOutlinedIcon />
-
-                    <span>
-                        Nuevo Tiempo de Giro
-                    </span>
-                </NavLink>
 
             </nav>
 
