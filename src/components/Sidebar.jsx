@@ -122,7 +122,7 @@ function Sidebar({ abierto }) {
                     <HistoryOutlinedIcon />
 
                     <span>
-                        Consulta de Tiempos de Giro
+                        Consulta Tiempos de Giro
                     </span>
                 </NavLink>
 

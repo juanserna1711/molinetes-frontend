@@ -276,6 +276,11 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                         name="rpmMolinete"
                         value={formData.rpmMolinete}
                         onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
                         className={fieldErrors.rpmMolinete ? 'input-error' : ''}
                     />
 
@@ -299,6 +304,11 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                         name="periMolinete"
                         value={formData.periMolinete}
                         onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
                         className={fieldErrors.periMolinete ? 'input-error' : ''}
                     />
                     {fieldErrors.periMolinete && (

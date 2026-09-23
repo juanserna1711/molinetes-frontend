@@ -155,7 +155,7 @@ function TallasPage() {
 
     useEffect(() => {
         cargarTallas(obtenerFiltros());
-    }, [busqueda]);
+    }, [busqueda, estado]);
 
     /*
       Consulta los registros y actualiza el listado y los mensajes de la página.

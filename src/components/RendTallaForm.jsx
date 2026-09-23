@@ -411,10 +411,16 @@ function RendTallaForm({
 
                     <input
                         type="number"
+                        min="1"
                         step="1"
                         name="anchoRendtall"
                         value={formData.anchoRendtall}
                         onChange={handleChange}
+                            onKeyDown={(event) => {
+                                if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                    event.preventDefault();
+                                }
+                            }}
                         className={
                             fieldErrors.anchoRendtall
                                 ? 'input-error'
@@ -443,10 +449,16 @@ function RendTallaForm({
 
                     <input
                         type="number"
+                        min="1"
                         step="1"
                         name="pesoRendtall"
                         value={formData.pesoRendtall}
                         onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
                         className={
                             fieldErrors.pesoRendtall
                                 ? 'input-error'
@@ -475,10 +487,16 @@ function RendTallaForm({
 
                     <input
                         type="number"
+                        min="1"
                         step="1"
                         name="rolloRendtall"
                         value={formData.rolloRendtall}
                         onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
                         className={
                             fieldErrors.rolloRendtall
                                 ? 'input-error'

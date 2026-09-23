@@ -66,7 +66,7 @@ function UsuariosTable({
                                     {usuario.nombre}
                                 </td>
 
-                                <td className="name">
+                                <td>
                                     {usuario.password}
                                 </td>
 

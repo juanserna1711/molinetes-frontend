@@ -15,9 +15,6 @@
 =============================================================================*/
 
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
@@ -29,18 +26,24 @@ import {
     consultarDetalleTigimoli
 } from '../services/tigimoli.service';
 
+import { consultarMolinetes } from '../services/molinetes.service';
+
 import TigimoliTable from '../components/TigimoliTable';
 
 
 function TigimoliPage() {
-    const navigate = useNavigate();
 
     const [tigimoli, setTigimoli] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const [busqueda, setBusqueda] = useState('');
-    const [fecha, setFecha] = useState('');
+    const [molinetes, setMolinetes] = useState([]);
+    const [molinetesSeleccionados, setMolinetesSeleccionados] = useState([]);
+    const [selectorMolinetesAbierto, setSelectorMolinetesAbierto] = useState(false);
+    const selectorMolinetesRef = useRef(null);
+
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
 
     const [pagina, setPagina] = useState(1);
     const registrosPagina = 10;
@@ -57,6 +60,63 @@ function TigimoliPage() {
       =========================================================
     */
 
+      /*
+        Carga los molinetes disponibles para el filtro.
+        */
+        useEffect(() => {
+
+            async function cargarMolinetes() {
+
+                try {
+
+                    const resultado = await consultarMolinetes();
+
+                    setMolinetes(resultado.data);
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    setError(
+                        error.response?.data?.message ||
+                        'No fue posible cargar los molinetes.'
+                    );
+
+                }
+
+            }
+
+            cargarMolinetes();
+
+        }, []);
+
+    /*
+    Cierra el selector de molinetes al hacer clic fuera de él.
+    */
+    useEffect(() => {
+
+        function manejarClickFuera(event) {
+
+            if (
+                selectorMolinetesRef.current &&
+                !selectorMolinetesRef.current.contains(event.target)
+            ) {
+                setSelectorMolinetesAbierto(false);
+            }
+
+        }
+
+        document.addEventListener('mousedown', manejarClickFuera);
+
+        return () => {
+            document.removeEventListener(
+                'mousedown',
+                manejarClickFuera
+            );
+        };
+
+    }, []);
+
     /*
       Prepara los filtros de búsqueda de la página.
     */
@@ -64,27 +124,24 @@ function TigimoliPage() {
 
         const filtros = {};
 
-        const valor = busqueda.trim();
-
-        if (valor !== '') {
-
-            if (!isNaN(valor)) {
-                filtros.codigo = Number(valor);
-            } else {
-                filtros.nombre = valor;
-            }
-
+        if (molinetesSeleccionados.length > 0) {
+            filtros.molinetes =
+                molinetesSeleccionados.join(',');
         }
 
-        if (fecha !== '') {
-            filtros.fecha = fecha;
+        if (fechaInicio !== '') {
+            filtros.fechaInicio = fechaInicio;
+        }
+
+        if (fechaFin !== '') {
+            filtros.fechaFin = fechaFin;
         }
 
         filtros.pagina = pagina;
         filtros.registrosPagina = registrosPagina;
 
         return filtros;
-        }
+    }
 
     /*
       =========================================================
@@ -92,43 +149,66 @@ function TigimoliPage() {
       =========================================================
     */
 
-    const busquedaAnterior = useRef(busqueda);
-    const fechaAnterior = useRef(fecha);
+    const molinetesAnteriores = useRef(molinetesSeleccionados);
+    const fechaInicioAnterior = useRef(fechaInicio);
+    const fechaFinAnterior = useRef(fechaFin);
 
     useEffect(() => {
 
         const filtrosCambiaron =
-            busquedaAnterior.current !== busqueda ||
-            fechaAnterior.current !== fecha;
+            molinetesAnteriores.current !== molinetesSeleccionados ||
+            fechaInicioAnterior.current !== fechaInicio ||
+            fechaFinAnterior.current !== fechaFin;
 
-
-        /*
-        * Si cambió un filtro y estamos en otra página,
-        * primero regresamos a la página 1.
-        *
-        * La consulta se hará cuando pagina cambie a 1.
-        */
         if (filtrosCambiaron && pagina !== 1) {
 
-            busquedaAnterior.current = busqueda;
-            fechaAnterior.current = fecha;
+            molinetesAnteriores.current = molinetesSeleccionados;
+            fechaInicioAnterior.current = fechaInicio;
+            fechaFinAnterior.current = fechaFin;
 
             setPagina(1);
 
             return;
         }
 
-
-        busquedaAnterior.current = busqueda;
-        fechaAnterior.current = fecha;
+        molinetesAnteriores.current = molinetesSeleccionados;
+        fechaInicioAnterior.current = fechaInicio;
+        fechaFinAnterior.current = fechaFin;
 
         cargarTigimoli();
 
     }, [
-        busqueda,
-        fecha,
+        molinetesSeleccionados,
+        fechaInicio,
+        fechaFin,
         pagina
     ]);
+
+    /*
+      =========================================================
+       CAMBIAR MOLINETE
+      =========================================================
+    */
+    
+
+    function cambiarMolinete(codigo) {
+
+        setMolinetesSeleccionados((actuales) => {
+
+            if (actuales.includes(codigo)) {
+                return actuales.filter(
+                    (item) => item !== codigo
+                );
+            }
+
+            return [
+                ...actuales,
+                codigo
+            ];
+
+        });
+
+    }
     /*
       =========================================================
       CONSULTAR TIGIMOLI
@@ -229,8 +309,9 @@ function TigimoliPage() {
 
 
     const hayFiltros =
-        busqueda.trim() !== '' ||
-        fecha !== '';
+        molinetesSeleccionados.length > 0 ||
+        fechaInicio !== '' ||
+        fechaFin !== '';
 
 
     const totalPaginas =
@@ -246,7 +327,7 @@ function TigimoliPage() {
                 <div className="page-header-info">
 
                     <h1>
-                        Historial Tiempos de Giro
+                        Consulta Tiempos de Giro
                     </h1>
 
                     <p>
@@ -255,52 +336,125 @@ function TigimoliPage() {
 
                 </div>
 
-
-                <button
-                    type="button"
-                    className="primary-button"
-                    onClick={() => {
-                        navigate('/nuevo-tigimoli'); 
-                    }}
-                >
-                    <AddIcon />
-                    Nuevo Tiempo de giro
-                </button>
-
             </div>
 
 
-            <div className="filters">
+            <div className="filters tigimoli-filters">
 
-                <div className="search-box">
+                <div className="tigimoli-filter-field">
 
-                    <SearchOutlinedIcon />
-
-                    <input
-                        type="text"
-                        placeholder="Buscar por código o nombre del molinete..."
-                        value={busqueda}
-                        onChange={(event) => {
-                            setBusqueda(event.target.value);
-                        }}
-                        maxLength={60}
-                    />
-
-                </div>
-
-
-                <div className="date-filter">
+                    <label htmlFor="fecha-inicio">
+                        Fecha inicio
+                    </label>
 
                     <input
+                        id="fecha-inicio"
                         type="date"
-                        value={fecha}
+                        value={fechaInicio}
+                        max={fechaFin || undefined}
                         onChange={(event) => {
-                            setFecha(event.target.value);
+                            setFechaInicio(event.target.value);
                         }}
                     />
 
                 </div>
 
+
+                <div className="tigimoli-filter-field">
+
+                    <label htmlFor="fecha-fin">
+                        Fecha fin
+                    </label>
+
+                    <input
+                        id="fecha-fin"
+                        type="date"
+                        value={fechaFin}
+                        min={fechaInicio || undefined}
+                        onChange={(event) => {
+                            setFechaFin(event.target.value);
+                        }}
+                    />
+
+                </div>
+
+
+                <div className="tigimoli-filter-field molinete-filter">
+
+                        <label>
+                            Molinetes
+                        </label>
+
+                        <div
+                            className="molinete-select"
+                            ref={selectorMolinetesRef}
+                        >
+
+                        <button
+                            type="button"
+                            className={`molinete-select-button ${
+                                selectorMolinetesAbierto ? 'open' : ''
+                            }`}
+                            onClick={() => {
+                                setSelectorMolinetesAbierto(
+                                    (actual) => !actual
+                                );
+                            }}
+                        >
+                            <span>
+                                {molinetesSeleccionados.length === 0
+                                    ? 'Todos los molinetes'
+                                    : molinetesSeleccionados.length === 1
+                                        ? '1 molinete seleccionado'
+                                        : `${molinetesSeleccionados.length} molinetes seleccionados`}
+                            </span>
+
+                            <span className="molinete-select-arrow">
+                                ▾
+                            </span>
+                        </button>
+
+
+                        {selectorMolinetesAbierto && (
+
+                            <div className="molinete-select-dropdown">
+
+                                {molinetes.map((molinete) => (
+
+                                    <label
+                                        key={molinete.codigo}
+                                        className="molinete-select-option"
+                                    >
+
+                                        <input
+                                            type="checkbox"
+                                            checked={
+                                                molinetesSeleccionados.includes(
+                                                    molinete.codigo
+                                                )
+                                            }
+                                            onChange={() => {
+                                                cambiarMolinete(
+                                                    molinete.codigo
+                                                );
+                                            }}
+                                        />
+
+                                        <span>
+                                            {molinete.nombre}
+                                        </span>
+
+                                    </label>
+
+                                ))}
+
+                            </div>
+
+                        )}
+
+                    </div>
+
+                </div>
             </div>
 
 

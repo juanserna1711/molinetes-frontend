@@ -171,7 +171,7 @@ function RendTallasPage() {
 
     useEffect(() => {
         cargarRendTallas(obtenerFiltros());
-    }, [busqueda]);
+    }, [busqueda, estado]);
 
 
     /*

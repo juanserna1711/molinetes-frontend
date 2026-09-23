@@ -256,56 +256,55 @@
     font-size: 10px;
 }
 
-
 /* =========================================================
-   TIGIMOLI - FILTRO DE FECHA
+   FILTROS TIGIMOLI
    ========================================================= */
 
-.date-filter {
-    position: relative;
+.tigimoli-filters {
+    align-items: flex-start;
 }
 
-.date-filter input[type="date"] {
-    height: 42px;
-    min-width: 170px;
+.tigimoli-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tigimoli-filter-field > label {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.tigimoli-filter-field > input {
+    width: 170px;
+    height: 40px;
 
     padding: 0 12px;
 
-    border: 1px solid #d8e0e8;
+    border: 1px solid #d9dee6;
     border-radius: 7px;
+    outline: none;
 
-    background: #ffffff;
-
-    color: #26364d;
+    background-color: #ffffff;
+    color: #344054;
 
     font-family: inherit;
     font-size: 13px;
-
-    outline: none;
 
     transition:
         border-color 0.15s ease,
         box-shadow 0.15s ease;
 }
 
-.date-filter input[type="date"]:hover {
-    border-color: #b8c4d1;
+.tigimoli-filter-field > input:hover {
+    border-color: #b8c0cb;
 }
 
-.date-filter input[type="date"]:focus {
-    border-color: #26364d;
-
-    box-shadow:
-        0 0 0 3px rgba(38, 54, 77, 0.08);
-}
-
-.date-filter input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.65;
-}
-
-.date-filter input[type="date"]::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
+.tigimoli-filter-field > input:focus {
+    border-color: #7b8798;
+    box-shadow: 0 0 0 3px rgba(38, 54, 77, 0.08);
 }
 
 
@@ -399,4 +398,121 @@
     cursor: not-allowed;
 
     background: #f8fafc;
+}
+
+/* =========================================================
+   FILTRO DE MOLINETES
+   ========================================================= */
+
+.molinete-filter {
+    position: relative;
+    min-width: 240px;
+}
+
+.molinete-select {
+    position: relative;
+}
+
+.molinete-select-button {
+    width: 240px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 12px;
+
+    border: 1px solid #d9dee6;
+    border-radius: 7px;
+    outline: none;
+
+    background-color: #ffffff;
+    color: #344054;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.molinete-select-button:hover {
+    border-color: #b8c0cb;
+}
+
+.molinete-select-button.open {
+    border-color: #7b8798;
+    box-shadow: 0 0 0 3px rgba(38, 54, 77, 0.08);
+}
+
+.molinete-select-arrow {
+    margin-left: 12px;
+    font-size: 15px;
+
+    transition: transform 0.15s ease;
+}
+
+.molinete-select-button.open .molinete-select-arrow {
+    transform: rotate(180deg);
+}
+
+.molinete-select-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    z-index: 20;
+
+    width: 240px;
+    max-height: 220px;
+    overflow-y: auto;
+
+    padding: 5px;
+
+    border: 1px solid #d9dee6;
+    border-radius: 7px;
+
+    background-color: #ffffff;
+
+    box-shadow: 0 8px 20px rgba(38, 54, 77, 0.12);
+}
+
+.molinete-select-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 8px 9px;
+
+    border-radius: 5px;
+
+    color: #344054;
+
+    font-size: 13px;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+.molinete-select-option:hover {
+    background-color: #f5f7fa;
+}
+
+.molinete-select-option input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+
+    accent-color: #ed1685;
+
+    cursor: pointer;
+}
+
+.molinete-select-option span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

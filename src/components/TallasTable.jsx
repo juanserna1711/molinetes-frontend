@@ -61,7 +61,7 @@ function TallasTable({
                                     {talla.codigo}
                                 </td>
 
-                                <td className="talla-name">
+                                <td className="name">
                                     {talla.nombre}
                                 </td>
 

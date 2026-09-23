@@ -112,7 +112,9 @@ function NuevoTigimoliPage() {
                     respuestaTallas
                 ] = await Promise.all([
                     consultarMolinetes(),
-                    consultarRendTallas()
+                        consultarRendTallas({
+                            estado: 'A'
+                        })
                 ]);
 
                 setMolinetes(

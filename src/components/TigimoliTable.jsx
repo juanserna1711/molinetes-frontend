@@ -186,7 +186,7 @@ function TigimoliTable({
                                                 <div className="tigimoli-detail-header">
 
                                                     <span>
-                                                        DETALLE DE CALCULO
+                                                        DETALLE DE TALLAS
                                                     </span>
 
                                                 </div>

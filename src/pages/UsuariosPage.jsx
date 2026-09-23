@@ -156,7 +156,7 @@ function UsuariosPage() {
 
     useEffect(() => {
         cargarUsuarios(obtenerFiltros());
-    }, [busqueda]);
+    }, [busqueda, estado]);
 
 
     /*

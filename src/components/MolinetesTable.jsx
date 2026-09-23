@@ -55,11 +55,11 @@ function MolinetesTable({
                                     {molinete.nombre}
                                 </td>
 
-                                <td className="name">
+                                <td>
                                     {molinete.rpm}
                                 </td>
 
-                                <td className="name">
+                                <td>
                                     {molinete.perimetro}
                                 </td>
 

@@ -283,9 +283,9 @@
 }
 
 .field-error {
-    display: block;
-    margin-top: 5px;
     color: #b42318;
-    font-size: 12px;
+    font-size: 12px !important;
     font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
 }

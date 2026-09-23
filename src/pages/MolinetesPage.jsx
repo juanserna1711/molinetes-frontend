@@ -227,32 +227,41 @@ function MolinetesPage() {
       Elimina el registro confirmado y comunica el resultado de la operación.
     */
     async function confirmarEliminarMolinete() {
-            if (!molineteAEliminar) return;
-    
-            try {
-                setEliminando(true);
-    
-                await eliminarMolineteService(molineteAEliminar.codigo);
-                await cargarMolinetes();
-    
-                setMolineteAEliminar(null);
-    
-                mostrarSnackbar(
-                    'Molinete eliminado correctamente.',
-                    'success'
-                );
-            } catch (error) {
-                console.error(error);
-    
-                mostrarSnackbar(
-                    error.response?.data?.message ||
-                    'No fue posible eliminar el molinete.',
-                    'error'
-                );
-            } finally {
-                setEliminando(false);
-            }
+
+        if (!molineteAEliminar) return;
+
+        try {
+
+            setEliminando(true);
+
+            await eliminarMolineteService(
+                molineteAEliminar.codigo
+            );
+
+            await cargarMolinetes();
+
+            mostrarSnackbar(
+                'Molinete eliminado correctamente.',
+                'success'
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarSnackbar(
+                error.response?.data?.message ||
+                'No fue posible eliminar el molinete.',
+                'error'
+            );
+
+        } finally {
+
+            setEliminando(false);
+            setMolineteAEliminar(null);
+
         }
+    }
     
 
     const hayFiltros = busqueda.trim() !== '';
