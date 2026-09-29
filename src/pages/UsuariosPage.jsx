@@ -30,8 +30,8 @@ import {
     eliminarUsuario as eliminarUsuarioService
 } from '../services/usuarios.service';
 
-import UsuariosTable from '../components/UsuariosTable';
-import UsuarioForm from '../components/UsuarioForm';
+import UsuariosTable from '../components/Usuario/UsuariosTable';
+import UsuarioForm from '../components/Usuario/UsuarioForm';
 
 import ConfirmModal from '../components/ConfirmModal';
 
@@ -154,9 +154,45 @@ function UsuariosPage() {
       =========================================================
     */
 
+
     useEffect(() => {
-        cargarUsuarios(obtenerFiltros());
-    }, [busqueda, estado]);
+
+        const filtros = {};
+
+        const valor =
+            busqueda.trim();
+
+        if (valor !== '') {
+
+            if (!isNaN(valor)) {
+
+                filtros.codigo =
+                    Number(valor);
+
+            } else {
+
+                filtros.nombre =
+                    valor;
+
+            }
+
+        }
+
+        if (estado !== '') {
+
+            filtros.estado =
+                estado;
+
+        }
+
+        cargarUsuarios(
+            filtros
+        );
+
+    }, [
+        busqueda,
+        estado
+    ]);
 
 
     /*
@@ -171,7 +207,6 @@ function UsuariosPage() {
 
             const resultado = await consultarUsuarios(filtros);
             
-
             setUsuarios(resultado.data);
 
         } catch (error) {
@@ -357,7 +392,7 @@ function UsuariosPage() {
                         maxLength={60}
                     />
                 </div>
-
+                <div className="filter-field">      
                 <select
                     value={estado}
                     onChange={(event) => {
@@ -368,76 +403,77 @@ function UsuariosPage() {
                     <option value="A">Activos</option>
                     <option value="I">Inactivos</option>
                 </select>
+                </div> 
 
             </div>
 
-            {loading && (
-                <div className="state-container loading-state">
-                    <CircularProgress
-                        size={30}
-                        thickness={4}
-                    />
-
-                    <div className="state-content">
-                        <h2>Cargando usuarios</h2>
-                        <p>Consultando la información...</p>
-                    </div>
-                </div>
-            )}
-
-            {!loading && error && (
-                <div className="state-container error-state">
-
-                    <div className="state-icon error-icon">
-                        <ErrorOutlineOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-                        <h2>No fue posible cargar los usuarios</h2>
-
-                        <p>
-                            {error}
-                        </p>
-
-                        <button
-                            type="button"
-                            className="primary-button"
-                            onClick={() => cargarUsuarios(obtenerFiltros())}
-                        >
-                            Reintentar
-                        </button>
-                    </div>
-
-                </div>
-            )}
-
-            {!loading && !error && usuarios.length === 0 && (
-                <div className="state-container empty-state">
-
-                    <div className="state-icon empty-icon">
-                        <SearchOffOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-
-                        <h2>
-                            {hayFiltros
-                                ? 'No se encontraron usuarios'
-                                : 'No hay usuarios registrados'}
-                        </h2>
-
-                        <p>
-                            {hayFiltros
-                                ? 'No hay usuarios que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen usuarios registrados en el sistema.'}
-                        </p>
-
-                    </div>
-
-                </div>
-            )}
-
             <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
+
+                {loading && (
+                    <div className="state-container loading-state">
+                        <CircularProgress
+                            size={30}
+                            thickness={4}
+                        />
+
+                        <div className="state-content">
+                            <h2>Cargando usuarios</h2>
+                            <p>Consultando la información...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div className="state-container error-state">
+
+                        <div className="state-icon error-icon">
+                            <ErrorOutlineOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+                            <h2>No fue posible cargar los usuarios</h2>
+
+                            <p>
+                                {error}
+                            </p>
+
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => cargarUsuarios(obtenerFiltros())}
+                            >
+                                Reintentar
+                            </button>
+                        </div>
+
+                    </div>
+                )}
+
+                {!loading && !error && usuarios.length === 0 && (
+                    <div className="state-container empty-state">
+
+                        <div className="state-icon empty-icon">
+                            <SearchOffOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+
+                            <h2>
+                                {hayFiltros
+                                    ? 'No se encontraron usuarios'
+                                    : 'No hay usuarios registrados'}
+                            </h2>
+
+                            <p>
+                                {hayFiltros
+                                    ? 'No hay usuarios que coincidan con los criterios de búsqueda.'
+                                    : 'Aún no existen usuarios registrados en el sistema.'}
+                            </p>
+
+                        </div>
+
+                    </div>
+                )}
 
                 {!loading && !error && usuarios.length > 0 && (
                     <div className="table-section">
@@ -455,6 +491,11 @@ function UsuariosPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <UsuarioForm
+                            key={
+                                usuarioSeleccionado
+                                    ? `editar-${usuarioSeleccionado.codigo}`
+                                    : 'crear-usuario'
+                            }
                             usuario={usuarioSeleccionado}
                             onClose={() => {
                                 setMostrarFormulario(false);

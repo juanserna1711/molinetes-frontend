@@ -22,38 +22,28 @@
 
 .page-header {
     position: relative;
-
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-
     gap: 24px;
-
     margin-bottom: 26px;
-
     padding-bottom: 18px;
 }
 
 .page-header-info {
     position: relative;
     min-width: 0;
-
     padding-left: 13px;
 }
 
 .page-header-info::before {
     content: '';
-
     position: absolute;
-
     left: 0;
     top: 3px;
     bottom: 3px;
-
     width: 3px;
-
     border-radius: 3px;
-
     background-color: #ed1685;
 }
 
@@ -79,29 +69,19 @@
 
 .primary-button {
     height: 40px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 7px;
-
     padding: 0 16px;
-
     border: none;
     border-radius: 7px;
-
     background-color: #26364d;
     color: #ffffff;
-
-    font-family: inherit;
     font-size: 13px;
     font-weight: 600;
-
     cursor: pointer;
-
     box-shadow: 4px 4px 0 #ed1685;
-
     transition:
         background-color 0.15s ease,
         box-shadow 0.15s ease,
@@ -115,13 +95,11 @@
 
 .primary-button:hover {
     background-color: #1f2d40;
-
     box-shadow: 5px 5px 0 #ed1685;
 }
 
 .primary-button:active {
     transform: translate(2px, 2px);
-
     box-shadow: 3px 3px 0 #ed1685;
 }
 
@@ -131,10 +109,34 @@
 
 .filters {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
     gap: 12px;
-
     margin-bottom: 20px;
+}
+/* ---------- Campo de filtro ---------- */
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 160px;
+}
+
+.filter-field label {
+    color: #667085;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.filter-field-small {
+    min-width: 140px;
+    width: 160px;
+}
+.filter-field-medium {
+    min-width: 190px;
+    width: 220px;
 }
 
 /* ---------- Buscador ---------- */
@@ -143,28 +145,20 @@
     flex: 1;
     min-width: 220px;
     height: 40px;
-
     display: flex;
     align-items: center;
     gap: 9px;
-
     padding: 0 12px;
-
     background-color: #ffffff;
     border: 1px solid #d9dee6;
     border-radius: 7px;
-
     color: #98a2b3;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .search-box svg {
     width: 19px;
     height: 19px;
-
     flex-shrink: 0;
 }
 
@@ -176,17 +170,11 @@
 .search-box input {
     width: 100%;
     height: 100%;
-
     padding: 0;
-
     border: none;
     outline: none;
-
     background: transparent;
-
     color: #344054;
-
-    font-family: inherit;
     font-size: 13px;
 }
 
@@ -194,41 +182,101 @@
     color: #98a2b3;
 }
 
-/* ---------- Filtro de estado ---------- */
+/* ---------- Controles de filtro ---------- */
 
-.filters select {
-    width: 170px;
+.filter-field input,
+.filter-field select {
+    width: 100%;
     height: 40px;
-
     padding: 0 12px;
-
     border: 1px solid #d9dee6;
     border-radius: 7px;
-
     outline: none;
-
     background-color: #ffffff;
     color: #344054;
-
-    font-family: inherit;
     font-size: 13px;
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
 }
 
-.filters select:hover {
+.filter-field input {
+    cursor: text;
+}
+
+.filter-field select {
+    cursor: pointer;
+}
+
+.filter-field input:hover,
+.filter-field select:hover {
     border-color: #b8c0cb;
 }
 
-.filters select:focus {
+.filter-field input:focus,
+.filter-field select:focus {
     border-color: #7b8798;
-    box-shadow: 0 0 0 3px rgba(38, 54, 77, 0.08);
+    box-shadow:
+        0 0 0 3px rgba(38, 54, 77, .08);
 }
 
+.filter-field input::placeholder {
+    color: #98a2b3;
+}
+/* ---------- Fecha ---------- */
+
+.filter-field input[type="date"] {
+    min-width: 165px;
+    color: #344054;
+    cursor: pointer;
+}
+
+.filter-field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: .55;
+    cursor: pointer;
+    transition: opacity .15s ease;
+}
+
+.filter-field input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    opacity: .8;
+}
+
+/* ---------- Filtro de hilaza y talla ---------- */
+
+.filter-select-hilaza {
+    min-width: 190px;
+}
+
+.filter-select-talla {
+    min-width: 170px;
+}
+
+/* ---------- Filtro de Hilaza ---------- */
+.hilaza-apply-control {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.hilaza-select-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hilaza-apply-control select {
+    min-width: 160px;
+}
+/* ---------- Input numérico ---------- */
+
+.filter-field input[type="number"]::-webkit-outer-spin-button,
+.filter-field input[type="number"]::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.filter-field input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
 
 /* =========================================================
    ESTADOS DE LA PÁGINA

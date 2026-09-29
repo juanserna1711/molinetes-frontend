@@ -17,31 +17,20 @@
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-function RendTallaForm({
-    onClose,
-    onSubmit,
-    rendtalla,
-    rendtallas
-}) {
+function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     /*
-     * Si rendtalla tiene información de rendimiento,
-     * estamos editando.
-     *
-     * Si rendtalla existe pero no tiene rendimiento,
-     * estamos agregando uno nuevo.
-     *
-     * Si rendtalla es null, el formulario inicia vacío.
-     */
-    const tieneRendimientoInicial =
-        rendtalla?.ancho !== null &&
-        rendtalla?.ancho !== undefined;
+      Si talla tiene información de rendimiento, estamos editando.
+      Si talla existe pero no tiene rendimiento, estamos agregando uno nuevo.
+      Si talla es null, el formulario inicia vacío.
+    */
+    const tieneRendimientoInicial = rendtalla?.ancho !== null && rendtalla?.ancho !== undefined;
 
     const [modo, setModo] = useState(
         tieneRendimientoInicial ? 'editar' : 'crear'
@@ -55,13 +44,6 @@ function RendTallaForm({
         usuarioRendtall: 2
     });
 
-
-    /*
-      =========================================================
-      CÁLCULOS
-      =========================================================
-    */
-
     /*
       Calcula la vista previa del rendimiento y de los metros por rollo.
     */
@@ -69,52 +51,8 @@ function RendTallaForm({
     const peso = Number(formData.pesoRendtall);
     const rollo = Number(formData.rolloRendtall);
 
-    const rendimiento =
-        ancho > 0 && peso > 0
-            ? 1000 / ((ancho * 2 / 100) * peso)
-            : 0;
-
-    const metrosRollo =
-        rendimiento > 0 && rollo > 0
-            ? rollo * rendimiento
-            : 0;
-
-
-    /*
-      =========================================================
-      CARGAR FORMULARIO CUANDO CAMBIA LA TALLA
-      =========================================================
-    */
-
-    useEffect(() => {
-
-        const tieneRendimiento =
-            rendtalla?.ancho !== null &&
-            rendtalla?.ancho !== undefined;
-
-        setModo(
-            tieneRendimiento ? 'editar' : 'crear'
-        );
-
-        setFormData({
-            codTalla: rendtalla?.codigo ?? '',
-            anchoRendtall: rendtalla?.ancho ?? '',
-            pesoRendtall: rendtalla?.pesoM2 ?? '',
-            rolloRendtall: rendtalla?.pesoRollo ?? '',
-            usuarioRendtall: 2
-        });
-
-        setError(null);
-        setFieldErrors({});
-
-    }, [rendtalla]);
-
-
-    /*
-      =========================================================
-      SELECCIONAR TALLA
-      =========================================================
-    */
+    const rendimiento = ancho > 0 && peso > 0 ? 1000 / ((ancho * 2 / 100) * peso) : 0;
+    const metrosRollo = rendimiento > 0 && rollo > 0 ? rollo * rendimiento : 0;
 
     /*
       Carga los datos de la talla seleccionada y determina si se crea o edita su rendimiento.
@@ -254,25 +192,15 @@ function RendTallaForm({
 
             console.error(error);
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar el rendimiento x talla.';
+            const mensaje = error.response?.data?.message || 'No fue posible guardar el rendimiento x talla.';
 
-            const campo =
-                error.response?.data?.field;
+            const campo = error.response?.data?.field;
 
             if (campo) {
-
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                setFieldErrors({ [campo]: mensaje });
                 setError(null);
-
             } else {
-
                 setError(mensaje);
-
             }
 
         } finally {
@@ -281,14 +209,6 @@ function RendTallaForm({
 
         }
     }
-
-
-    /*
-      =========================================================
-      VALIDACIONES
-      =========================================================
-    */
-
     /*
       Comprueba los campos obligatorios e identifica los errores de captura.
     */
@@ -318,24 +238,13 @@ function RendTallaForm({
     }
 
 
-    /*
-      =========================================================
-      RENDER
-      =========================================================
-    */
-
     return (
 
         <div className="form-panel">
 
             <div className="form-header">
 
-                <h2>
-                    {modo === 'editar'
-                        ? 'Editar Rendimiento'
-                        : 'Nuevo Rendimiento'
-                    }
-                </h2>
+                <h2> {modo === 'editar' ? 'Editar Rendimiento' : 'Nuevo Rendimiento'} </h2>
 
                 <button
                     type="button"
@@ -351,10 +260,6 @@ function RendTallaForm({
 
             <form onSubmit={handleSubmit}>
 
-                {/* =================================================
-                    TALLA
-                ================================================= */}
-
                 <div className="form-group">
 
                     <label>
@@ -366,11 +271,7 @@ function RendTallaForm({
                         value={formData.codTalla}
                         onChange={handleTallaChange}
                         disabled={Boolean(rendtalla)}
-                        className={
-                            fieldErrors.codTalla
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.codTalla ? 'input-error' : ''}
                     >
 
                         <option value="">
@@ -385,9 +286,7 @@ function RendTallaForm({
                             >
                                 {talla.nombre}
                             </option>
-
                         ))}
-
                     </select>
 
                     {fieldErrors.codTalla && (
@@ -397,11 +296,6 @@ function RendTallaForm({
                     )}
 
                 </div>
-
-
-                {/* =================================================
-                    ANCHO
-                ================================================= */}
 
                 <div className="form-group">
 
@@ -436,11 +330,6 @@ function RendTallaForm({
 
                 </div>
 
-
-                {/* =================================================
-                    PESO/M2
-                ================================================= */}
-
                 <div className="form-group">
 
                     <label>
@@ -473,11 +362,6 @@ function RendTallaForm({
                     )}
 
                 </div>
-
-
-                {/* =================================================
-                    PESO/ROLLO
-                ================================================= */}
 
                 <div className="form-group">
 
@@ -512,11 +396,6 @@ function RendTallaForm({
 
                 </div>
 
-
-                {/* =================================================
-                    RENDIMIENTO
-                ================================================= */}
-
                 <div className="form-group calculated-group">
 
                     <label>
@@ -535,11 +414,6 @@ function RendTallaForm({
 
                 </div>
 
-
-                {/* =================================================
-                    METROS
-                ================================================= */}
-
                 <div className="form-group calculated-group">
 
                     <label>
@@ -557,11 +431,6 @@ function RendTallaForm({
                     />
 
                 </div>
-
-
-                {/* =================================================
-                    ERROR GENERAL
-                ================================================= */}
 
                 {error && (
 
@@ -587,11 +456,6 @@ function RendTallaForm({
                     </div>
 
                 )}
-
-
-                {/* =================================================
-                    BOTONES
-                ================================================= */}
 
                 <div className="form-actions">
 

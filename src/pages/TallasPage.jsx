@@ -30,8 +30,8 @@ import {
     eliminarTalla as eliminarTallaService
 } from '../services/tallas.service';
 
-import TallasTable from '../components/TallasTable';
-import TallaForm from '../components/TallaForm';
+import TallasTable from '../components/Talla/TallasTable';
+import TallaForm from '../components/Talla/TallaForm';
 
 import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
@@ -153,9 +153,45 @@ function TallasPage() {
       =========================================================
     */
 
+
     useEffect(() => {
-        cargarTallas(obtenerFiltros());
-    }, [busqueda, estado]);
+
+        const filtros = {};
+
+        const valor =
+            busqueda.trim();
+
+        if (valor !== '') {
+
+            if (!isNaN(valor)) {
+
+                filtros.codigo =
+                    Number(valor);
+
+            } else {
+
+                filtros.nombre =
+                    valor;
+
+            }
+
+        }
+
+        if (estado !== '') {
+
+            filtros.estado =
+                estado;
+
+        }
+
+        cargarTallas(
+            filtros
+        );
+
+    }, [
+        busqueda,
+        estado
+    ]);
 
     /*
       Consulta los registros y actualiza el listado y los mensajes de la página.
@@ -355,7 +391,8 @@ function TallasPage() {
                         maxLength={60}
                     />
                 </div>
-
+                
+                <div className="filter-field">
                 <select
                     value={estado}
                     onChange={(event) => {
@@ -366,76 +403,77 @@ function TallasPage() {
                     <option value="A">Activos</option>
                     <option value="I">Inactivos</option>
                 </select>
+                </div>
 
             </div>
 
-            {loading && (
-                <div className="state-container loading-state">
-                    <CircularProgress
-                        size={30}
-                        thickness={4}
-                    />
-
-                    <div className="state-content">
-                        <h2>Cargando tallas</h2>
-                        <p>Consultando la información...</p>
-                    </div>
-                </div>
-            )}
-
-            {!loading && error && (
-                <div className="state-container error-state">
-
-                    <div className="state-icon error-icon">
-                        <ErrorOutlineOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-                        <h2>No fue posible cargar las tallas</h2>
-
-                        <p>
-                            {error}
-                        </p>
-
-                        <button
-                            type="button"
-                            className="primary-button"
-                            onClick={() => cargarTallas(obtenerFiltros())}
-                        >
-                            Reintentar
-                        </button>
-                    </div>
-
-                </div>
-            )}
-
-            {!loading && !error && tallas.length === 0 && (
-                <div className="state-container empty-state">
-
-                    <div className="state-icon empty-icon">
-                        <SearchOffOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-
-                        <h2>
-                            {hayFiltros
-                                ? 'No se encontraron tallas'
-                                : 'No hay tallas registradas'}
-                        </h2>
-
-                        <p>
-                            {hayFiltros
-                                ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen tallas registradas en el sistema.'}
-                        </p>
-
-                    </div>
-
-                </div>
-            )}
-
             <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
+
+                {loading && (
+                    <div className="state-container loading-state">
+                        <CircularProgress
+                            size={30}
+                            thickness={4}
+                        />
+
+                        <div className="state-content">
+                            <h2>Cargando tallas</h2>
+                            <p>Consultando la información...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div className="state-container error-state">
+
+                        <div className="state-icon error-icon">
+                            <ErrorOutlineOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+                            <h2>No fue posible cargar las tallas</h2>
+
+                            <p>
+                                {error}
+                            </p>
+
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => cargarTallas(obtenerFiltros())}
+                            >
+                                Reintentar
+                            </button>
+                        </div>
+
+                    </div>
+                )}
+
+                {!loading && !error && tallas.length === 0 && (
+                    <div className="state-container empty-state">
+
+                        <div className="state-icon empty-icon">
+                            <SearchOffOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+
+                            <h2>
+                                {hayFiltros
+                                    ? 'No se encontraron tallas'
+                                    : 'No hay tallas registradas'}
+                            </h2>
+
+                            <p>
+                                {hayFiltros
+                                    ? 'No hay tallas que coincidan con los criterios de búsqueda.'
+                                    : 'Aún no existen tallas registradas en el sistema.'}
+                            </p>
+
+                        </div>
+
+                    </div>
+                )}
 
                 {!loading && !error && tallas.length > 0 && (
                     <div className="table-section">
@@ -453,6 +491,11 @@ function TallasPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <TallaForm
+                            key={
+                                tallaSeleccionada
+                                    ? `editar-${tallaSeleccionada.codigo}`
+                                    : 'crear-talla'
+                            }
                             talla={tallaSeleccionada}
                             onClose={() => {
                                 setMostrarFormulario(false);

@@ -1,5 +1,5 @@
 /*=============================================================================
-  Nombre responsabilidad: Capturar los datos de usuario
+  Nombre responsabilidad: Capturar los datos de molinete
 
   Autor: JUAN ANDRES SERNA CASTRO
   Fecha_creacion: 22/Septiembre/2026
@@ -18,9 +18,9 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
-import { consultarUsuarios } from '../services/usuarios.service';
+import { consultarMolinetes } from '../../services/molinetes.service';
 
-function UsuarioForm({ onClose, onSubmit, usuario }) {
+function MolineteForm({ onClose, onSubmit, molinete }) {
 
     const [codigoDuplicado, setCodigoDuplicado] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
@@ -28,58 +28,43 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
     const [error, setError] = useState(null);
 
     const [formData, setFormData] = useState({
-        codUsuario: usuario?.codigo ?? '',
-        nomUsuario: usuario?.nombre ?? '',
-        passUsuario: usuario?.password ?? '',
-        estaUsuario: usuario?.estado ?? 'A'
+        codMolinete: molinete?.codigo ?? '',
+        nomMolinete: molinete?.nombre.toUpperCase() ?? '',
+        rpmMolinete: molinete?.rpm ?? '',
+        periMolinete: molinete?.perimetro ?? ''
     });
+
+    useEffect(() => {
     
-    useEffect(() => {
-
-        const codigo = formData.codUsuario;
-
-        if (!codigo || usuario) {
-            setCodigoDuplicado(false);
-            return;
-        }
-
-        const temporizador = setTimeout(async () => {
-
-            try {
-
-                const response = await consultarUsuarios({
-                    codigo: Number(codigo)
-                });
-
-                const existe = response.data?.length > 0;
-
-                setCodigoDuplicado(existe);
-
-            } catch (error) {
-
-                console.error('Error verificando código:', error);
-
+            const codigo = formData.codMolinete;
+    
+            if (!codigo || molinete) {
+                return;
             }
-
-        }, 500);
-
-        return () => clearTimeout(temporizador);
-
-    }, [formData.codUsuario, usuario]);
-
-    useEffect(() => {
-        setFormData({
-            codUsuario: usuario?.codigo ?? '',
-            nomUsuario: usuario?.nombre.toUpperCase() ?? '',
-            passUsuario: usuario?.password ?? '',
-            estaUsuario: usuario?.estado ?? 'A'
-        });
-
-        setError(null);
-        setFieldErrors({});
-        setCodigoDuplicado(false);
-    }, [usuario]);
-
+    
+            const temporizador = setTimeout(async () => {
+    
+                try {
+    
+                    const response = await consultarMolinetes({
+                        codigo: Number(codigo)
+                    });
+    
+                    const existe = response.data?.length > 0;
+    
+                    setCodigoDuplicado(existe);
+    
+                } catch (error) {
+    
+                    console.error('Error verificando código:', error);
+    
+                }
+    
+            }, 500);
+    
+            return () => clearTimeout(temporizador);
+    
+    }, [formData.codMolinete, molinete]);
 
     /*
       Actualiza los datos del formulario y limpia los errores del campo.
@@ -88,21 +73,32 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
         const { name, value } = event.target;
 
-        if (name === 'codUsuario' && value.length > 3) {
+        if (name === 'codMolinete' && value.length > 3) {
             return;
         }
+        if (
+            ['rpmMolinete', 'periMolinete'].includes(name) &&
+            value.length > 3
+        ) {
+            return;
+        }
+        if (name === 'codMolinete') {
+                setCodigoDuplicado(false);
+            }
 
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'nomUsuario'
+            [name]: name === 'nomMolinete'
                 ? value.toUpperCase()
                 : value
         }));
-        
+
         setFieldErrors(prev => ({
             ...prev,
             [name]: null
         }));
+        
+        setError(null);
     }
 
     /*
@@ -115,13 +111,15 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
             return;
         }
 
+        
         if (codigoDuplicado) {
             return;
         }
 
+
         const data = {
             ...formData,
-            codUsuario: Number(formData.codUsuario)
+            codMolinete: Number(formData.codMolinete)
         };
 
         try {
@@ -136,11 +134,10 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
             const mensaje =
                 error.response?.data?.message ||
-                'No fue posible guardar la talla.';
+                'No fue posible guardar el molinete.';
 
             const campo =
                 error.response?.data?.field;
-
             if (campo) {
 
                 setFieldErrors({
@@ -165,21 +162,22 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
         const errores = {};
 
-        if (!formData.codUsuario) {
-            errores.codUsuario = 'Completa este campo.';
+        if (!formData.codMolinete) {
+            errores.codMolinete = 'Completa este campo.';
         }
 
-        if (!formData.nomUsuario.trim()) {
-            errores.nomUsuario = 'Completa este campo.';
-        }
-        
-        if (!formData.passUsuario.trim()) {
-            errores.passUsuario = 'Completa este campo.';
+        if (!formData.nomMolinete.trim()) {
+            errores.nomMolinete = 'Completa este campo.';
         }
 
-        if (!formData.estaUsuario) {
-            errores.estaUsuario = 'Completa este campo.';
+        if (!formData.rpmMolinete) {
+            errores.rpmMolinete = 'Completa este campo.';
         }
+
+        if (!formData.periMolinete) {
+            errores.periMolinete = 'Completa este campo.';
+        }
+
 
         setFieldErrors(errores);
 
@@ -191,7 +189,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
             <div className="form-header">
 
-            <h2>{usuario ? 'Editar Usuario' : 'Crear Usuario'}</h2>
+            <h2>{molinete ? 'Editar Molinete' : 'Crear Molinete'}</h2>
 
             <button
                 type="button"
@@ -209,25 +207,24 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                 <div className="form-group">
 
                     <label>
-                        Código Usuario
+                        Código Molinete
                     </label>
 
                 <input
                     type="number"
-                    name="codUsuario"
-                    value={formData.codUsuario}
+                    name="codMolinete"
+                    value={formData.codMolinete}
                     onChange={handleChange}
                     min={1}
                     max={999}
-                    disabled={Boolean(usuario)}
-                    className={`${usuario ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codUsuario ? 'input-error' : ''}`}
+                    disabled={Boolean(molinete)}
+                    className={`${molinete ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codMolinete ? 'input-error' : ''}`}
                 />
-
-                    {(codigoDuplicado || fieldErrors.codUsuario) && (
+                    {(codigoDuplicado || fieldErrors.codMolinete) && (
                         <span className="field-error">
                             {codigoDuplicado
-                                ? 'El código de usuario ya existe.'
-                                : fieldErrors.codUsuario}
+                                ? 'El código de molinete ya existe.'
+                                : fieldErrors.codMolinete}
                         </span>
                     )}
 
@@ -236,44 +233,50 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                 <div className="form-group">
 
                     <label>
-                        Nombre Usuario
+                        Nombre Molinete
                     </label>
 
                     <input
                         type="text"
-                        name="nomUsuario"
-                        value={formData.nomUsuario}
+                        name="nomMolinete"
+                        value={formData.nomMolinete}
                         onChange={handleChange}
                         maxLength={60}
-                        className={fieldErrors.nomUsuario ? 'input-error' : ''}
+                        className={fieldErrors.nomMolinete ? 'input-error' : ''}
                     />
-                    
-                    {fieldErrors.nomUsuario && (
+
+                    {fieldErrors.nomMolinete && (
                         <span className="field-error">
-                            {fieldErrors.nomUsuario}
+                            {fieldErrors.nomMolinete}
                         </span>
                     )}
+
 
                 </div>
 
                 <div className="form-group">
 
                     <label>
-                        Contraseña Usuario
+                        RPM
                     </label>
 
                     <input
-                        type="text"
-                        name="passUsuario"
-                        value={formData.passUsuario}
+                        type="number"
+                        step="any"
+                        name="rpmMolinete"
+                        value={formData.rpmMolinete}
                         onChange={handleChange}
-                        maxLength={30}
-                        className={fieldErrors.passUsuario ? 'input-error' : ''}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
+                        className={fieldErrors.rpmMolinete ? 'input-error' : ''}
                     />
 
-                    {fieldErrors.passUsuario && (
+                    {fieldErrors.rpmMolinete && (
                         <span className="field-error">
-                            {fieldErrors.passUsuario}
+                            {fieldErrors.rpmMolinete}
                         </span>
                     )}
 
@@ -282,29 +285,25 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                 <div className="form-group">
 
                     <label>
-                        Estado
+                        Perímetro
                     </label>
 
-                    <select
-                        name="estaUsuario"
-                        value={formData.estaUsuario}
+                    <input
+                        type="number"
+                        step="any"
+                        name="periMolinete"
+                        value={formData.periMolinete}
                         onChange={handleChange}
-                        className={fieldErrors.estaUsuario ? 'input-error' : ''}
-                    >
-                        <option value="A">
-                            Activo
-                        </option>
-
-                        <option value="I">
-                            Inactivo
-                        </option>
-
-                    </select>
-
-                    
-                    {fieldErrors.estaUsuario && (
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
+                        className={fieldErrors.periMolinete ? 'input-error' : ''}
+                    />
+                    {fieldErrors.periMolinete && (
                         <span className="field-error">
-                            {fieldErrors.estaUsuario}
+                            {fieldErrors.periMolinete}
                         </span>
                     )}
 
@@ -317,7 +316,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
                         <div className="form-error-content">
                             <span className="form-error-title">
-                                No fue posible guardar el usuario
+                                No fue posible guardar el molinete
                             </span>
 
                             <span className="form-error-message">
@@ -349,7 +348,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                                 Guardando...
                             </>
                         ) : (
-                            usuario ? 'Actualizar' : 'Guardar'
+                            molinete ? 'Actualizar' : 'Guardar'
                         )}
                     </button>
                 </div>
@@ -360,4 +359,4 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
     );
 }
 
-export default UsuarioForm;
+export default MolineteForm;

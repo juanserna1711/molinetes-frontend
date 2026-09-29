@@ -21,8 +21,10 @@ import RendTallasPage from './pages/RendTallasPage';
 import UsuariosPage from './pages/UsuariosPage';
 import MolinetesPage from './pages/MolinetesPage';
 import LoginPage from './pages/LoginPage';
-import TigimoliPage from './pages/TigimoliPage'
-import NuevoTigimoliPage from './pages/NuevoTigimoliPage'
+import OrdeProdPage from './pages/OrdeProdPage';
+import NuevoTigimoliPage from './pages/NuevoTigimoliPage';
+import TiposHilazaPage from './pages/TiposHilazaPage';
+import TiHiPromPage from './pages/TiHiPromPage';
 
 function App() {
     return (
@@ -37,8 +39,10 @@ function App() {
                 <Route path="/tallas" element={<TallasPage />} />
                 <Route path="/usuarios" element={<UsuariosPage />} />
                 <Route path="/molinetes" element={<MolinetesPage />} />
-                <Route path="/tigimoli" element={<TigimoliPage />} />
+                <Route path="/ordeprod" element={<OrdeProdPage />} />                
                 <Route path="/nuevo-tigimoli" element={<NuevoTigimoliPage />} />
+                <Route path="/tipos-hilaza" element={<TiposHilazaPage />} />
+                <Route path="/tipos-hilaza-prom" element={<TiHiPromPage />} />
                 </Route>
                 {/* Ruta por si intentan entrar a una URL que no existe */}
                 <Route path="*" element={<h2>404 - Página no encontrada</h2>} />

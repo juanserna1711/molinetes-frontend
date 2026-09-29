@@ -5,13 +5,16 @@
   Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
-  Expone las operaciones Axios del recurso /tigimoli para páginas y formularios.
+  Expone la operación Axios del recurso /tigimoli para registrar
+  cálculos y generar la respectiva Orden de Trabajo.
 
   Historial_modificaciones:
 
-  Autor:
-  Fecha:
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha: 25/Septiembre/2026
   Descripcion:
+  Se eliminan las consultas históricas de TIGIMOLI y se conserva
+  únicamente el registro del cálculo.
 =============================================================================*/
 
 import axios from 'axios';
@@ -20,38 +23,11 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 /*
-  Consulta los cálculos TIGIMOLI utilizando los filtros recibidos.
-*/
-export async function consultarTigimoli(params = {}) {
-    const response = await axios.get(
-        `${API_URL}/tigimoli`,
-        {
-            params
-        }
-    );
-
-    return response.data;
-}
-
-/*
-  Consulta el detalle del cálculo seleccionado.
-*/
-export async function consultarDetalleTigimoli(params = {}) {
-    const response = await axios.get(
-        `${API_URL}/tigimoli/detalle`,
-        {
-            params
-        }
-    );
-
-    return response.data;
-}
-
-
-/*
-  Registra un nuevo cálculo TIGIMOLI con la información recibida.
+  Registra un nuevo cálculo TIGIMOLI y genera
+  la respectiva Orden de Trabajo.
 */
 export async function crearTigimoli(data) {
+
     const response = await axios.post(
         `${API_URL}/tigimoli`,
         data

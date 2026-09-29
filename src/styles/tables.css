@@ -21,21 +21,17 @@
 .table-container {
     width: 100%;
     overflow-x: auto;
-
     background-color: #ffffff;
     border: 1px solid #e2e7ed;
     border-radius: 10px;
-
     box-shadow: 0 1px 3px rgba(38, 54, 77, 0.05);
 }
 
 .table {
     width: 100%;
     min-width: 900px;
-
     border-collapse: separate;
     border-spacing: 0;
-
     font-size: 13px;
     color: #344054;
 }
@@ -47,19 +43,13 @@
 }
 .table th {
     height: 46px;
-
     padding: 0 14px;
-
     border-bottom: 1px solid #dfe4ea;
-
     text-align: center;
     vertical-align: middle;
-
     color: #26364d;
-
     font-size: 13px;
     font-weight: 700;
-
     white-space: nowrap;
 }
 
@@ -67,15 +57,10 @@
 
 .table td {
     height: 52px;
-
     padding: 0 14px;
-
     border-bottom: 1px solid #edf0f3;
-
     vertical-align: middle;
-
     white-space: nowrap;
-
     text-align: center;
 }
 
@@ -86,7 +71,6 @@
 
 .table tbody tr {
     background-color: #ffffff;
-
     transition: background-color 0.15s ease;
 }
 
@@ -121,25 +105,14 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     min-width: 88px;
     height: 30px;
-
     padding: 0 10px;
-
     border-radius: 15px;
-
-    font-family: inherit;
     font-size: 11px;
     font-weight: 600;
-
     cursor: pointer;
-
-    transition:
-        background-color 0.15s ease,
-        border-color 0.15s ease,
-        transform 0.1s ease;
-
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
     outline: none;
 }
 
@@ -200,23 +173,15 @@
 .table-action {
     width: 32px;
     height: 32px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 0;
-
     border: none;
     border-radius: 6px;
-
     background-color: transparent;
-
     cursor: pointer;
-
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .table-action svg {
@@ -269,6 +234,24 @@
     text-transform: uppercase;
 }
 
+/* ---------- Ver detalle ---------- */
+.table-action.view {
+    border: 1px solid #d6dee7;
+    background-color: #ffffff;
+    color: #52647a;
+}
+
+.table-action.view:hover:not(:disabled) {
+    border-color: #ed1685;
+    background-color: #fff5fa;
+    color: #ed1685;
+}
+
+.table-action.view:disabled {
+    opacity: .55;
+    cursor: wait;
+}
+
 /* =========================================================
    VALORES AUTOCALCULADOS
    ========================================================= */
@@ -277,7 +260,6 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     color: #2563a6;
     font-weight: 600;
 }

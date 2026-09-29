@@ -98,7 +98,6 @@
     outline: none;
     background: #ffffff;
     color: #26364d;
-    font-family: inherit;
     font-size: 13px;
     text-align: center;
     box-sizing: border-box;
@@ -183,7 +182,6 @@
     height: 38px;
     padding: 0 12px;
     border-radius: 8px;
-    font-family: inherit;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -227,13 +225,10 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-
     margin-bottom: 18px;
     padding: 12px;
-
     border: 1px solid #f0c7c4;
     border-radius: 7px;
-
     background-color: #fff7f6;
     color: #b42318;
 }
@@ -241,9 +236,7 @@
 .form-error > svg {
     width: 19px;
     height: 19px;
-
     flex-shrink: 0;
-
     margin-top: 1px;
 }
 
@@ -251,13 +244,11 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-
     min-width: 0;
 }
 
 .form-error-title {
     color: #912018;
-
     font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
@@ -265,10 +256,8 @@
 
 .form-error-message {
     color: #b42318;
-
     font-size: 11px;
     line-height: 1.5;
-
     overflow-wrap: anywhere;
 }
 

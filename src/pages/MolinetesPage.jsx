@@ -20,19 +20,15 @@ import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
-
 import {
     consultarMolinetes,
     crearMolinete as crearMolineteService,
     actualizarMolinete as actualizarMolineteService,
     eliminarMolinete as eliminarMolineteService
 } from '../services/molinetes.service';
-
-import MolinetesTable from '../components/MolinetesTable';
-import MolineteForm from '../components/MolineteForm';
-
+import MolinetesTable from '../components/Molinete/MolinetesTable';
+import MolineteForm from '../components/Molinete/MolineteForm';
 import ConfirmModal from '../components/ConfirmModal';
-
 import Snackbar from '../components/Snackbar';
 
 function MolinetesPage() {
@@ -40,16 +36,11 @@ function MolinetesPage() {
     const [molinetes, setMolinetes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [busqueda, setBusqueda] = useState('');
     const [molineteSeleccionado, setMolineteSeleccionado] = useState(null);
-
     const [molineteAEliminar, setMolineteAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
-
-
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
     const [snackbar, setSnackbar] = useState({
         message: '',
         type: 'success'
@@ -60,7 +51,6 @@ function MolinetesPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
 
     function solicitarEliminarMolinete(molinete) {
         setMolineteAEliminar(molinete);
@@ -76,7 +66,6 @@ function MolinetesPage() {
       SNACKBAR
       =========================================================
     */
-
 
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({
@@ -110,7 +99,6 @@ function MolinetesPage() {
       =========================================================
     */
 
-
     /*
       Prepara los filtros de búsqueda de la página.
     */
@@ -128,14 +116,12 @@ function MolinetesPage() {
 
         return filtros;
     }
-
     
     /*
       =========================================================
       CARGA INICIAL
       =========================================================
     */
-
 
     useEffect(() => {
         cargarMolinetes();
@@ -148,7 +134,32 @@ function MolinetesPage() {
     */
 
     useEffect(() => {
-        cargarMolinetes(obtenerFiltros());
+
+        const filtros = {};
+
+        const valor =
+            busqueda.trim();
+
+        if (valor !== '') {
+
+            if (!isNaN(valor)) {
+
+                filtros.codigo =
+                    Number(valor);
+
+            } else {
+
+                filtros.nombre =
+                    valor;
+
+            }
+
+        }
+
+        cargarMolinetes(
+            filtros
+        );
+
     }, [busqueda]);
 
 
@@ -310,73 +321,73 @@ function MolinetesPage() {
 
             </div>
 
-            {loading && (
-                <div className="state-container loading-state">
-                    <CircularProgress
-                        size={30}
-                        thickness={4}
-                    />
-
-                    <div className="state-content">
-                        <h2>Cargando molinetes</h2>
-                        <p>Consultando la información...</p>
-                    </div>
-                </div>
-            )}
-
-            {!loading && error && (
-                <div className="state-container error-state">
-
-                    <div className="state-icon error-icon">
-                        <ErrorOutlineOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-                        <h2>No fue posible cargar los molinetes</h2>
-
-                        <p>
-                            {error}
-                        </p>
-
-                        <button
-                            type="button"
-                            className="primary-button"
-                            onClick={() => cargarMolinetes(obtenerFiltros())}
-                        >
-                            Reintentar
-                        </button>
-                    </div>
-
-                </div>
-            )}
-
-            {!loading && !error && molinetes.length === 0 && (
-                <div className="state-container empty-state">
-
-                    <div className="state-icon empty-icon">
-                        <SearchOffOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-
-                        <h2>
-                            {hayFiltros
-                                ? 'No se encontraron molinetes'
-                                : 'No hay molinetes registrados'}
-                        </h2>
-
-                        <p>
-                            {hayFiltros
-                                ? 'No hay molinetes que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen molinetes registrados en el sistema.'}
-                        </p>
-
-                    </div>
-
-                </div>
-            )}
-
             <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
+
+                {loading && (
+                    <div className="state-container loading-state">
+                        <CircularProgress
+                            size={30}
+                            thickness={4}
+                        />
+
+                        <div className="state-content">
+                            <h2>Cargando molinetes</h2>
+                            <p>Consultando la información...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div className="state-container error-state">
+
+                        <div className="state-icon error-icon">
+                            <ErrorOutlineOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+                            <h2>No fue posible cargar los molinetes</h2>
+
+                            <p>
+                                {error}
+                            </p>
+
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => cargarMolinetes(obtenerFiltros())}
+                            >
+                                Reintentar
+                            </button>
+                        </div>
+
+                    </div>
+                )}
+
+                {!loading && !error && molinetes.length === 0 && (
+                    <div className="state-container empty-state">
+
+                        <div className="state-icon empty-icon">
+                            <SearchOffOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+
+                            <h2>
+                                {hayFiltros
+                                    ? 'No se encontraron molinetes'
+                                    : 'No hay molinetes registrados'}
+                            </h2>
+
+                            <p>
+                                {hayFiltros
+                                    ? 'No hay molinetes que coincidan con los criterios de búsqueda.'
+                                    : 'Aún no existen molinetes registrados en el sistema.'}
+                            </p>
+
+                        </div>
+
+                    </div>
+                )}
 
                 {!loading && !error && molinetes.length > 0 && (
                     <div className="table-section">
@@ -391,6 +402,11 @@ function MolinetesPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <MolineteForm
+                            key={
+                                molineteSeleccionado
+                                    ? `editar-${molineteSeleccionado.codigo}`
+                                    : 'crear-molinete'
+                            }
                             molinete={molineteSeleccionado}
                             onClose={() => {
                                 setMostrarFormulario(false);

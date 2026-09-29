@@ -20,37 +20,28 @@ import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
-
 import {
     consultarRendTallas,
     crearRendTalla as crearRendTallaService,
     actualizarRendTalla as actualizarRendTallaService,
     eliminarRendTalla as eliminarRendTallaService
 } from '../services/rendtallas.service';
-
-import RendTallasTable from '../components/RendTallasTable';
-import RendTallaForm from '../components/RendTallaForm';
-
+import RendTallasTable from '../components/RendTalla/RendTallasTable';
+import RendTallaForm from '../components/RendTalla/RendTallaForm';
 import Snackbar from '../components/Snackbar';
 import ConfirmModal from '../components/ConfirmModal';
 
 function RendTallasPage() {
 
     const [rendtallas, setRendTallas] = useState([]);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
-
     const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
-
     const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
-
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
     const [snackbar, setSnackbar] = useState({
         message: '',
         type: 'success'
@@ -68,24 +59,18 @@ function RendTallasPage() {
         setMostrarFormulario(true);
     }
 
-
     function agregarRendTalla(rendtalla) {
         /*
-         * La talla no tiene rendimiento.
-         *
-         * Abrimos el mismo formulario de nuevo rendimiento,
-         * pero enviamos la talla seleccionada para que aparezca
-         * automáticamente en el selector.
+          La talla no tiene rendimiento.
+          Abrimos el mismo formulario de nuevo rendimiento, pero enviamos la talla seleccionada para que aparezca automáticamente en el selector.
          */
         setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
     }
 
-
     function solicitarEliminarRendTalla(rendtalla) {
         setRendTallaAEliminar(rendtalla);
     }
-
 
     /*
       =========================================================
@@ -99,7 +84,6 @@ function RendTallasPage() {
             type
         });
     }
-
 
     useEffect(() => {
 
@@ -118,13 +102,11 @@ function RendTallasPage() {
 
     }, [snackbar.message]);
 
-
     /*
       =========================================================
       FILTROS
       =========================================================
     */
-
     /*
       Prepara los filtros de búsqueda de la página.
     */
@@ -151,7 +133,6 @@ function RendTallasPage() {
         return filtros;
     }
 
-
     /*
       =========================================================
       CARGA INICIAL
@@ -162,7 +143,6 @@ function RendTallasPage() {
         cargarRendTallas();
     }, []);
 
-
     /*
       =========================================================
       BÚSQUEDA AUTOMÁTICA
@@ -170,9 +150,43 @@ function RendTallasPage() {
     */
 
     useEffect(() => {
-        cargarRendTallas(obtenerFiltros());
-    }, [busqueda, estado]);
 
+        const filtros = {};
+
+        const valor =
+            busqueda.trim();
+
+        if (valor !== '') {
+
+            if (!isNaN(valor)) {
+
+                filtros.codigo =
+                    Number(valor);
+
+            } else {
+
+                filtros.nombre =
+                    valor;
+
+            }
+
+        }
+
+        if (estado !== '') {
+
+            filtros.estado =
+                estado;
+
+        }
+
+        cargarRendTallas(
+            filtros
+        );
+
+    }, [
+        busqueda,
+        estado
+    ]);
 
     /*
       Consulta los registros y actualiza el listado y los mensajes de la página.
@@ -203,7 +217,6 @@ function RendTallasPage() {
 
         }
     }
-
 
     function cerrarFormulario() {
 
@@ -272,10 +285,7 @@ function RendTallasPage() {
 
             setEliminando(true);
 
-            await eliminarRendTallaService(
-                rendtallaAEliminar.codigo
-            );
-
+            await eliminarRendTallaService(rendtallaAEliminar.codigo);
             await cargarRendTallas(obtenerFiltros());
 
             setRendTallaAEliminar(null);
@@ -302,10 +312,7 @@ function RendTallasPage() {
         }
     }
 
-
-    const hayFiltros =
-        busqueda.trim() !== '' ||
-        estado !== '';
+    const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
     return (
 
@@ -320,12 +327,10 @@ function RendTallasPage() {
                     </h1>
 
                     <p>
-                        Administración de parámetros de rendimiento
-                        con la talla asociada.
+                        Administración de parámetros de rendimiento con la talla asociada.
                     </p>
 
                 </div>
-
 
                 <button
                     type="button"
@@ -362,7 +367,7 @@ function RendTallasPage() {
 
                 </div>
 
-
+                <div className="filter-field">
                 <select
                     value={estado}
                     onChange={(event) =>
@@ -383,81 +388,79 @@ function RendTallasPage() {
                     </option>
 
                 </select>
-
-            </div>
-
-
-            {loading && (
-                <div className="state-container loading-state">
-                    <CircularProgress
-                        size={30}
-                        thickness={4}
-                    />
-
-                    <div className="state-content">
-                        <h2>Cargando rendimientos</h2>
-                        <p>Consultando la información...</p>
-                    </div>
                 </div>
-            )}
-
-            {!loading && error && (
-                <div className="state-container error-state">
-
-                    <div className="state-icon error-icon">
-                        <ErrorOutlineOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-                        <h2>No fue posible cargar los rendimientos</h2>
-
-                        <p>
-                            {error}
-                        </p>
-
-                        <button
-                            type="button"
-                            className="primary-button"
-                            onClick={() => cargarRendTallas(obtenerFiltros())}
-                        >
-                            Reintentar
-                        </button>
-                    </div>
 
                 </div>
-            )}
-
-            {!loading && !error && rendtallas.length === 0 && (
-                <div className="state-container empty-state">
-
-                    <div className="state-icon empty-icon">
-                        <SearchOffOutlinedIcon />
-                    </div>
-
-                    <div className="state-content">
-
-                        <h2>
-                            {hayFiltros
-                                ? 'No se encontraron tallas'
-                                : 'No hay tallas registradas'}
-                        </h2>
-
-                        <p>
-                            {hayFiltros
-                                ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                : 'Aún no existen tallas registradas en el sistema.'}
-                        </p>
-
-                    </div>
-
-                </div>
-            )}
 
             <div
-                className={`page-workspace ${
-                    mostrarFormulario ? 'form-open' : ''
-                }`}
+                className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}
             >
+
+                {loading && (
+                    <div className="state-container loading-state">
+                        <CircularProgress
+                            size={30}
+                            thickness={4}
+                        />
+
+                        <div className="state-content">
+                            <h2>Cargando rendimientos</h2>
+                            <p>Consultando la información...</p>
+                        </div>
+                    </div>
+                )}
+
+                {!loading && error && (
+                    <div className="state-container error-state">
+
+                        <div className="state-icon error-icon">
+                            <ErrorOutlineOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+                            <h2>No fue posible cargar los rendimientos</h2>
+
+                            <p>
+                                {error}
+                            </p>
+
+                            <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => cargarRendTallas(obtenerFiltros())}
+                            >
+                                Reintentar
+                            </button>
+                        </div>
+
+                    </div>
+                )}
+
+                {!loading && !error && rendtallas.length === 0 && (
+                    <div className="state-container empty-state">
+
+                        <div className="state-icon empty-icon">
+                            <SearchOffOutlinedIcon />
+                        </div>
+
+                        <div className="state-content">
+
+                            <h2>
+                                {hayFiltros
+                                    ? 'No se encontraron tallas'
+                                    : 'No hay tallas registradas'}
+                            </h2>
+
+                            <p>
+                                {hayFiltros
+                                    ? 'No hay tallas que coincidan con los criterios de búsqueda.'
+                                    : 'Aún no existen tallas registradas en el sistema.'}
+                            </p>
+
+                        </div>
+
+                    </div>
+                )}
                 {!loading &&
                     !error &&
                     rendtallas.length > 0 && (
@@ -465,13 +468,9 @@ function RendTallasPage() {
                         <div className="table-section">
 
                             <RendTallasTable
-
                                 rendtallas={rendtallas}
-
                                 onEdit={editarRendTalla}
-
                                 onAdd={agregarRendTalla}
-
                                 onDelete={solicitarEliminarRendTalla}
 
                             />
@@ -486,15 +485,15 @@ function RendTallasPage() {
                     <aside className="form-section">
 
                         <RendTallaForm
-
+                            key={
+                                rendtallaSeleccionada
+                                    ? `rendimiento-${rendtallaSeleccionada.codigo}`
+                                    : 'nuevo-rendimiento'
+                            }
                             rendtallas={rendtallas}
-
                             rendtalla={rendtallaSeleccionada}
-
                             onClose={cerrarFormulario}
-
                             onSubmit={guardarRendTalla}
-
                         />
 
                     </aside>

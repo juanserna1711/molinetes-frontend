@@ -4,8 +4,9 @@
   Autor: JUAN ANDRES SERNA CASTRO
   Fecha_creacion: 22/Septiembre/2026
 
-  Descripcion responsabilidad:
-  Define selección de molinetes y tallas, captura de rollos, tabla, resultados, acciones y adaptación a distintos anchos.
+    Descripcion responsabilidad:
+    Define la selección de tallas, la distribución entre molinetes,
+    los resultados del cálculo, las acciones y la adaptación a distintos anchos.
 
   Historial_modificaciones:
 
@@ -13,51 +14,11 @@
   Fecha:
   Descripcion:
 =============================================================================*/
+
+
 /* =========================================================
-   CABECERA
+   FECHA
    ========================================================= */
-
-.nuevo-tigimoli-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-
-    gap: 24px;
-
-    margin-bottom: 22px;
-}
-
-.nuevo-tigimoli-overline,
-.section-overline {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: #ed1685;
-
-    font-size: 10px;
-    font-weight: 700;
-
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.nuevo-tigimoli-header h1 {
-    margin: 0;
-
-    color: #26364d;
-
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.nuevo-tigimoli-header p {
-    margin: 6px 0 0;
-
-    color: #718096;
-
-    font-size: 12px;
-}
 
 .nuevo-tigimoli-date {
     display: flex;
@@ -73,6 +34,74 @@
 .nuevo-tigimoli-date svg {
     width: 16px;
     height: 16px;
+}
+
+/* =========================================================
+   TIPO DE HILAZA
+   ========================================================= */
+
+.nuevo-tigimoli-hilaza-control {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.nuevo-tigimoli-hilaza-control select {
+    min-width: 220px;
+    height: 36px;
+
+    padding: 0 34px 0 11px;
+
+    border: 1px solid #d6dee7;
+    border-radius: 6px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #34445a;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+.nuevo-tigimoli-hilaza-control select:hover:not(:disabled) {
+    border-color: #f09ac2;
+}
+
+.nuevo-tigimoli-hilaza-control select:focus {
+    border-color: #ed1685;
+
+    box-shadow:
+        0 0 0 2px rgba(237, 22, 133, .08);
+}
+
+.nuevo-tigimoli-hilaza-control select:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+.nuevo-tigimoli-applying {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: #7c8999;
+
+    font-size: 11px;
+}
+
+.nuevo-tigimoli-applying .MuiCircularProgress-root {
+    color: #ed1685;
 }
 
 
@@ -118,232 +147,19 @@
     font-size: 11px;
 }
 
-.selection-counter {
-    padding: 6px 10px;
-
-    border-radius: 14px;
-
-    background: #fff0f7;
-
-    color: #ed1685;
-
-    font-size: 10px;
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   MOLINETES
-   ========================================================= */
-
-.molinetes-selector {
-    display: grid;
-
-    grid-template-columns:
-        repeat(6, minmax(130px, 1fr));
-
-    gap: 9px;
-}
-
-.molinete-card {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-
-    min-width: 0;
-    min-height: 64px;
-
-    padding: 9px 10px;
-
-    border: 1px solid #dce3eb;
-    border-radius: 7px;
-
-    background: #ffffff;
-
-    cursor: pointer;
-
-    transition:
-        border-color .15s ease,
-        background-color .15s ease,
-        box-shadow .15s ease;
-}
-
-.molinete-card:hover {
-    border-color: #f3a4ca;
-
-    background: #fffafd;
-}
-
-.molinete-card.selected {
-    border-color: #ed1685;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(237, 22, 133, .06),
-            rgba(240, 33, 145, .10)
-        );
-
-    box-shadow:
-        0 0 0 1px rgba(237, 22, 133, .08);
-}
-
-.molinete-card input {
-    position: absolute;
-
-    width: 1px;
-    height: 1px;
-
-    opacity: 0;
-}
-
-.molinete-check {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 16px;
-    height: 16px;
-
-    margin-right: 8px;
-
-    border: 1px solid #c7d0db;
-    border-radius: 4px;
-
-    flex-shrink: 0;
-}
-
-.molinete-card.selected .molinete-check {
-    border-color: #ed1685;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ed1685 0%,
-            #f02191 100%
-        );
-}
-
-.molinete-check span {
-    width: 7px;
-    height: 4px;
-
-    border-left: 1.5px solid transparent;
-    border-bottom: 1.5px solid transparent;
-
-    transform:
-        rotate(-45deg)
-        translateY(-1px);
-}
-
-.molinete-card.selected
-.molinete-check span {
-    border-left-color: #ffffff;
-    border-bottom-color: #ffffff;
-}
-
-.molinete-card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 29px;
-    height: 29px;
-
-    margin-right: 8px;
-
-    border-radius: 6px;
-
-    background: #f3f6f9;
-
-    color: #64748b;
-
-    flex-shrink: 0;
-}
-
-.molinete-card.selected
-.molinete-card-icon {
-    background: #ffe5f1;
-
-    color: #ed1685;
-}
-
-.molinete-card-icon svg {
-    width: 17px;
-    height: 17px;
-}
-
-.molinete-card-info {
-    display: flex;
-    flex-direction: column;
-
-    min-width: 0;
-
-    gap: 2px;
-}
-
-.molinete-card-info strong {
-    overflow: hidden;
-
-    color: #26364d;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.molinete-card-info span {
-    color: #7b8797;
-
-    font-size: 13px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   CONFIGURACIÓN DE CALCULO
-   ========================================================= */
-
-.calculo-config-grid {
-    display: grid;
-
-    grid-template-columns: .7fr 1.3fr;
-
-    gap: 18px;
-
-    align-items: stretch;
-}
-
-.tallas-panel,
-.calculo-table-panel {
-    padding: 15px;
-
-    border: 1px solid #e3e8ee;
-    border-radius: 7px;
-
-    background: #fafbfd;
-}
-
-.panel-label {
+.section-overline {
     display: block;
 
-    margin-bottom: 12px;
+    margin-bottom: 5px;
 
-    color: #56677d;
+    color: #ed1685;
 
     font-size: 10px;
     font-weight: 700;
 
+    letter-spacing: 1.2px;
     text-transform: uppercase;
-    letter-spacing: .5px;
 }
-
 
 /* =========================================================
    TALLAS
@@ -369,7 +185,6 @@
 
     color: #617087;
 
-    font-family: inherit;
     font-size: 13px;
     font-weight: 700;
 
@@ -404,449 +219,36 @@
         0 2px 6px rgba(237, 22, 133, .18);
 }
 
-
 /* =========================================================
-   TABLA DE CALCULO
+   BLOQUEO DE SECCIONES
    ========================================================= */
 
-.calculo-table-wrapper {
-    width: 100%;
-
-    overflow-x: auto;
-
-    border: 1px solid #e0e6ed;
-    border-radius: 6px;
-
-    background: #ffffff;
+.nuevo-tigimoli-block {
+    transition:
+        opacity .15s ease,
+        filter .15s ease;
 }
 
-.calculo-table {
-    width: 100%;
-
-    border-collapse: collapse;
+.nuevo-tigimoli-block.disabled {
+    opacity: .45;
+    filter: grayscale(.15);
+    pointer-events: none;
+    user-select: none;
 }
-
-.calculo-table th,
-.calculo-table td {
-    padding: 9px 12px;
-
-    border-bottom: 1px solid #edf1f5;
-
-    font-size: 13px;
-}
-
-.calculo-table thead th {
-    background: #f7f9fb;
-
-    color: #657388;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    text-transform: uppercase;
-}
-
-.calculo-table th,
-.calculo-table td {
-    text-align: center;
-    vertical-align: middle;
-}
-
-.calculo-table th:nth-child(1),
-.calculo-table td:nth-child(1),
-.calculo-table th:nth-child(2),
-.calculo-table td:nth-child(2),
-.calculo-table th:nth-child(3),
-.calculo-table td:nth-child(3) {
-    text-align: center;
-}
-
-.calculo-total-row td {
-    text-align: center;
-}
-
-.calculo-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.calculo-size {
-    color: #34445a;
-
-    font-weight: 700;
-}
-
-.calculo-meters {
-    color: #40536a;
-
-    font-variant-numeric: tabular-nums;
-}
-
 
 /* =========================================================
-   ROLLOS
+   DISTRIBUCIÓN
    ========================================================= */
 
-.rollos-field {
+.distribucion-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    width: 100%;
-}
 
-.rollos-input {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
-}
-
-
-.rollos-input input {
-    width: 58px;
-    height: 29px;
-    box-sizing: border-box;
-
-    padding: 0 7px;
-
-    border: 1px solid #d6dee7;
-    border-radius: 5px;
-
-    background: #ffffff;
-    color: #26364d;
-
-    font-family: inherit;
-    font-size: 13px;
-    text-align: center;
-
-    outline: none;
-}
-.rollos-input input::-webkit-outer-spin-button,
-.rollos-input input::-webkit-inner-spin-button {
-    margin: 0;
-
-    -webkit-appearance: none;
-}
-
-.rollos-input input[type="number"] {
-    appearance: textfield;
-    -moz-appearance: textfield;
-}
-
-.rollos-input input:focus {
-    border-color: #ed1685;
-
-    box-shadow:
-        0 0 0 2px rgba(237, 22, 133, .08);
-}
-
-.rollos-input input.input-error {
-    border-color: #dc3545;
-
-    background: #fff8f8;
-
-    box-shadow:
-        0 0 0 2px rgba(220, 53, 69, .07);
-}
-
-.rollos-input button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 29px;
-    height: 29px;
-
-    padding: 0;
-
-    border: 1px solid #d6dee7;
-    border-radius: 5px;
-
-    background: #ffffff;
-    color: #657388;
-
-    cursor: pointer;
-}
-
-.rollos-input button:hover {
-    border-color: #ed1685;
-
-    color: #ed1685;
-}
-
-.rollos-input button svg {
-    width: 15px;
-    height: 15px;
-}
-
-.field-error {
-    color: #dc3545;
-
-    font-size: 8px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   TOTAL
-   ========================================================= */
-
-.calculo-total-row {
-    background: #fafbfc;
-}
-
-.calculo-total-row td {
-    color: #26364d;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   TABLA VACÍA
-   ========================================================= */
-
-.empty-calculo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 150px;
+    min-height: 140px;
 
     padding: 20px;
-
-    border: 1px dashed #d6dee7;
-    border-radius: 6px;
-
-    background: #ffffff;
-
-    color: #8995a4;
-
-    font-size: 10px;
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   RESULTADOS POR MOLINETE
-   ========================================================= */
-
-.result-molinetes-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 14px;
-}
-
-.molinete-result-card {
-    overflow: hidden;
-
-    border: 1px solid #e7c3d4;
-    border-radius: 8px;
-
-    background: #ffffff;
-}
-
-.molinete-result-card.single {
-    grid-column: 1 / -1;
-}
-
-
-/* =========================================================
-   CABECERA RESULTADO
-   ========================================================= */
-
-.result-card-header {
-    display: flex;
-    align-items: center;
-
-    padding: 14px 16px;
-
-    border-bottom: 1px solid #edf1f5;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(237, 22, 133, .025),
-            rgba(240, 33, 145, .055)
-        );
-}
-
-.result-molinete-title {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-}
-
-.result-molinete-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 36px;
-    height: 36px;
-
-    border-radius: 7px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ed1685 0%,
-            #f02191 100%
-        );
-
-    color: #ffffff;
-}
-
-.result-molinete-icon svg {
-    width: 19px;
-    height: 19px;
-}
-
-.result-molinete-title > div {
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-.result-molinete-title > div > span {
-    color: #a06d83;
-
-    font-size: 8px;
-    font-weight: 700;
-
-    letter-spacing: .8px;
-}
-
-.result-molinete-title h3 {
-    margin: 0;
-
-    color: #26364d;
-
-    font-size: 14px;
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   DATOS DEL MOLINETE
-   ========================================================= */
-
-.result-machine-data {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 12px;
-
-    padding: 16px;
-}
-
-.result-machine-data > div {
-    display: flex;
-    flex-direction: column;
-
-    gap: 4px;
-
-    padding-right: 12px;
-
-    border-right: 1px solid #edf1f5;
-}
-
-.result-machine-data > div:last-child {
-    padding-right: 0;
-
-    border-right: none;
-}
-
-.result-machine-data span {
-    color: #8995a4;
-
-    font-size: 8px;
-    font-weight: 600;
-
-    text-transform: uppercase;
-}
-
-.result-machine-data strong {
-    color: #26364d;
-
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   TIEMPO DE GIRO
-   ========================================================= */
-
-.result-time-box {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-
-    margin: 0 16px 16px;
-    padding: 13px 14px;
-
-    border-radius: 7px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(237, 22, 133, .06),
-            rgba(240, 33, 145, .10)
-        );
-}
-
-.result-time-box > svg {
-    width: 22px;
-    height: 22px;
-
-    color: #ed1685;
-}
-
-.result-time-box > div {
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-.result-time-box span {
-    color: #8b6c7c;
-
-    font-size: 8px;
-}
-
-.result-time-box strong {
-    color: #ed1685;
-
-    font-size: 17px;
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   RESULTADO VACÍO
-   ========================================================= */
-
-.empty-results {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 180px;
 
     border: 1px dashed #d6dee7;
     border-radius: 7px;
@@ -856,29 +258,543 @@
     text-align: center;
 }
 
-.empty-results svg {
-    width: 30px;
-    height: 30px;
-
-    margin-bottom: 9px;
-
-    color: #b5bfca;
-}
-
-.empty-results strong {
+.distribucion-empty strong {
     color: #596a80;
 
-    font-size: 12px;
+    font-size: 13px;
 }
 
-.empty-results span {
+.distribucion-empty span {
     margin-top: 4px;
 
     color: #8995a4;
 
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MATRIZ DE DISTRIBUCIÓN
+   ========================================================= */
+
+.distribucion-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #e1e7ee;
+    border-radius: 7px;
+
+    background: #ffffff;
+}
+
+.distribucion-table {
+    width: 100%;
+
+    min-width: max-content;
+
+    border-collapse: collapse;
+}
+
+.distribucion-table th,
+.distribucion-table td {
+    padding: 10px 12px;
+
+    border-right: 1px solid #edf1f5;
+    border-bottom: 1px solid #edf1f5;
+
+    text-align: center;
+    vertical-align: middle;
+}
+
+.distribucion-table th:last-child,
+.distribucion-table td:last-child {
+    border-right: none;
+}
+
+.distribucion-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.distribucion-table thead th {
+    background: #f7f9fb;
+
+    color: #657388;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ENCABEZADO TALLAS
+   ========================================================= */
+
+.distribucion-talla-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 2px;
+}
+
+.distribucion-talla-header strong {
+    color: #34445a;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   COLUMNA MOLINETE
+   ========================================================= */
+
+.distribucion-molinete-column,
+.distribucion-molinete {
+    position: sticky;
+    left: 0;
+
+    z-index: 3;
+
+    min-width: 180px;
+}
+
+.distribucion-table thead .distribucion-molinete-column {
+    background: #f7f9fb;
+}
+
+.distribucion-molinete {
+    background: #ffffff;
+}
+
+.distribucion-molinete-info {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    cursor: pointer;
+}
+
+.distribucion-molinete-info input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+}
+
+.distribucion-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+
+    border: 1px solid #c7d0db;
+    border-radius: 4px;
+
+    flex-shrink: 0;
+}
+
+.distribucion-molinete-info.active .distribucion-check {
+    border-color: #ed1685;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ed1685 0%,
+            #f02191 100%
+        );
+}
+
+.distribucion-check span {
+    width: 7px;
+    height: 4px;
+
+    border-left: 1.5px solid transparent;
+    border-bottom: 1.5px solid transparent;
+
+    transform:
+        rotate(-45deg)
+        translateY(-1px);
+}
+
+.distribucion-molinete-info.active
+.distribucion-check span {
+    border-left-color: #ffffff;
+    border-bottom-color: #ffffff;
+}
+
+.distribucion-molinete-info > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 2px;
+
+    min-width: 0;
+}
+
+.distribucion-molinete-info strong {
+    color: #26364d;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.distribucion-molinete-info > div > span {
+    color: #8995a4;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   RPM
+   ========================================================= */
+
+.distribucion-rpm-column {
+    min-width: 90px;
+}
+
+.distribucion-rpm {
+    min-width: 90px;
+}
+
+.distribucion-rpm input {
+    width: 58px;
+    height: 30px;
+
+    padding: 0 6px;
+
+    border: 1px solid #d6dee7;
+    border-radius: 5px;
+
+    outline: none;
+
+    background: #ffffff;
+    color: #26364d;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.distribucion-rpm input:focus {
+    border-color: #ed1685;
+
+    box-shadow:
+        0 0 0 2px rgba(237, 22, 133, .08);
+}
+
+
+/* =========================================================
+   CELDAS DE DISTRIBUCIÓN
+   ========================================================= */
+
+.distribucion-celda {
+    min-width: 95px;
+}
+
+.distribucion-celda input {
+    width: 58px;
+    height: 30px;
+    padding: 0 6px;
+    border: 1px solid #d6dee7;
+    border-radius: 5px;
+    outline: none;
+    background: #ffffff;
+    color: #26364d;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.distribucion-celda input:hover {
+    border-color: #f09ac2;
+}
+
+.distribucion-celda input:focus {
+    border-color: #ed1685;
+    box-shadow:
+        0 0 0 2px rgba(237, 22, 133, .08);
+}
+
+.distribucion-celda > span {
+    display: block;
+    margin-top: 4px;
+    color: #7b8797;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   RESUMEN POR MOLINETE
+   ========================================================= */
+
+.distribucion-resumen-column {
+    min-width: 120px;
+}
+
+.distribucion-resumen {
+    min-width: 120px;
+}
+
+.distribucion-resumen strong,
+.distribucion-resumen span {
+    display: block;
+}
+
+.distribucion-resumen strong {
+    color: #26364d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.distribucion-resumen span {
+    margin-top: 2px;
+    color: #7b8797;
     font-size: 10px;
 }
 
+
+/* =========================================================
+   TIEMPO DE GIRO
+   ========================================================= */
+
+.distribucion-tiempo-column {
+    min-width: 110px;
+}
+
+.distribucion-tiempo {
+    min-width: 110px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(237, 22, 133, .035),
+            rgba(240, 33, 145, .07)
+        );
+}
+
+.distribucion-tiempo strong {
+    color: #ed1685;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.distribucion-tiempo span {
+    display: block;
+    margin-top: 2px;
+    color: #8b6c7c;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   MOLINETE DESHABILITADO
+   ========================================================= */
+
+.distribucion-table tr.disabled td:not(.distribucion-molinete) {
+    opacity: .45;
+}
+
+.distribucion-table tr.disabled .distribucion-molinete {
+    background: #f8fafc;
+}
+
+.distribucion-table tr.disabled input {
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   INPUTS NUMÉRICOS
+   ========================================================= */
+
+.distribucion-rpm input::-webkit-outer-spin-button,
+.distribucion-rpm input::-webkit-inner-spin-button,
+.distribucion-celda input::-webkit-outer-spin-button,
+.distribucion-celda input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.distribucion-rpm input[type="number"],
+.distribucion-celda input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+
+/* =========================================================
+   TOTALES POR TALLA
+   ========================================================= */
+
+.distribucion-total-row td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-top: 2px solid #dce3eb;
+    background: #f7f9fb;
+    color: #26364d;
+}
+
+.distribucion-total-label {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: #f7f9fb !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.distribucion-total-talla strong {
+    display: block;
+    color: #26364d;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.distribucion-total-talla span {
+    display: block;
+    margin-top: 3px;
+    color: #7b8797;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   GRÁFICA TIEMPO DE GIRO
+   ========================================================= */
+
+.nuevo-tigimoli-chart {
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid #e1e7ee;
+    border-radius: 9px;
+    background: #ffffff;
+}
+
+.nuevo-tigimoli-chart-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.nuevo-tigimoli-chart-title > svg {
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    color: #ed1685;
+}
+
+.nuevo-tigimoli-chart-title h2 {
+    margin: 0;
+    color: #26364d;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.nuevo-tigimoli-chart-title p {
+    margin: 5px 0 0;
+    color: #7c8999;
+    font-size: 11px;
+}
+
+.nuevo-tigimoli-chart-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 22px;
+    min-height: 230px;
+    padding: 10px 10px 0;
+    overflow-x: auto;
+}
+
+.nuevo-tigimoli-chart-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    min-width: 70px;
+}
+
+.nuevo-tigimoli-chart-label {
+    max-width: 90px;
+    overflow: hidden;
+    color: #657388;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nuevo-tigimoli-chart-track {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    width: 42px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 5px 5px 2px 2px;
+    background: #f1f4f7;
+}
+
+.nuevo-tigimoli-chart-bar {
+    width: 100%;
+    border-radius: 5px 5px 2px 2px;
+    background:
+        linear-gradient(
+            180deg,
+            #f02191 0%,
+            #ed1685 100%
+        );
+    transition: height .25s ease;
+}
+
+.nuevo-tigimoli-chart-item strong {
+    color: #26364d;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   ORDEN GENERADA
+   ========================================================= */
+
+.nuevo-tigimoli-order-result {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 10px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.nuevo-tigimoli-order-result strong {
+    color: #ed1685;
+    font-size: 13px;
+    font-weight: 700;
+}
 
 /* =========================================================
    ACCIONES
@@ -888,9 +804,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
     gap: 10px;
-
     padding-top: 2px;
 }
 
@@ -898,25 +812,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-height: 39px;
-
     padding: 0 17px;
-
     border-radius: 6px;
-
-    font-family: inherit;
     font-size: 10px;
     font-weight: 600;
-
     cursor: pointer;
 }
 
 .secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
     border: 1px solid #d5dee7;
-
     background: #ffffff;
-
     color: #52647a;
 }
 
@@ -924,24 +834,23 @@
     background: #f8fafc;
 }
 
+.secondary-action svg {
+    width: 16px;
+    height: 16px;
+}
+
 .primary-action {
     display: inline-flex;
-
     align-items: center;
-
     gap: 7px;
-
     border: none;
-
     background:
         linear-gradient(
             135deg,
             #ed1685 0%,
             #f02191 100%
         );
-
     color: #ffffff;
-
     box-shadow:
         0 3px 8px rgba(237, 22, 133, .18);
 }
@@ -958,9 +867,30 @@
 
 .nuevo-tigimoli-actions button:disabled {
     opacity: .5;
-
     cursor: not-allowed;
 }
+
+.nuevo-tigimoli-actions-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid #d5dee7;
+    background: #ffffff;
+    color: #52647a;
+}
+
+.secondary-action svg {
+    width: 16px;
+    height: 16px;
+}
+
 
 
 /* =========================================================
@@ -972,92 +902,55 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     min-height: 420px;
 }
 
 .nuevo-tigimoli-loading svg {
     width: 32px;
     height: 32px;
-
     margin-bottom: 10px;
-
     color: #ed1685;
 }
 
 .nuevo-tigimoli-loading strong {
     color: #34445a;
-
     font-size: 14px;
 }
 
 .nuevo-tigimoli-loading span {
     margin-top: 5px;
-
     color: #8793a2;
-
     font-size: 11px;
 }
-
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 1300px) {
-
-    .molinetes-selector {
-        grid-template-columns:
-            repeat(3, minmax(150px, 1fr));
-    }
-
-    .calculo-config-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-
-@media (max-width: 950px) {
-
-    .result-molinetes-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
 
 @media (max-width: 700px) {
 
-    .nuevo-tigimoli-page {
-        padding: 20px 16px 30px;
-    }
-
-    .nuevo-tigimoli-header {
-        align-items: flex-start;
+    .nuevo-tigimoli-section-header {
         flex-direction: column;
     }
 
-    .molinetes-selector {
-        grid-template-columns: 1fr 1fr;
+    .distribucion-molinete-column,
+    .distribucion-molinete {
+        min-width: 150px;
     }
-
+    .distribucion-celda {
+        min-width: 85px;
+    }
 }
 
 
 @media (max-width: 480px) {
-
-    .molinetes-selector {
-        grid-template-columns: 1fr;
-    }
-
-    .nuevo-tigimoli-actions {
-        align-items: stretch;
-        flex-direction: column-reverse;
-    }
-
-    .nuevo-tigimoli-actions button {
+    .nuevo-tigimoli-actions-main {
+        display: flex;
+        flex-direction: column;
         width: 100%;
     }
-
 }
+
+
+

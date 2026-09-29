@@ -22,7 +22,9 @@ function ConfirmModal({
     message,
     onConfirm,
     onCancel,
-    loading = false
+    loading = false,
+    confirmText = 'Eliminar',
+    confirmVariant = 'danger'
 }) {
     return (
         <div className="modal-overlay">
@@ -48,17 +50,21 @@ function ConfirmModal({
 
                     <button
                         type="button"
-                        className="danger-button"
+                        className={
+                            confirmVariant === 'danger'
+                                ? 'danger-button'
+                                : 'save-button'
+                        }
                         onClick={onConfirm}
                         disabled={loading}
                     >
                         {loading ? (
                             <>
                                 <CircularProgress size={16} thickness={4} />
-                                Eliminando...
+                                Procesando...
                             </>
                         ) : (
-                            'Eliminar'
+                            confirmText
                         )}
                     </button>
                 </div>

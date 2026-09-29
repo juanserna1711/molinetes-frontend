@@ -22,6 +22,8 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PrecisionManufacturingOutlinedIcon from '@mui/icons-material/PrecisionManufacturingOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+import TextureOutlinedIcon from '@mui/icons-material/TextureOutlined';
+import FunctionsOutlinedIcon from '@mui/icons-material/FunctionsOutlined';
 
 import logoMoliplus from '../assets/logo-moliplus-solo.png';
 
@@ -85,6 +87,31 @@ function Sidebar({ abierto }) {
                     </span>
                 </NavLink>
 
+                <NavLink
+                    to="/tipos-hilaza"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <TextureOutlinedIcon />
+
+                    <span>
+                        Gestión de Tipos de Hilaza
+                    </span>
+                </NavLink>
+
+                <NavLink
+                    to="/tipos-hilaza-prom"
+                    className={({ isActive }) =>
+                        `sidebar-item ${isActive ? 'active' : ''}`
+                    }
+                >
+                    <FunctionsOutlinedIcon />
+
+                    <span>
+                        Promedios por Tipo de Hilaza
+                    </span>
+                </NavLink>
 
                 <NavLink
                     to="/rendimiento-tallas"
@@ -114,7 +141,7 @@ function Sidebar({ abierto }) {
 
                 
                 <NavLink
-                    to="/tigimoli"
+                    to="/ordeprod"
                     className={({ isActive }) =>
                         `sidebar-item ${isActive ? 'active' : ''}`
                     }
@@ -122,7 +149,7 @@ function Sidebar({ abierto }) {
                     <HistoryOutlinedIcon />
 
                     <span>
-                        Consulta Tiempos de Giro
+                        Consulta de Ordenes de Produccion
                     </span>
                 </NavLink>
 
