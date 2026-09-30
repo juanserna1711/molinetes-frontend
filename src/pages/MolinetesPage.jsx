@@ -137,20 +137,17 @@ function MolinetesPage() {
 
         const filtros = {};
 
-        const valor =
-            busqueda.trim();
+        const valor = busqueda.trim();
 
         if (valor !== '') {
 
             if (!isNaN(valor)) {
 
-                filtros.codigo =
-                    Number(valor);
+                filtros.codigo = Number(valor);
 
             } else {
 
-                filtros.nombre =
-                    valor;
+                filtros.nombre = valor;
 
             }
 
@@ -161,7 +158,6 @@ function MolinetesPage() {
         );
 
     }, [busqueda]);
-
 
     /*
       Consulta los registros y actualiza el listado y los mensajes de la página.
@@ -175,17 +171,13 @@ function MolinetesPage() {
 
             const resultado = await consultarMolinetes(filtros);
             
-
             setMolinetes(resultado.data);
 
         } catch (error) {
 
             console.error(error);
 
-            setError(
-                error.response?.data?.message ||
-                'No fue posible cargar los molinetes.'
-            );
+            setError(error.response?.data?.message || 'No fue posible cargar los molinetes.');
 
         } finally {
 
@@ -224,7 +216,6 @@ function MolinetesPage() {
             await actualizarMolinete(molineteSeleccionado, data);
         } else {
             await crearMolineteService(data);
-
             cerrarFormulario();
             await cargarMolinetes();
             mostrarSnackbar(
@@ -245,10 +236,7 @@ function MolinetesPage() {
 
             setEliminando(true);
 
-            await eliminarMolineteService(
-                molineteAEliminar.codigo
-            );
-
+            await eliminarMolineteService(molineteAEliminar.codigo);
             await cargarMolinetes();
 
             mostrarSnackbar(
@@ -274,9 +262,7 @@ function MolinetesPage() {
         }
     }
     
-
     const hayFiltros = busqueda.trim() !== '';
-
 
     return (
 
@@ -287,9 +273,7 @@ function MolinetesPage() {
                 <div className="page-header-info">
                     <h1>Gestión de Molinetes</h1>
 
-                    <p>
-                        Administración de molinetes y su información.
-                    </p>
+                    <p>Administración de molinetes y su información.</p>
                 </div>
 
                 <button
@@ -312,9 +296,7 @@ function MolinetesPage() {
                         type="text"
                         placeholder="Buscar por código o nombre..."
                         value={busqueda}
-                        onChange={(event) => {
-                            setBusqueda(event.target.value);
-                        }}
+                        onChange={(event) => {setBusqueda(event.target.value);}}
                         maxLength={60}
                     />
                 </div>
@@ -347,9 +329,7 @@ function MolinetesPage() {
                         <div className="state-content">
                             <h2>No fue posible cargar los molinetes</h2>
 
-                            <p>
-                                {error}
-                            </p>
+                            <p>{error}</p>
 
                             <button
                                 type="button"
@@ -402,11 +382,7 @@ function MolinetesPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <MolineteForm
-                            key={
-                                molineteSeleccionado
-                                    ? `editar-${molineteSeleccionado.codigo}`
-                                    : 'crear-molinete'
-                            }
+                            key={molineteSeleccionado ? `editar-${molineteSeleccionado.codigo}` : 'crear-molinete'}
                             molinete={molineteSeleccionado}
                             onClose={() => {
                                 setMostrarFormulario(false);

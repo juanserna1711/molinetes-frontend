@@ -24,33 +24,26 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     /*
       Si talla tiene información de rendimiento, estamos editando.
       Si talla existe pero no tiene rendimiento, estamos agregando uno nuevo.
       Si talla es null, el formulario inicia vacío.
     */
     const tieneRendimientoInicial = rendtalla?.ancho !== null && rendtalla?.ancho !== undefined;
-
-    const [modo, setModo] = useState(
-        tieneRendimientoInicial ? 'editar' : 'crear'
-    );
-
+    const [modo, setModo] = useState(tieneRendimientoInicial ? 'editar' : 'crear');
     const [formData, setFormData] = useState({
         codTalla: rendtalla?.codigo ?? '',
         anchoRendtall: rendtalla?.ancho ?? '',
         pesoRendtall: rendtalla?.pesoM2 ?? '',
         rolloRendtall: rendtalla?.pesoRollo ?? '',
-        usuarioRendtall: 2
+        usuarioRendtall: 4
     });
-
     /*
       Calcula la vista previa del rendimiento y de los metros por rollo.
     */
     const ancho = Number(formData.anchoRendtall);
     const peso = Number(formData.pesoRendtall);
     const rollo = Number(formData.rolloRendtall);
-
     const rendimiento = ancho > 0 && peso > 0 ? 1000 / ((ancho * 2 / 100) * peso) : 0;
     const metrosRollo = rendimiento > 0 && rollo > 0 ? rollo * rendimiento : 0;
 
@@ -68,9 +61,8 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                 anchoRendtall: '',
                 pesoRendtall: '',
                 rolloRendtall: '',
-                usuarioRendtall: 2
+                usuarioRendtall: 4
             });
-
             setModo('crear');
             setFieldErrors({});
             setError(null);
@@ -87,16 +79,14 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             return;
         }
 
-        const tieneRendimiento =
-            tallaSeleccionada.ancho !== null &&
-            tallaSeleccionada.ancho !== undefined;
+        const tieneRendimiento = tallaSeleccionada.ancho !== null && tallaSeleccionada.ancho !== undefined;
 
         setFormData({
             codTalla: tallaSeleccionada.codigo,
             anchoRendtall: tallaSeleccionada.ancho ?? '',
             pesoRendtall: tallaSeleccionada.pesoM2 ?? '',
             rolloRendtall: tallaSeleccionada.pesoRollo ?? '',
-            usuarioRendtall: 2
+            usuarioRendtall: 4
         });
 
         setModo(
@@ -106,7 +96,6 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
         setFieldErrors({});
         setError(null);
     }
-
 
     /*
       =========================================================
@@ -121,10 +110,9 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
         const { name, value } = event.target;
 
-        /*
-         * Los campos de rendimiento solamente permiten
-         * números y máximo 4 caracteres.
-         */
+        /* 
+        Los campos de rendimiento solamente permiten números y máximo 4 caracteres.
+        */
         if (
             ['anchoRendtall', 'pesoRendtall', 'rolloRendtall']
                 .includes(name) &&
@@ -145,7 +133,6 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
         setError(null);
     }
-
 
     /*
       =========================================================
@@ -177,14 +164,9 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             setLoading(true);
             setError(null);
             setFieldErrors({});
-
             /*
-             * Mandamos también el modo a la página.
-             *
-             * La página decide si llama:
-             * crearRendTalla()
-             * o
-             * actualizarRendTalla()
+              Mandamos también el modo a la página.
+              La página decide si llama: crearRendTalla() o actualizarRendTalla()
              */
             await onSubmit(data, modo);
 
@@ -237,7 +219,6 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
         return Object.keys(errores).length === 0;
     }
 
-
     return (
 
         <div className="form-panel">
@@ -246,75 +227,58 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                 <h2> {modo === 'editar' ? 'Editar Rendimiento' : 'Nuevo Rendimiento'} </h2>
 
-                <button
-                    type="button"
-                    className="close-button"
-                    onClick={onClose}
-                    title="Cerrar"
-                >
+                <button type="button" className="close-button" onClick={onClose} title="Cerrar">
                     <CloseOutlinedIcon />
                 </button>
 
             </div>
 
-
             <form onSubmit={handleSubmit}>
 
                 <div className="form-group">
 
-                    <label>
-                        Talla
-                    </label>
+                    <label>Talla</label>
 
-                    <select
-                        name="codTalla"
-                        value={formData.codTalla}
-                        onChange={handleTallaChange}
-                        disabled={Boolean(rendtalla)}
+                    <select 
+                        name="codTalla" 
+                        value={formData.codTalla} 
+                        onChange={handleTallaChange} 
+                        disabled={Boolean(rendtalla)} 
                         className={fieldErrors.codTalla ? 'input-error' : ''}
                     >
 
-                        <option value="">
-                            Seleccione
-                        </option>
+                        <option value="">Seleccione</option>
 
                         {rendtallas.map((talla) => (
 
-                            <option
-                                key={talla.codigo}
-                                value={talla.codigo}
-                            >
+                            <option key={talla.codigo} value={talla.codigo}>
                                 {talla.nombre}
                             </option>
                         ))}
                     </select>
 
                     {fieldErrors.codTalla && (
-                        <span className="field-error">
-                            {fieldErrors.codTalla}
-                        </span>
+                        <span className="field-error">{fieldErrors.codTalla} </span>
                     )}
 
                 </div>
 
                 <div className="form-group">
 
-                    <label>
-                        Ancho
-                    </label>
+                    <label>Ancho</label>
 
-                    <input
-                        type="number"
-                        min="1"
-                        step="1"
-                        name="anchoRendtall"
+                    <input 
+                        type="number" 
+                        min="1" 
+                        step="1" 
+                        name="anchoRendtall" 
                         value={formData.anchoRendtall}
                         onChange={handleChange}
-                            onKeyDown={(event) => {
-                                if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
                                     event.preventDefault();
                                 }
-                            }}
+                        }}
                         className={
                             fieldErrors.anchoRendtall
                                 ? 'input-error'
@@ -332,9 +296,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Peso/M2
-                    </label>
+                    <label>Peso / M2</label>
 
                     <input
                         type="number"
@@ -348,11 +310,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                                 event.preventDefault();
                             }
                         }}
-                        className={
-                            fieldErrors.pesoRendtall
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.pesoRendtall ? 'input-error': ''}
                     />
 
                     {fieldErrors.pesoRendtall && (
@@ -365,9 +323,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Peso/Rollo
-                    </label>
+                    <label>Peso / Rollo</label>
 
                     <input
                         type="number"
@@ -381,11 +337,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                                 event.preventDefault();
                             }
                         }}
-                        className={
-                            fieldErrors.rolloRendtall
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.rolloRendtall ? 'input-error' : ''}
                     />
 
                     {fieldErrors.rolloRendtall && (
@@ -398,17 +350,11 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                 <div className="form-group calculated-group">
 
-                    <label>
-                        Rendimiento
-                    </label>
+                    <label>Rendimiento</label>
 
                     <input
                         type="text"
-                        value={
-                            rendimiento > 0
-                                ? rendimiento.toFixed(1)
-                                : ''
-                        }
+                        value={rendimiento > 0 ? rendimiento.toFixed(1) : ''}
                         readOnly
                     />
 
@@ -416,17 +362,11 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                 <div className="form-group calculated-group">
 
-                    <label>
-                        Metros
-                    </label>
+                    <label>Metros</label>
 
                     <input
                         type="text"
-                        value={
-                            metrosRollo > 0
-                                ? metrosRollo.toFixed(1)
-                                : ''
-                        }
+                        value={metrosRollo > 0 ? metrosRollo.toFixed(1) : ''}
                         readOnly
                     />
 

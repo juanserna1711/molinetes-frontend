@@ -26,10 +26,7 @@ import ondasMoliplus from '../assets/ondas-moliplus.png';
 
 function LoginPage() {
     const navigate = useNavigate();
-
-    const manejarRedireccion = () => {
-    navigate('/tallas'); 
-    };
+    const manejarRedireccion = () => {navigate('/inicio'); };
 
     return (
         <div className="login-page">
@@ -44,7 +41,6 @@ function LoginPage() {
                 <span />
                 <span />
             </div>
-
 
             {/* =====================================================
                 MARCA
@@ -68,7 +64,6 @@ function LoginPage() {
 
             </header>
 
-
             {/* =====================================================
                 CONTENIDO
             ====================================================== */}
@@ -79,16 +74,11 @@ function LoginPage() {
 
                     <div className="login-card-header">
 
-                        <h1>
-                            Bienvenido
-                        </h1>
+                        <h1>Bienvenido</h1>
 
-                        <p>
-                            Ingresa tus credenciales para acceder a MOLIPLUS.
-                        </p>
+                        <p>Ingresa tus credenciales para acceder a MOLIPLUS.</p>
 
                     </div>
-
 
                     {/* =================================================
                         FORMULARIO
@@ -98,9 +88,7 @@ function LoginPage() {
 
                         <div className="login-form-group">
 
-                            <label htmlFor="usuario">
-                                Usuario
-                            </label>
+                            <label htmlFor="usuario">Usuario</label>
 
                             <div className="login-input-wrapper">
 
@@ -115,7 +103,6 @@ function LoginPage() {
                             </div>
 
                         </div>
-
 
                         <div className="login-form-group">
 
@@ -145,7 +132,6 @@ function LoginPage() {
 
                         </div>
 
-
                         <button
                             type="button"
                             className="login-button"
@@ -156,19 +142,15 @@ function LoginPage() {
 
                     </form>
 
-
                     <div className="login-card-footer">
 
-                        <span>
-                            Sistema de gestión industrial
-                        </span>
+                        <span>Sistema de gestión industrial</span>
 
                     </div>
 
                 </section>
 
             </main>
-
 
             {/* =====================================================
                 DECORACIÓN INFERIOR
@@ -189,7 +171,6 @@ function LoginPage() {
                 </div>
 
             </div>
-
 
             {/* =====================================================
                 PIE DE PÁGINA

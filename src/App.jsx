@@ -16,6 +16,7 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
+import InicioPage from './pages/InicioPage';
 import TallasPage from './pages/TallasPage';
 import RendTallasPage from './pages/RendTallasPage';
 import UsuariosPage from './pages/UsuariosPage';
@@ -30,11 +31,12 @@ function App() {
     return (
             <Routes>
                 {/* Redirección inicial a una ruta por defecto al entrar a la app */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/" element={<Navigate to="/inicio" replace />} />
 
                 {/* Rutas principales */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route element={<Layout />}>
+                <Route path="/inicio" element={<InicioPage />} />
                 <Route path="/rendimiento-tallas" element={<RendTallasPage />} />
                 <Route path="/tallas" element={<TallasPage />} />
                 <Route path="/usuarios" element={<UsuariosPage />} />

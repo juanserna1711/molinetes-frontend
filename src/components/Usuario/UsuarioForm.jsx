@@ -26,7 +26,6 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const [formData, setFormData] = useState({
         codUsuario: usuario?.codigo ?? '',
         nomUsuario: usuario?.nombre.toUpperCase() ?? '',
@@ -65,7 +64,6 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
         return () => clearTimeout(temporizador);
 
     }, [formData.codUsuario, usuario]);
-
 
     /*
       Actualiza los datos del formulario y limpia los errores del campo.
@@ -126,12 +124,8 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
             console.error(error);
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar la talla.';
-
-            const campo =
-                error.response?.data?.field;
+            const mensaje = error.response?.data?.message || 'No fue posible guardar la talla.';
+            const campo = error.response?.data?.field;
 
             if (campo) {
 
@@ -200,9 +194,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Código Usuario
-                    </label>
+                    <label>Código Usuario</label>
 
                 <input
                     type="number"
@@ -212,16 +204,12 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                     min={1}
                     max={999}
                     disabled={Boolean(usuario)}
-                    className={`
-                        ${usuario ? 'input-readonly' : ''} 
-                        ${codigoDuplicado || fieldErrors.codUsuario ? 'input-error' : ''}`}
+                    className={`${usuario ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codUsuario ? 'input-error' : ''}`}
                 />
 
                     {(codigoDuplicado || fieldErrors.codUsuario) && (
                         <span className="field-error">
-                            {codigoDuplicado
-                                ? 'El código de usuario ya existe.'
-                                : fieldErrors.codUsuario}
+                            {codigoDuplicado ? 'El código de usuario ya existe.' : fieldErrors.codUsuario}
                         </span>
                     )}
 
@@ -229,9 +217,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Nombre Usuario
-                    </label>
+                    <label>Nombre Usuario</label>
 
                     <input
                         type="text"
@@ -252,9 +238,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Contraseña Usuario
-                    </label>
+                    <label>Contraseña Usuario</label>
 
                     <input
                         type="text"
@@ -275,9 +259,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Estado
-                    </label>
+                    <label>Estado</label>
 
                     <select
                         name="estaUsuario"
@@ -285,17 +267,12 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
                         onChange={handleChange}
                         className={fieldErrors.estaUsuario ? 'input-error' : ''}
                     >
-                        <option value="A">
-                            Activo
-                        </option>
+                        <option value="A">Activo</option>
 
-                        <option value="I">
-                            Inactivo
-                        </option>
+                        <option value="I">Inactivo</option>
 
                     </select>
 
-                    
                     {fieldErrors.estaUsuario && (
                         <span className="field-error">
                             {fieldErrors.estaUsuario}

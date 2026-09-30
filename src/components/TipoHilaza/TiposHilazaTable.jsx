@@ -61,9 +61,7 @@ function TiposHilazaTable({
                                     <button
                                         type="button"
                                         className="table-action edit"
-                                        onClick={() =>
-                                            onEdit(tipoHilaza)
-                                        }
+                                        onClick={() => onEdit(tipoHilaza)}
                                         title="Editar"
                                     >
                                         <EditOutlinedIcon />
@@ -72,9 +70,7 @@ function TiposHilazaTable({
                                     <button
                                         type="button"
                                         className="table-action delete"
-                                        onClick={() =>
-                                            onDelete(tipoHilaza)
-                                        }
+                                        onClick={() => onDelete(tipoHilaza)}
                                         title="Eliminar"
                                     >
                                         <DeleteOutlinedIcon />

@@ -37,7 +37,6 @@ function RendTallasPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
-    const [estado, setEstado] = useState('');
     const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
     const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
@@ -117,18 +116,8 @@ function RendTallasPage() {
         const valor = busqueda.trim();
 
         if (valor !== '') {
-
-            if (!isNaN(valor)) {
-                filtros.codigo = Number(valor);
-            } else {
                 filtros.nombre = valor;
             }
-
-        }
-
-        if (estado !== '') {
-            filtros.estado = estado;
-        }
 
         return filtros;
     }
@@ -158,24 +147,7 @@ function RendTallasPage() {
 
         if (valor !== '') {
 
-            if (!isNaN(valor)) {
-
-                filtros.codigo =
-                    Number(valor);
-
-            } else {
-
-                filtros.nombre =
-                    valor;
-
-            }
-
-        }
-
-        if (estado !== '') {
-
-            filtros.estado =
-                estado;
+            filtros.nombre = valor;
 
         }
 
@@ -184,8 +156,7 @@ function RendTallasPage() {
         );
 
     }, [
-        busqueda,
-        estado
+        busqueda
     ]);
 
     /*
@@ -312,7 +283,7 @@ function RendTallasPage() {
         }
     }
 
-    const hayFiltros = busqueda.trim() !== '' || estado !== '';
+    const hayFiltros = busqueda.trim() !== '';
 
     return (
 
@@ -357,7 +328,7 @@ function RendTallasPage() {
 
                     <input
                         type="text"
-                        placeholder="Buscar por código o nombre..."
+                        placeholder="Buscar por talla..."
                         value={busqueda}
                         onChange={(event) =>
                             setBusqueda(event.target.value)
@@ -365,29 +336,6 @@ function RendTallasPage() {
                         maxLength={60}
                     />
 
-                </div>
-
-                <div className="filter-field">
-                <select
-                    value={estado}
-                    onChange={(event) =>
-                        setEstado(event.target.value)
-                    }
-                >
-
-                    <option value="">
-                        Todos los estados
-                    </option>
-
-                    <option value="A">
-                        Activos
-                    </option>
-
-                    <option value="I">
-                        Inactivos
-                    </option>
-
-                </select>
                 </div>
 
                 </div>

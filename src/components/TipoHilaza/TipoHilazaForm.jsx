@@ -26,12 +26,10 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const [formData, setFormData] = useState({
         codTipoHilaza: tipoHilaza?.codigo ?? '',
         nomTipoHilaza: tipoHilaza?.nombre.toUpperCase() ?? ''
     });
-
 
     useEffect(() => {
 
@@ -45,13 +43,11 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
             try {
 
-                const response =
-                    await consultarTiposHilaza({
+                const response = await consultarTiposHilaza({
                         codigo: Number(codigo)
                     });
 
-                const existe =
-                    response.data?.length > 0;
+                const existe = response.data?.length > 0;
 
                 setCodigoDuplicado(existe);
 
@@ -101,7 +97,6 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
     }
 
-
     /*
       Valida el formulario, solicita el guardado y muestra los errores recibidos.
     */
@@ -133,12 +128,8 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
             console.error(error);
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar el tipo de hilaza.';
-
-            const campo =
-                error.response?.data?.field;
+            const mensaje = error.response?.data?.message || 'No fue posible guardar el tipo de hilaza.';
+            const campo = error.response?.data?.field;
 
             if (campo) {
 
@@ -159,7 +150,6 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
         }
 
     }
-
 
     /*
       Comprueba los campos obligatorios e identifica los errores de captura.
@@ -204,14 +194,11 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
             </div>
 
-
             <form onSubmit={handleSubmit}>
 
                 <div className="form-group">
 
-                    <label>
-                        Código Tipo de Hilaza
-                    </label>
+                    <label>Código Tipo de Hilaza</label>
 
                     <input
                         type="number"
@@ -221,27 +208,20 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
                         min={1}
                         max={999}
                         disabled={Boolean(tipoHilaza)}
-                        className={`
-                            ${tipoHilaza ? 'input-readonly' : ''}
-                            ${codigoDuplicado || fieldErrors.codTipoHilaza ? 'input-error' : ''}
-                        `}
+                        className={`${tipoHilaza ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codTipoHilaza ? 'input-error' : ''}`}
                     />
 
                     {(codigoDuplicado || fieldErrors.codTipoHilaza) && (
 
                         <span className="field-error">
-                            {codigoDuplicado
-                                ? 'El código de tipo de hilaza ya existe.'
-                                : fieldErrors.codTipoHilaza}
+                            {codigoDuplicado ? 'El código de tipo de hilaza ya existe.' : fieldErrors.codTipoHilaza}
                         </span>
                     )}
                 </div>
 
                 <div className="form-group">
 
-                    <label>
-                        Nombre Tipo de Hilaza
-                    </label>
+                    <label>Nombre Tipo de Hilaza</label>
 
                     <input
                         type="text"
@@ -280,7 +260,6 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
                     </div>
 
                 )}
-
 
                 <div className="form-actions">
 

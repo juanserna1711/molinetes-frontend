@@ -17,6 +17,7 @@
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
+import { formatearFecha } from '../../utils/formatters';
 
 
 function OrdeProdTable({
@@ -24,22 +25,6 @@ function OrdeProdTable({
     imprimiendoOrden,
     onDetalle
 }) {
-
-    function formatearFecha(fecha) {
-
-        if (!fecha) {
-            return '-';
-        }
-
-        return new Date(
-            fecha
-        ).toLocaleString(
-            'es-CO'
-        );
-
-    }
-
-
     return (
 
         <div className="table-container">
@@ -59,7 +44,6 @@ function OrdeProdTable({
 
                 </thead>
 
-
                 <tbody>
 
                     {ordenes.map((orden) => (
@@ -77,9 +61,7 @@ function OrdeProdTable({
                             </td>
 
                             <td>
-                                {formatearFecha(
-                                    orden.fechaGeneracion
-                                )}
+                                {formatearFecha(orden.fechaGeneracion)}
                             </td>
 
                             <td>
@@ -94,21 +76,15 @@ function OrdeProdTable({
 
                                 <div className="actions">
                                 <button
-                                        type="button"
-                                        className="table-action view"
-                                    onClick={() =>
-                                        onDetalle(orden)
-                                    }
-                                    disabled={
-                                        imprimiendoOrden ===
-                                        orden.codigoOrden
-                                    }
+                                    type="button"
+                                    className="table-action view"
+                                    onClick={() => onDetalle(orden)}
+                                    disabled={imprimiendoOrden === orden.codigoOrden}
                                     title="Ver detalle"
                                     aria-label="Ver detalle"
                                 >
 
-                                    {imprimiendoOrden ===
-                                    orden.codigoOrden ? (
+                                    {imprimiendoOrden === orden.codigoOrden ? (
 
                                         <CircularProgress
                                             size={18}

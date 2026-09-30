@@ -191,7 +191,6 @@ function NuevoTigimoliDistribucion({
         0
     );
 
-
     return (
 
         <section className="nuevo-tigimoli-section">
@@ -344,13 +343,15 @@ function NuevoTigimoliDistribucion({
                                                 disabled={!habilitado}
                                                 value={rpmProgramacion[molinete.codigo] ?? ''}
                                                 onChange={(event) => {
+
                                                     const valor = event.target.value;
 
-                                                    if (
-                                                        /^\d*$/.test(valor) && valor.length <= 3
-                                                    ) {
-                                                        onCambiarRpm(molinete.codigo,valor);
+                                                    if (/^\d*$/.test(valor) && valor.length <= 3) {
+
+                                                        onCambiarRpm(valor);
+
                                                     }
+
                                                 }}
                                                 onKeyDown={(event) => {
                                                     if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
@@ -407,9 +408,7 @@ function NuevoTigimoliDistribucion({
                                                     />
 
                                                     <span>
-                                                        {Number(cantidad || 0) > 0 ? `${formatearNumero(
-                                                                Number(cantidad) * Number(talla.metrosRollo || 0)
-                                                            )} m` : '—'}
+                                                        {Number(cantidad || 0) > 0 ? `${formatearNumero(Number(cantidad) * Number(talla.metrosRollo || 0))} m` : '—'}
                                                     </span>
 
                                                 </td>
@@ -539,6 +538,5 @@ function NuevoTigimoliDistribucion({
     );
 
 }
-
 
 export default NuevoTigimoliDistribucion;

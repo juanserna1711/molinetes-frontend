@@ -50,11 +50,7 @@ function ConfirmModal({
 
                     <button
                         type="button"
-                        className={
-                            confirmVariant === 'danger'
-                                ? 'danger-button'
-                                : 'save-button'
-                        }
+                        className={confirmVariant === 'danger' ? 'danger-button' : 'save-button'}
                         onClick={onConfirm}
                         disabled={loading}
                     >

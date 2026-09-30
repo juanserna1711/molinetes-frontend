@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Consultar historial de órdenes de trabajo
+  Nombre responsabilidad: Consultar las órdenes de trabajo
 
   Autor: JUAN ANDRES SERNA CASTRO
   Fecha_creacion: 25/Septiembre/2026
 
   Descripcion responsabilidad:
-  Coordina filtros, paginación y consulta del historial de órdenes
+  Coordina filtros, paginación y consulta de órdenes
   de trabajo almacenadas en ORDEPROD.
 
   Historial_modificaciones:
@@ -33,16 +33,23 @@ import logoMoliplus from '../assets/logo-moliplus.png';
 import logoTextiles from '../assets/logo-textiles-pacifico.png';
 
 
+const obtenerFechaHoy = () => {
+    const hoy = new Date();
+    const offset = hoy.getTimezoneOffset();
+    const fechaLocal = new Date(hoy.getTime() - (offset * 60 * 1000));
+    return fechaLocal.toISOString().split('T')[0];
+};
 
 function OrdeProdPage() {
 
+    const hoy = obtenerFechaHoy();
     const [ordenes, setOrdenes] = useState([]);
     const [tiposHilaza, setTiposHilaza] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [ordenFiltro, setOrdenFiltro] = useState('');
     const [tipoHilazaFiltro, setTipoHilazaFiltro] = useState('');
-    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaInicio, setFechaInicio] = useState(hoy);
     const [fechaFin, setFechaFin] = useState('');
     const [pagina, setPagina] = useState(1);
     const registrosPagina = 10;
@@ -112,7 +119,7 @@ function OrdeProdPage() {
     const fechaFinAnterior = useRef(fechaFin);
 
     /*
-      Reinicia la paginación cuando cambia un filtro y consulta nuevamente el historial.
+      Reinicia la paginación cuando cambia un filtro y consulta nuevamente las órdenes.
     */
     useEffect(() => {
 
@@ -233,7 +240,7 @@ function OrdeProdPage() {
 
                 setError(
                     error.response?.data?.message ||
-                    'No fue posible cargar el historial de órdenes de trabajo.'
+                    'No fue posible cargar las órdenes de trabajo.'
                 );
 
             } finally {
@@ -256,7 +263,7 @@ function OrdeProdPage() {
     ]);
 
     /*
-      Consulta el historial ORDEPROD.
+      Consulta las ORDEPROD.
     */
     async function cargarOrdenes(
         filtros = obtenerFiltros()
@@ -280,7 +287,7 @@ function OrdeProdPage() {
 
             setError(
                 error.response?.data?.message ||
-                'No fue posible cargar el historial de órdenes de trabajo.'
+                'No fue posible cargar las órdenes de trabajo.'
             );
 
         } finally {
@@ -341,7 +348,7 @@ function OrdeProdPage() {
                 <div className="page-header-info">
 
                     <h1>
-                        Historial de Órdenes de Trabajo
+                        Órdenes de Trabajo
                     </h1>
 
                     <p>
@@ -464,7 +471,7 @@ function OrdeProdPage() {
                     <div className="state-content">
 
                         <h2>
-                            Cargando historial
+                            Cargando órdenes de trabajo
                         </h2>
 
                         <p>
@@ -490,7 +497,7 @@ function OrdeProdPage() {
                     <div className="state-content">
 
                         <h2>
-                            No fue posible cargar el historial
+                            No fue posible cargar las órdenes de trabajo
                         </h2>
 
                         <p>

@@ -26,10 +26,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const [formData, setFormData] = useState({
         codTalla: talla?.codigo ?? '',
-        nomTalla: talla?.nombre.toUpperCase() ?? '',
+        nomTalla: talla?.nombre?.toUpperCase() ?? '',
         estaTalla: talla?.estado ?? 'A'
     });
 
@@ -123,12 +122,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
         } catch (error) {
             console.error(error);
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar la talla.';
+            const mensaje = error.response?.data?.message || 'No fue posible guardar la talla.';
+            const campo = error.response?.data?.field;
 
-            const campo =
-                error.response?.data?.field;
             if (campo) {
 
                 setFieldErrors({
@@ -169,6 +165,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
         return Object.keys(errores).length === 0;
     }
+    
     return (
 
         <div className="form-panel">
@@ -192,9 +189,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Código Talla
-                    </label>
+                    <label>Código Talla</label>
 
                     <input
                         type="number"
@@ -204,24 +199,19 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         min={1}
                         max={999}
                         disabled={Boolean(talla)}
-                        className={`${talla ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codTalla ? 'input-error' : ''}
-                        `}
+                        className={`${talla ? 'input-readonly' : ''} ${codigoDuplicado || fieldErrors.codTalla ? 'input-error' : ''}`}
                     />
 
                     {(codigoDuplicado || fieldErrors.codTalla) && (
                         <span className="field-error">
-                            {codigoDuplicado
-                                ? 'El código de talla ya existe.'
-                                : fieldErrors.codTalla}
+                            {codigoDuplicado ? 'El código de talla ya existe.' : fieldErrors.codTalla}
                         </span>
                     )}
                 </div>
 
                 <div className="form-group">
 
-                    <label>
-                        Nombre Talla
-                    </label>
+                    <label>Nombre Talla</label>
 
                     <input
                         type="text"
@@ -242,9 +232,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Estado
-                    </label>
+                    <label>Estado</label>
 
                     <select
                         name="estaTalla"
@@ -252,13 +240,9 @@ function TallaForm({ onClose, onSubmit, talla }) {
                         onChange={handleChange}
                         className={fieldErrors.estaTalla ? 'input-error' : ''}
                     >
-                        <option value="A">
-                            Activo
-                        </option>
+                        <option value="A">Activo</option>
 
-                        <option value="I">
-                            Inactivo
-                        </option>
+                        <option value="I">Inactivo</option>
                     </select>
 
                     {fieldErrors.estaTalla && (

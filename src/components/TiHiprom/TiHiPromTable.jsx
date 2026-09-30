@@ -17,20 +17,7 @@
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-
-
-/*
-  Presenta la fecha y hora en formato local; muestra un guion si no hay fecha.
-*/
-function formatearFecha(fecha) {
-    if (!fecha) return '-';
-
-    return new Intl.DateTimeFormat('es-CO', {
-        dateStyle: 'short',
-        timeStyle: 'short'
-    }).format(new Date(fecha));
-}
-
+import {formatearFecha} from '../../utils/formatters';
 
 function TiHiPromTable({
     tihiprom,
@@ -49,8 +36,7 @@ function TiHiPromTable({
                         <th>Peso</th>
                         <th>Ancho</th>
                         <th>Promedio</th>
-                        <th>Fecha generación</th>
-                        <th>Usuario</th>
+                        <th>Fecha Generación</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -59,9 +45,7 @@ function TiHiPromTable({
 
                     {tihiprom.map((registro) => (
 
-                        <tr
-                            key={`${registro.codigoTipoHilaza}-${registro.codigoTalla}`}
-                        >
+                        <tr key={`${registro.codigoTipoHilaza}-${registro.codigoTalla}`}>
 
                             <td className="name">
                                 {registro.nombreTipoHilaza}
@@ -88,13 +72,7 @@ function TiHiPromTable({
                             </td>
 
                             <td className="date-cell">
-                                {formatearFecha(
-                                    registro.fechaGeneracion
-                                )}
-                            </td>
-
-                            <td>
-                                {registro.usuario || '-'}
+                                {formatearFecha(registro.fechaGeneracion)}
                             </td>
 
                             <td>
@@ -104,9 +82,7 @@ function TiHiPromTable({
                                     <button
                                         type="button"
                                         className="table-action edit"
-                                        onClick={() =>
-                                            onEdit(registro)
-                                        }
+                                        onClick={() => onEdit(registro)}
                                         title="Editar promedio"
                                     >
                                         <EditOutlinedIcon />
@@ -115,9 +91,7 @@ function TiHiPromTable({
                                     <button
                                         type="button"
                                         className="table-action delete"
-                                        onClick={() =>
-                                            onDelete(registro)
-                                        }
+                                        onClick={() => onDelete(registro)}
                                         title="Eliminar promedio"
                                     >
                                         <DeleteOutlinedIcon />

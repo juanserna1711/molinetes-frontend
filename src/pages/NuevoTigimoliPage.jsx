@@ -20,35 +20,26 @@
 =============================================================================*/
 
 import { useEffect, useMemo, useState } from 'react';
-
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import PrecisionManufacturingOutlinedIcon from '@mui/icons-material/PrecisionManufacturingOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
-
-import NuevoTigimoliTallas from '../components/NuevoTigimoli/NuevoTigimoliTallas.jsx';
+import NuevoTigimoliHilazaTallas from '../components/NuevoTigimoli/NuevoTigimoliHilazaTallas.jsx';
 import NuevoTigimoliDistribucion from '../components/NuevoTigimoli/NuevoTigimoliDistribucion.jsx';
-
 import { consultarMolinetes } from '../services/molinetes.service.js';
 import { consultarRendTallas } from '../services/rendtallas.service.js';
 import { consultarTiposHilaza } from '../services/tipohilaza.service.js';
-
 import { consultarDetalleOrdeProd } from '../services/ordeprod.service.js';
 import { generarOrdenTrabajoPdf } from '../utils/generarOrdenTrabajoPdf.js';
-
-import { aplicarTipoHilaza } from '../services/tihiprom.service.js';
+import { aplicarTipoHilaza, consultarTiHiProm } from '../services/tihiprom.service.js';
 import { crearTigimoli } from '../services/tigimoli.service.js';
-
 import logoMoliplus from '../assets/logo-moliplus.png';
 import logoTextiles from '../assets/logo-textiles-pacifico.png';
-
-
 
 function NuevoTigimoliPage() {
 
@@ -64,17 +55,14 @@ function NuevoTigimoliPage() {
     const [loading, setLoading] = useState(true);
     const [aplicandoHilaza, setAplicandoHilaza] = useState(false);
     const [guardando, setGuardando] = useState(false);
-
     const [snackbar, setSnackbar] = useState({
         message: '',
         type: 'success'
     });
 
-
     /* =========================================================
        SNACKBAR
        ========================================================= */
-
     function mostrarSnackbar(message, type = 'success') {
 
         setSnackbar({
@@ -83,7 +71,6 @@ function NuevoTigimoliPage() {
         });
 
     }
-
 
     /* =========================================================
        CARGAR DATOS
@@ -97,26 +84,11 @@ function NuevoTigimoliPage() {
 
                 setLoading(true);
 
-                const [
-                    respuestaMolinetes,
-                    respuestaTallas,
-                    respuestaTiposHilaza
-                ] = await Promise.all([
-                    consultarMolinetes(),
-
-                    consultarRendTallas({
-                        estado: 'A'
-                    }),
-
-                    consultarTiposHilaza()
-                ]);
-
+                const [respuestaMolinetes,respuestaTiposHilaza] = await Promise.all([consultarMolinetes(), consultarTiposHilaza()]);
                 const datosMolinetes = respuestaMolinetes.data || respuestaMolinetes;
-                const datosTallas = respuestaTallas.data || respuestaTallas;
                 const datosTiposHilaza = respuestaTiposHilaza.data || respuestaTiposHilaza;
 
                 setMolinetes(datosMolinetes);
-                setTallas(datosTallas);
                 setTiposHilaza(datosTiposHilaza);
 
                 /*
@@ -155,7 +127,6 @@ function NuevoTigimoliPage() {
 
     }, []);
 
-
     /* =========================================================
        ORDEN GUARDADA
        ========================================================= */
@@ -171,19 +142,21 @@ function NuevoTigimoliPage() {
 
     }
 
-
     /* =========================================================
        TIPO DE HILAZA
        ========================================================= */
 
-    async function cambiarTipoHilaza(event) {
-
-        const valor = event.target.value;
+    async function cambiarTipoHilaza(valor) {
 
         setTipoHilazaSeleccionado(valor);
         setCodigoOrden(null);
 
         if (!valor) {
+
+            setTallas([]);
+            setTallasSeleccionadas([]);
+            setDistribucion({});
+
             return;
         }
 
@@ -196,17 +169,67 @@ function NuevoTigimoliPage() {
             */
             await aplicarTipoHilaza(Number(valor),
                 {
-                    usuarioRendtall: 2
+                    usuarioRendtall: 4
                 }
             );
 
             /*
               Recarga RENDTALL para trabajar con los nuevos metros por rollo calculados.
             */
-            const respuestaTallas = await consultarRendTallas({estado: 'A'});
+            const [
+                respuestaTallas,
+                respuestaAsociaciones
+            ] = await Promise.all([
+                consultarRendTallas({
+                    estado: 'A'
+                }),
+                consultarTiHiProm({
+                    tipoHilaza: Number(valor)
+                })
+            ]);
+
             const datosTallas = respuestaTallas.data || respuestaTallas;
 
-            setTallas(datosTallas);
+            const asociaciones =
+                respuestaAsociaciones.data ||
+                respuestaAsociaciones;
+
+            const codigosTallasAsociadas =
+                new Set(
+                    asociaciones.map(
+                        (registro) =>
+                            registro.codigoTalla
+                    )
+                );
+
+            /*
+            RIB es independiente del tipo de hilaza, por lo que siempre
+            permanece disponible. Las demás tallas deben estar asociadas
+            al tipo de hilaza seleccionado en TIHIPROM.
+            */
+            const tallasFiltradas =
+                datosTallas.filter(
+                    (talla) => {
+
+                        const esRib =
+                            talla.nombre
+                                ?.trim()
+                                .toUpperCase() === 'RIB';
+
+                        return (
+                            esRib ||
+                            codigosTallasAsociadas.has(
+                                talla.codigo
+                            )
+                        );
+
+                    }
+                );
+
+
+            setTallas(
+                tallasFiltradas
+            );
             /*
               El cambio de hilaza invalida la distribución previamente calculada.
             */
@@ -311,18 +334,27 @@ function NuevoTigimoliPage() {
 
 
     /*
-      Actualiza el RPM utilizado exclusivamente para la programación actual.
+    Actualiza el RPM utilizado por todos los molinetes de la programación,
+    ya que tecnológicamente trabajan con una misma velocidad.
     */
-    function cambiarRpm(codigoMolinete, valor) {
+    function cambiarRpm(valor) {
 
-        if (!tipoHilazaSeleccionado || aplicandoHilaza) {return;}
+        if (!tipoHilazaSeleccionado || aplicandoHilaza) {
+            return;
+        }
 
         invalidarOrdenGuardada();
 
-        setRpmProgramacion((actual) => ({
-            ...actual,
-            [codigoMolinete]: valor
-        }));
+        setRpmProgramacion(
+            Object.fromEntries(
+                molinetes.map(
+                    (molinete) => [
+                        molinete.codigo,
+                        valor
+                    ]
+                )
+            )
+        );
 
     }
 
@@ -538,7 +570,7 @@ function NuevoTigimoliPage() {
                 codTipoHilaza: Number(
                     tipoHilazaSeleccionado
                 ),
-                usuario: 2
+                usuario: 4
             });
 
             setCodigoOrden(
@@ -648,7 +680,7 @@ function NuevoTigimoliPage() {
 
     }
 
-    const programacionHabilitada = Boolean(tipoHilazaSeleccionado) &&!aplicandoHilaza;
+    const programacionHabilitada = Boolean(tipoHilazaSeleccionado) && !aplicandoHilaza;
 
 
     /* =========================================================
@@ -717,90 +749,19 @@ function NuevoTigimoliPage() {
 
 
             {/* =================================================
-                TIPO DE HILAZA
+                TIPO DE HILAZA Y TALLAS
                 ================================================= */}
 
-            <section className="nuevo-tigimoli-section">
-
-                <div className="nuevo-tigimoli-section-header">
-
-                    <div>
-
-                        <span className="section-overline">
-                            01 · TIPO DE HILAZA
-                        </span>
-
-                        <h2>
-                            Tipo de Hilaza
-                        </h2>
-
-                        <p>
-                            Seleccione el tipo de hilaza que se utilizará para la programación.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div className="nuevo-tigimoli-hilaza-control">
-
-                    <select
-                        value={tipoHilazaSeleccionado}
-                        onChange={cambiarTipoHilaza}
-                        disabled={aplicandoHilaza}
-                    >
-                        <option value="">
-                            Seleccione un tipo de hilaza
-                        </option>
-
-                        {tiposHilaza.map((tipo) => (
-
-                            <option
-                                key={tipo.codigo}
-                                value={tipo.codigo}
-                            >
-                                {tipo.nombre}
-                            </option>
-
-                        ))}
-
-                    </select>
-
-                    {aplicandoHilaza && (
-
-                        <div className="nuevo-tigimoli-applying">
-
-                            <CircularProgress
-                                size={18}
-                                thickness={4}
-                            />
-
-                            <span>
-                                Aplicando parámetros...
-                            </span>
-
-                        </div>
-
-                    )}
-
-                </div>
-
-            </section>
-
-            {/* =================================================
-                TALLAS
-                ================================================= */}
-
-            <div
-                className={!programacionHabilitada ? 'nuevo-tigimoli-block disabled' : 'nuevo-tigimoli-block'}
-            >
-
-            <NuevoTigimoliTallas
+            <NuevoTigimoliHilazaTallas
+                tiposHilaza={tiposHilaza}
+                tipoHilazaSeleccionado={tipoHilazaSeleccionado}
+                onCambiarTipoHilaza={cambiarTipoHilaza}
+                aplicandoHilaza={aplicandoHilaza}
                 tallas={tallas}
                 tallasSeleccionadas={tallasSeleccionadas}
                 onCambiarTalla={cambiarTalla}
+                programacionHabilitada={programacionHabilitada}
             />
-            </div>
 
             {/* =================================================
                 DISTRIBUCIÓN

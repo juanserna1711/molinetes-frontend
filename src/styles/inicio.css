@@ -1,0 +1,182 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentación visual: pantalla de inicio
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 30/Septiembre/2026
+
+  Descripcion responsabilidad:
+  Define la presentación de bienvenida y las tarjetas informativas
+  de las áreas principales de MOLIPLUS.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
+
+/* =========================================================
+   PÁGINA
+   ========================================================= */
+
+.inicio-page {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.inicio-header {
+    display: flex;
+    justify-content: center;
+    padding: 34px 24px 10px;
+    text-align: center;
+}
+
+.inicio-header-info {
+    max-width: 720px;
+}
+
+.inicio-header h1 {
+    margin: 0;
+    color: #26364d;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.inicio-header p {
+    max-width: 420px;
+    margin: 12px auto 0;
+    color: #6f7d90;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.inicio-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 24px;
+}
+
+.inicio-logo {
+    width: 440px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+
+.inicio-cards {
+    width: 100%;
+    max-width: 940px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.inicio-card {
+    display: flex;
+    gap: 18px;
+    padding: 24px;
+    border: 1px solid #e3e8ef;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(38, 54, 77, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inicio-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(38, 54, 77, 0.12);
+}
+
+.inicio-card-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(237, 22, 133, 0.1);
+    color: #ed1685;
+}
+
+.inicio-card-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.inicio-card-content {
+    flex: 1;
+}
+
+.inicio-card-content h2 {
+    margin: 0 0 8px;
+    color: #26364d;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.inicio-card-content p {
+    margin: 0 0 14px;
+    color: #6f7d90;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.inicio-card-content ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #4f5e72;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   PIE DE PÁGINA
+   ========================================================= */
+
+.inicio-footer {
+    display: flex;
+    justify-content: center;
+    padding: 18px 24px;
+    color: #9aa5b3;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .inicio-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .inicio-header h1 {
+        font-size: 28px;
+    }
+
+}

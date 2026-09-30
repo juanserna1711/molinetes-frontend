@@ -27,25 +27,22 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     /*
       Si tihiprom existe estamos editando.
       Si tihiprom es null estamos creando un nuevo registro.
     */
     const modo = tihiprom ? 'editar' : 'crear';
-
     const [formData, setFormData] = useState({
         codTipoHilaza: tihiprom?.codigoTipoHilaza ?? '',
         codTalla: tihiprom?.codigoTalla ?? '',
         pesoTiHiProm: tihiprom?.peso ?? '',
         anchoTiHiProm: tihiprom?.ancho ?? '',
-        usuarioTiHiProm: 2
+        usuarioTiHiProm: 4
     });
 
     useEffect(() => {
 
         const codTipoHilaza = formData.codTipoHilaza;
-
         const codTalla = formData.codTalla;
 
         if (!codTipoHilaza ||!codTalla || modo === 'editar') {
@@ -110,7 +107,6 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             [name]: value
         }));
 
-
         setFieldErrors(prev => ({
             ...prev,
             [name]: null
@@ -133,7 +129,6 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             return;
         }
 
-
         const data = {
             codTipoHilaza: Number(formData.codTipoHilaza),
             codTalla: Number(formData.codTalla),
@@ -142,32 +137,24 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             usuarioTiHiProm: Number(formData.usuarioTiHiProm)
         };
 
-
         try {
             setLoading(true);
             setError(null);
             setFieldErrors({});
 
-            /*
-              Mandamos también el modo a la página.
-              La página decide si llama:
-              crearTiHiProm() o actualizarTiHiProm()
+            /* 
+            Mandamos también el modo a la página.
+            La página decide si llama: crearTiHiProm() o actualizarTiHiProm()
             */
             await onSubmit(data, modo);
-
 
         } catch (error) {
 
             console.error(error);
 
+            const mensaje = error.response?.data?.message || 'No fue posible guardar el promedio por tipo de hilaza.';
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar el promedio por tipo de hilaza.';
-
-
-            const campo =
-                error.response?.data?.field;
+            const campo = error.response?.data?.field;
 
 
             if (campo) {
@@ -238,9 +225,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Tipo de Hilaza
-                    </label>
+                    <label>Tipo de Hilaza</label>
 
                     <select
                         name="codTipoHilaza"
@@ -250,10 +235,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
                         className={`${modo === 'editar' ? 'input-readonly' : ''} ${combinacionDuplicada || fieldErrors.codTipoHilaza ? 'input-error' : ''}`}
                     >
 
-                        <option value="">
-                            Seleccione
-                        </option>
-
+                        <option value=""> Seleccione </option>
 
                         {tiposHilaza.map((tipoHilaza) => (
 
@@ -276,9 +258,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Talla
-                    </label>
+                    <label>Talla</label>
 
                     <select
                         name="codTalla"
@@ -288,10 +268,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
                         className={`${modo === 'editar' ? 'input-readonly' : ''} ${combinacionDuplicada || fieldErrors.codTalla ? 'input-error' : ''}`}
                     >
 
-                        <option value="">
-                            Seleccione
-                        </option>
-
+                        <option value="">Seleccione</option>
 
                         {tallas.map((talla) => (
 
@@ -318,10 +295,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Peso
-                    </label>
-
+                    <label>Peso</label>
 
                     <input
                         type="number"
@@ -335,11 +309,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
                                 event.preventDefault();
                             }
                         }}
-                        className={
-                            fieldErrors.pesoTiHiProm
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.pesoTiHiProm ? 'input-error' : ''}
                     />
 
                     {fieldErrors.pesoTiHiProm && (
@@ -370,11 +340,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
                             }
 
                         }}
-                        className={
-                            fieldErrors.anchoTiHiProm
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.anchoTiHiProm ? 'input-error' : ''}
                     />
 
                     {fieldErrors.anchoTiHiProm && (
@@ -395,13 +361,11 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
                         <ErrorOutlineOutlinedIcon />
 
-
                         <div className="form-error-content">
 
                             <span className="form-error-title">
                                 No fue posible guardar el promedio
                             </span>
-
 
                             <span className="form-error-message">
                                 {error}
@@ -424,14 +388,10 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
                         Cancelar
                     </button>
 
-
                     <button
                         type="submit"
                         className="save-button"
-                        disabled={
-                            loading ||
-                            combinacionDuplicada
-                        }
+                        disabled={loading || combinacionDuplicada}
                     >
 
                         {loading ? (
@@ -449,9 +409,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
                         ) : (
 
-                            modo === 'editar'
-                                ? 'Actualizar'
-                                : 'Guardar'
+                            modo === 'editar' ? 'Actualizar' : 'Guardar'
 
                         )}
 

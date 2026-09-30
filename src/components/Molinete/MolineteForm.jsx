@@ -111,11 +111,9 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
             return;
         }
 
-        
         if (codigoDuplicado) {
             return;
         }
-
 
         const data = {
             ...formData,
@@ -132,12 +130,10 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
         } catch (error) {
             console.error(error);
 
-            const mensaje =
-                error.response?.data?.message ||
-                'No fue posible guardar el molinete.';
+            const mensaje = error.response?.data?.message || 'No fue posible guardar el molinete.';
 
-            const campo =
-                error.response?.data?.field;
+            const campo = error.response?.data?.field;
+
             if (campo) {
 
                 setFieldErrors({
@@ -177,7 +173,6 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
         if (!formData.periMolinete) {
             errores.periMolinete = 'Completa este campo.';
         }
-
 
         setFieldErrors(errores);
 
@@ -222,9 +217,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                 />
                     {(codigoDuplicado || fieldErrors.codMolinete) && (
                         <span className="field-error">
-                            {codigoDuplicado
-                                ? 'El código de molinete ya existe.'
-                                : fieldErrors.codMolinete}
+                            {codigoDuplicado ? 'El código de molinete ya existe.' : fieldErrors.codMolinete}
                         </span>
                     )}
 
@@ -250,7 +243,6 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                             {fieldErrors.nomMolinete}
                         </span>
                     )}
-
 
                 </div>
 

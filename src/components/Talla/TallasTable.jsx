@@ -47,12 +47,9 @@ function TallasTable({
 
                         const estaActiva = talla.estado === 'A';
 
-                        const operacionEstado = estaActiva
-                            ? `desactivar-${talla.codigo}`
-                            : `activar-${talla.codigo}`;
+                        const operacionEstado = estaActiva ? `desactivar-${talla.codigo}` : `activar-${talla.codigo}`;
 
-                        const procesandoEstado =
-                            operation === operacionEstado;
+                        const procesandoEstado = operation === operacionEstado;
 
                         return (
                             <tr key={talla.codigo}>
@@ -69,11 +66,7 @@ function TallasTable({
 
                                     <button
                                         type="button"
-                                        className={`status-button ${
-                                            estaActiva
-                                                ? 'status-active'
-                                                : 'status-inactive'
-                                        }`}
+                                        className={`status-button ${ estaActiva ? 'status-active' : 'status-inactive'}`}
                                         onClick={() => {
                                             if (estaActiva) {
                                                 onDeactivate(talla.codigo);
@@ -82,11 +75,7 @@ function TallasTable({
                                             }
                                         }}
                                         disabled={procesandoEstado}
-                                        title={
-                                            estaActiva
-                                                ? 'Desactivar talla'
-                                                : 'Activar talla'
-                                        }
+                                        title={estaActiva ? 'Desactivar talla' : 'Activar talla'}
                                     >
 
                                         {estaActiva ? (
@@ -96,9 +85,7 @@ function TallasTable({
                                         )}
 
                                         <span>
-                                            {estaActiva
-                                                ? 'Activo'
-                                                : 'Inactivo'}
+                                            {estaActiva ? 'Activo' : 'Inactivo'}
                                         </span>
 
                                     </button>

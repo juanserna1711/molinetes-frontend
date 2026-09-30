@@ -41,7 +41,6 @@ function MolinetesTable({
 
                     {molinetes.map((molinete) => {
 
-
                         return (
                             <tr key={molinete.codigo}>
 

@@ -49,15 +49,10 @@ function Layout({ children }) {
                         type="button"
                         className="menu-button"
                         onClick={alternarSidebar}
-                        title={
-                            sidebarAbierto
-                                ? 'Ocultar menú'
-                                : 'Mostrar menú'
-                        }
+                        title={sidebarAbierto ? 'Ocultar menú' : 'Mostrar menú'}
                     >
                         <MenuIcon />
                     </button>
-
 
                     {/* =================================================
                         IDENTIDAD MOLIPLUS
@@ -75,9 +70,7 @@ function Layout({ children }) {
 
                     </div>
 
-
                     <div className="topbar-center"/>
-
 
                     {/* =================================================
                         LOGO EMPRESA
@@ -94,7 +87,6 @@ function Layout({ children }) {
                         />
 
                     </div>
-
 
                     {/* =================================================
                         USUARIO
@@ -125,7 +117,6 @@ function Layout({ children }) {
                     </div>
 
                 </header>
-
 
                 {/* =====================================================
                     CONTENIDO
