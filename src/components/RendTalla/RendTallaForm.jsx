@@ -1,0 +1,446 @@
+/*=============================================================================
+  Nombre responsabilidad: Capturar parámetros de rendimiento por talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 22/Septiembre/2026
+
+  Descripcion responsabilidad:
+  Selecciona una talla y permite crear o editar sus parámetros con una vista previa calculada.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useState } from 'react';
+
+function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
+
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    /*
+      Si talla tiene información de rendimiento, estamos editando.
+      Si talla existe pero no tiene rendimiento, estamos agregando uno nuevo.
+      Si talla es null, el formulario inicia vacío.
+    */
+    const tieneRendimientoInicial = rendtalla?.ancho !== null && rendtalla?.ancho !== undefined;
+    const [modo, setModo] = useState(tieneRendimientoInicial ? 'editar' : 'crear');
+    const [formData, setFormData] = useState({
+        codTalla: rendtalla?.codigo ?? '',
+        anchoRendtall: rendtalla?.ancho ?? '',
+        pesoRendtall: rendtalla?.pesoM2 ?? '',
+        rolloRendtall: rendtalla?.pesoRollo ?? '',
+        usuarioRendtall: 4
+    });
+    /*
+      Calcula la vista previa del rendimiento y de los metros por rollo.
+    */
+    const ancho = Number(formData.anchoRendtall);
+    const peso = Number(formData.pesoRendtall);
+    const rollo = Number(formData.rolloRendtall);
+    const rendimiento = ancho > 0 && peso > 0 ? 1000 / ((ancho * 2 / 100) * peso) : 0;
+    const metrosRollo = rendimiento > 0 && rollo > 0 ? rollo * rendimiento : 0;
+
+    /*
+      Carga los datos de la talla seleccionada y determina si se crea o edita su rendimiento.
+    */
+    function handleTallaChange(event) {
+
+        const codigo = event.target.value;
+
+        if (!codigo) {
+
+            setFormData({
+                codTalla: '',
+                anchoRendtall: '',
+                pesoRendtall: '',
+                rolloRendtall: '',
+                usuarioRendtall: 4
+            });
+            setModo('crear');
+            setFieldErrors({});
+            setError(null);
+
+            return;
+        }
+
+        const tallaSeleccionada = rendtallas.find(
+            (talla) =>
+                String(talla.codigo) === String(codigo)
+        );
+
+        if (!tallaSeleccionada) {
+            return;
+        }
+
+        const tieneRendimiento = tallaSeleccionada.ancho !== null && tallaSeleccionada.ancho !== undefined;
+
+        setFormData({
+            codTalla: tallaSeleccionada.codigo,
+            anchoRendtall: tallaSeleccionada.ancho ?? '',
+            pesoRendtall: tallaSeleccionada.pesoM2 ?? '',
+            rolloRendtall: tallaSeleccionada.pesoRollo ?? '',
+            usuarioRendtall: 4
+        });
+
+        setModo(
+            tieneRendimiento ? 'editar' : 'crear'
+        );
+
+        setFieldErrors({});
+        setError(null);
+    }
+
+    /*
+      =========================================================
+      CAMBIAR CAMPOS
+      =========================================================
+    */
+
+    /*
+      Actualiza los datos del formulario y limpia los errores del campo.
+    */
+    function handleChange(event) {
+
+        const { name, value } = event.target;
+
+        /* 
+        Los campos de rendimiento solamente permiten números y máximo 4 caracteres.
+        */
+        if (
+            ['anchoRendtall', 'pesoRendtall', 'rolloRendtall']
+                .includes(name) &&
+            value.length > 4
+        ) {
+            return;
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        setFieldErrors(prev => ({
+            ...prev,
+            [name]: null
+        }));
+
+        setError(null);
+    }
+
+    /*
+      =========================================================
+      ENVIAR FORMULARIO
+      =========================================================
+    */
+
+    /*
+      Valida el formulario, solicita el guardado y muestra los errores recibidos.
+    */
+    async function handleSubmit(event) {
+
+        event.preventDefault();
+
+        if (!validarFormulario()) {
+            return;
+        }
+
+        const data = {
+            codTalla: Number(formData.codTalla),
+            anchoRendtall: Number(formData.anchoRendtall),
+            pesoRendtall: Number(formData.pesoRendtall),
+            rolloRendtall: Number(formData.rolloRendtall),
+            usuarioRendtall: Number(formData.usuarioRendtall)
+        };
+
+        try {
+
+            setLoading(true);
+            setError(null);
+            setFieldErrors({});
+            /*
+              Mandamos también el modo a la página.
+              La página decide si llama: crearRendTalla() o actualizarRendTalla()
+             */
+            await onSubmit(data, modo);
+
+        } catch (error) {
+
+            console.error(error);
+
+            const mensaje = error.response?.data?.message || 'No fue posible guardar el rendimiento x talla.';
+
+            const campo = error.response?.data?.field;
+
+            if (campo) {
+                setFieldErrors({ [campo]: mensaje });
+                setError(null);
+            } else {
+                setError(mensaje);
+            }
+
+        } finally {
+
+            setLoading(false);
+
+        }
+    }
+    /*
+      Comprueba los campos obligatorios e identifica los errores de captura.
+    */
+    function validarFormulario() {
+
+        const errores = {};
+
+        if (!formData.codTalla) {
+            errores.codTalla = 'Selecciona una talla.';
+        }
+
+        if (!formData.anchoRendtall) {
+            errores.anchoRendtall = 'Completa este campo.';
+        }
+
+        if (!formData.pesoRendtall) {
+            errores.pesoRendtall = 'Completa este campo.';
+        }
+
+        if (!formData.rolloRendtall) {
+            errores.rolloRendtall = 'Completa este campo.';
+        }
+
+        setFieldErrors(errores);
+
+        return Object.keys(errores).length === 0;
+    }
+
+    return (
+
+        <div className="form-panel">
+
+            <div className="form-header">
+
+                <h2> {modo === 'editar' ? 'Editar Rendimiento' : 'Nuevo Rendimiento'} </h2>
+
+                <button type="button" className="close-button" onClick={onClose} title="Cerrar">
+                    <CloseOutlinedIcon />
+                </button>
+
+            </div>
+
+            <form onSubmit={handleSubmit}>
+
+                <div className="form-group">
+
+                    <label>Talla</label>
+
+                    <select 
+                        name="codTalla" 
+                        value={formData.codTalla} 
+                        onChange={handleTallaChange} 
+                        disabled={Boolean(rendtalla)} 
+                        className={fieldErrors.codTalla ? 'input-error' : ''}
+                    >
+
+                        <option value="">Seleccione</option>
+
+                        {rendtallas.map((talla) => (
+
+                            <option key={talla.codigo} value={talla.codigo}>
+                                {talla.nombre}
+                            </option>
+                        ))}
+                    </select>
+
+                    {fieldErrors.codTalla && (
+                        <span className="field-error">{fieldErrors.codTalla} </span>
+                    )}
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>Ancho</label>
+
+                    <input 
+                        type="number" 
+                        min="1" 
+                        step="1" 
+                        name="anchoRendtall" 
+                        value={formData.anchoRendtall}
+                        onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                    event.preventDefault();
+                                }
+                        }}
+                        className={
+                            fieldErrors.anchoRendtall
+                                ? 'input-error'
+                                : ''
+                        }
+                    />
+
+                    {fieldErrors.anchoRendtall && (
+                        <span className="field-error">
+                            {fieldErrors.anchoRendtall}
+                        </span>
+                    )}
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>Peso / M2</label>
+
+                    <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        name="pesoRendtall"
+                        value={formData.pesoRendtall}
+                        onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
+                        className={fieldErrors.pesoRendtall ? 'input-error': ''}
+                    />
+
+                    {fieldErrors.pesoRendtall && (
+                        <span className="field-error">
+                            {fieldErrors.pesoRendtall}
+                        </span>
+                    )}
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>Peso / Rollo</label>
+
+                    <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        name="rolloRendtall"
+                        value={formData.rolloRendtall}
+                        onChange={handleChange}
+                        onKeyDown={(event) => {
+                            if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
+                        className={fieldErrors.rolloRendtall ? 'input-error' : ''}
+                    />
+
+                    {fieldErrors.rolloRendtall && (
+                        <span className="field-error">
+                            {fieldErrors.rolloRendtall}
+                        </span>
+                    )}
+
+                </div>
+
+                <div className="form-group calculated-group">
+
+                    <label>Rendimiento</label>
+
+                    <input
+                        type="text"
+                        value={rendimiento > 0 ? rendimiento.toFixed(1) : ''}
+                        readOnly
+                    />
+
+                </div>
+
+                <div className="form-group calculated-group">
+
+                    <label>Metros</label>
+
+                    <input
+                        type="text"
+                        value={metrosRollo > 0 ? metrosRollo.toFixed(1) : ''}
+                        readOnly
+                    />
+
+                </div>
+
+                {error && (
+
+                    <div
+                        className="form-error"
+                        role="alert"
+                    >
+
+                        <ErrorOutlineOutlinedIcon />
+
+                        <div className="form-error-content">
+
+                            <span className="form-error-title">
+                                No fue posible guardar el rendimiento x talla
+                            </span>
+
+                            <span className="form-error-message">
+                                {error}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                )}
+
+                <div className="form-actions">
+
+                    <button
+                        type="button"
+                        className="cancel-button"
+                        onClick={onClose}
+                        disabled={loading}
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="save-button"
+                        disabled={loading}
+                    >
+
+                        {loading ? (
+
+                            <>
+                                <CircularProgress
+                                    size={16}
+                                    thickness={4}
+                                />
+
+                                Guardando...
+                            </>
+
+                        ) : (
+
+                            modo === 'editar'
+                                ? 'Actualizar'
+                                : 'Guardar'
+
+                        )}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    );
+}
+
+export default RendTallaForm;

@@ -1,0 +1,251 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentación visual: sidebar
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 22/Septiembre/2026
+
+  Descripcion responsabilidad:
+  Define la navegación lateral, enlaces activos, decoración y estados abierto/cerrado.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    background:
+        linear-gradient(
+            180deg,
+            #172b47 0%,
+            #1d3555 55%,
+            #142943 100%
+        );
+    color: #ffffff;
+    overflow: hidden;
+    transition: width 0.25s ease, padding 0.25s ease;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================================
+   GRUPOS DE NAVEGACIÓN
+   ========================================================= */
+
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-group + .sidebar-group {
+    margin-top: 14px;
+}
+
+.sidebar-group-button {
+    width: 100%;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 13px;
+    border: none;
+    background: transparent;
+    color: #8fa2b9;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.sidebar-group-button:hover {
+    color: #ffffff;
+}
+
+.sidebar-group-arrow {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-group-arrow.open {
+    transform: rotate(180deg);
+}
+
+.sidebar-group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* =========================================================
+   ITEMS
+   ========================================================= */
+
+.sidebar-item {
+    position: relative;
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 13px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #c4d0df;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.sidebar-item svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: #b9c7d9;
+    opacity: 0.95;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.065);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-item:hover svg {
+    color: #ffffff;
+    transform: translateX(1px);
+}
+
+
+/* =========================================================
+   ITEM ACTIVO
+   ========================================================= */
+
+.sidebar-item.active {
+    background:
+        linear-gradient(
+            90deg,
+            #ed1685 0%,
+            #f02191 100%
+        );
+
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    box-shadow:
+        0 5px 14px rgba(237, 22, 133, 0.22);
+}
+
+.sidebar-item.active svg {
+    color: #ffffff;
+    opacity: 1;
+}
+
+.sidebar-item.active::before {
+    display: none;
+}
+
+
+/* =========================================================
+   DECORACIÓN
+   ========================================================= */
+
+.sidebar-decoration {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 65px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.sidebar-wave {
+    width: 205px;
+    max-height: 150px; 
+    height: auto;
+    object-fit: contain;
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   SIDEBAR CERRADO
+   ========================================================= */
+
+.sidebar-open {
+    width: 250px;
+}
+
+.sidebar-closed {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar-closed .sidebar-navigation,
+.sidebar-closed .sidebar-decoration {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-navigation,
+.sidebar-decoration {
+    transition: opacity 0.15s ease;
+}
+
+.sidebar-footer-line {
+    width: 110px;
+    height: 3px;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    background: #ed1685;
+}
+
+.sidebar-footer-text {
+    display: block;
+    max-width: 170px;
+    color: #d5dfeb;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.45;
+}
