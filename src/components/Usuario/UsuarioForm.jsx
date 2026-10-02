@@ -33,6 +33,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
         estaUsuario: usuario?.estado ?? 'A'
     });
     
+    // Comprueba el código al crear después de 500 ms; no consulta duplicados para el usuario en edición.
     useEffect(() => {
 
         const codigo = formData.codUsuario;
@@ -45,9 +46,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
             try {
 
-                const response = await consultarUsuarios({
-                    codigo: Number(codigo)
-                });
+                const response = await consultarUsuarios({codigo: Number(codigo)});
 
                 const existe = response.data?.length > 0;
 
@@ -65,9 +64,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
 
     }, [formData.codUsuario, usuario]);
 
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -79,24 +76,12 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
             setCodigoDuplicado(false);
         }
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'nomUsuario'
-                ? value.toUpperCase()
-                : value
-        }));
-        
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-
+        setFormData(prev => ({...prev, [name]: name === 'nomUsuario' ? value.toUpperCase() : value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
     }
 
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -108,10 +93,8 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
             return;
         }
 
-        const data = {
-            ...formData,
-            codUsuario: Number(formData.codUsuario)
-        };
+        // Solo convierte el código; nombre, contraseña y estado conservan los valores del formulario.
+        const data = {...formData, codUsuario: Number(formData.codUsuario)};
 
         try {
             setLoading(true);
@@ -127,12 +110,10 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
             const mensaje = error.response?.data?.message || 'No fue posible guardar la talla.';
             const campo = error.response?.data?.field;
 
+            // field permite señalar un control concreto; sin él se presenta un error general.
             if (campo) {
 
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                setFieldErrors({[campo]: mensaje});
                 setError(null);
 
             } else {
@@ -144,9 +125,7 @@ function UsuarioForm({ onClose, onSubmit, usuario }) {
             setLoading(false);
         }
     }
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};

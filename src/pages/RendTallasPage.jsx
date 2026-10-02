@@ -26,6 +26,8 @@ import {
     actualizarRendTalla as actualizarRendTallaService,
     eliminarRendTalla as eliminarRendTallaService
 } from '../services/rendtallas.service';
+import { consultarTiposHilaza } from '../services/tipohilaza.service';
+import { aplicarTipoHilaza } from '../services/tihiprom.service';
 import RendTallasTable from '../components/RendTalla/RendTallasTable';
 import RendTallaForm from '../components/RendTalla/RendTallaForm';
 import Snackbar from '../components/Snackbar';
@@ -40,6 +42,9 @@ function RendTallasPage() {
     const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
     const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
+    const [tiposHilaza, setTiposHilaza] = useState([]);
+    const [tipoHilazaSeleccionado, setTipoHilazaSeleccionado] = useState('');
+    const [aplicandoHilaza, setAplicandoHilaza] = useState(false); // Señala la aplicación remota en curso.
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({
         message: '',
@@ -106,9 +111,7 @@ function RendTallasPage() {
       FILTROS
       =========================================================
     */
-    /*
-      Prepara los filtros de búsqueda de la página.
-    */
+    // Filtra por nombre tras quitar espacios; la recarga conserva la búsqueda actual.
     function obtenerFiltros() {
 
         const filtros = {};
@@ -121,16 +124,6 @@ function RendTallasPage() {
 
         return filtros;
     }
-
-    /*
-      =========================================================
-      CARGA INICIAL
-      =========================================================
-    */
-
-    useEffect(() => {
-        cargarRendTallas();
-    }, []);
 
     /*
       =========================================================
@@ -159,9 +152,38 @@ function RendTallasPage() {
         busqueda
     ]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    useEffect(() => {
+
+        async function cargarTipos() {
+
+            try {
+
+                const resultado = await consultarTiposHilaza({
+                    estado: 'A'
+                });
+
+                setTiposHilaza(
+                    resultado.data || resultado
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                mostrarSnackbar(
+                    'No fue posible cargar los tipos de hilaza.',
+                    'error'
+                );
+
+            }
+
+        }
+
+        cargarTipos();
+
+    }, []);
+
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarRendTallas(filtros = {}) {
 
         try {
@@ -189,6 +211,7 @@ function RendTallasPage() {
         }
     }
 
+    // Libera la talla seleccionada para que una nueva apertura no herede el registro anterior.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -197,7 +220,8 @@ function RendTallasPage() {
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      El formulario indica si la talla requiere crear rendimiento o editar el existente.
+      El error se muestra en la página; el listado se recarga con los filtros tras el éxito.
     */
     async function guardarRendTalla(data, modo) {
 
@@ -243,9 +267,7 @@ function RendTallasPage() {
         }
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarRendimiento() {
 
         if (!rendtallaAEliminar) {
@@ -281,6 +303,54 @@ function RendTallasPage() {
             setEliminando(false);
 
         }
+    }
+
+    /*
+      Esta selección aplica la hilaza en el servidor y vuelve a consultar RENDTALL.
+      A diferencia de la programación TIGIMOLI, no es solo una estimación visual.
+    */
+    async function cambiarTipoHilaza(valor) {
+
+        setTipoHilazaSeleccionado(valor);
+
+        if (!valor) {
+            return;
+        }
+
+        try {
+
+            setAplicandoHilaza(true);
+
+            await aplicarTipoHilaza(
+                Number(valor),
+                {
+                    usuarioRendtall: 4
+                }
+            );
+
+            await cargarRendTallas(obtenerFiltros());
+
+            mostrarSnackbar(
+                'Tipo de hilaza aplicado correctamente.',
+                'success'
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarSnackbar(
+                error.response?.data?.message ||
+                'No fue posible aplicar el tipo de hilaza.',
+                'error'
+            );
+
+        } finally {
+
+            setAplicandoHilaza(false);
+
+        }
+
     }
 
     const hayFiltros = busqueda.trim() !== '';
@@ -335,6 +405,38 @@ function RendTallasPage() {
                         }
                         maxLength={60}
                     />
+
+                </div>
+
+                <div className="filter-field">
+
+                    <select
+                        value={tipoHilazaSeleccionado}
+                        onChange={(event) =>
+                            cambiarTipoHilaza(event.target.value)
+                        }
+                        disabled={aplicandoHilaza}
+                    >
+                        <option value="">
+                            Aplicar tipo de hilaza...
+                        </option>
+
+                        {tiposHilaza.map((tipo) => (
+                            <option
+                                key={tipo.codigo}
+                                value={tipo.codigo}
+                            >
+                                {tipo.nombre}
+                            </option>
+                        ))}
+
+                    </select>
+                    {aplicandoHilaza && (
+                        <CircularProgress
+                            size={20}
+                            thickness={4}
+                        />
+                    )}
 
                 </div>
 

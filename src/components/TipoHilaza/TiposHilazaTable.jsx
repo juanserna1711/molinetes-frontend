@@ -18,11 +18,8 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
-function TiposHilazaTable({
-    tiposHilaza,
-    onEdit,
-    onDelete
-}) {
+// Entrega el registro completo a la página para editarlo o solicitar confirmación de eliminación.
+function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
 
     return (
 

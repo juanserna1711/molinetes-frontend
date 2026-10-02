@@ -43,7 +43,9 @@ function TiposHilazaPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
+    // La selección enlaza la fila de la tabla con el formulario; null representa creación.
     const [tipoHilazaSeleccionado, setTipoHilazaSeleccionado] = useState(null);
+    // Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [tipoHilazaAEliminar, setTipoHilazaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -88,6 +90,7 @@ function TiposHilazaPage() {
             return;
         }
 
+        // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
             setSnackbar({
@@ -107,7 +110,8 @@ function TiposHilazaPage() {
       =========================================================
     */
     /*
-      Prepara los filtros de búsqueda de la página.
+      Interpreta texto numérico como código y el resto como nombre.
+      La recarga después de una operación reutiliza estos criterios de búsqueda.
     */
     function obtenerFiltros() {
 
@@ -167,9 +171,7 @@ function TiposHilazaPage() {
 
     }, [busqueda]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarTiposHilaza(filtros = {}) {
 
         try {
@@ -200,6 +202,7 @@ function TiposHilazaPage() {
 
     }
 
+    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -207,9 +210,7 @@ function TiposHilazaPage() {
 
     }
 
-    /*
-      Guarda los cambios del registro seleccionado y actualiza el listado.
-    */
+    // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarTipoHilaza(
         tipoHilaza,
         data
@@ -221,7 +222,7 @@ function TiposHilazaPage() {
         );
 
         cerrarFormulario();
-        await cargarTiposHilaza();
+        await cargarTiposHilaza(obtenerFiltros());
         mostrarSnackbar(
             'Tipo de hilaza actualizado correctamente.',
             'success'
@@ -231,7 +232,8 @@ function TiposHilazaPage() {
 
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
+      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
     */
     async function guardarTipoHilaza(data) {
 
@@ -246,7 +248,7 @@ function TiposHilazaPage() {
 
             await crearTipoHilazaService(data);
             cerrarFormulario();
-            await cargarTiposHilaza();
+            await cargarTiposHilaza(obtenerFiltros());
             mostrarSnackbar(
                 'Tipo de hilaza creado correctamente.',
                 'success'
@@ -256,9 +258,7 @@ function TiposHilazaPage() {
 
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarTipoHilaza() {
 
         if (!tipoHilazaAEliminar) return;
@@ -267,7 +267,7 @@ function TiposHilazaPage() {
 
             setEliminando(true);
             await eliminarTipoHilazaService(tipoHilazaAEliminar.codigo);
-            await cargarTiposHilaza();
+            await cargarTiposHilaza(obtenerFiltros());
 
             mostrarSnackbar(
                 'Tipo de hilaza eliminado correctamente.',

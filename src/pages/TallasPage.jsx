@@ -44,11 +44,13 @@ function TallasPage() {
 
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
+    // La selección enlaza la fila de la tabla con el formulario; null representa creación.
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
 
+    // Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [tallaAEliminar, setTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
-    const [operacion, setOperacion] = useState(null);
+    const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
@@ -93,6 +95,7 @@ function TallasPage() {
             return;
         }
 
+        // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
             setSnackbar({
@@ -114,7 +117,8 @@ function TallasPage() {
     */
 
     /*
-      Prepara los filtros de búsqueda de la página.
+      Interpreta texto numérico como código y el resto como nombre.
+      La recarga después de una operación reutiliza estos criterios de búsqueda.
     */
     function obtenerFiltros() {
         const filtros = {};
@@ -134,18 +138,6 @@ function TallasPage() {
 
         return filtros;
     }
-
-
-    /*
-      =========================================================
-      CARGA INICIAL
-      =========================================================
-    */
-
-
-    useEffect(() => {
-        cargarTallas();
-    }, []);
 
     /*
       =========================================================
@@ -193,9 +185,7 @@ function TallasPage() {
         estado
     ]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarTallas(filtros = {}) {
 
         try {
@@ -224,6 +214,7 @@ function TallasPage() {
         }
     }
 
+    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -231,15 +222,13 @@ function TallasPage() {
 
     }
 
-    /*
-      Guarda los cambios del registro seleccionado y actualiza el listado.
-    */
+    // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarTalla(talla, data) {
         await actualizarTallaService(talla.codigo, data);
 
         cerrarFormulario();
 
-        await cargarTallas();
+        await cargarTallas(obtenerFiltros());
         mostrarSnackbar(
             'Talla actualizada correctamente.',
             'success'
@@ -247,7 +236,8 @@ function TallasPage() {
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
+      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
     */
     async function guardarTalla(data) {
         if (tallaSeleccionada) {
@@ -257,7 +247,7 @@ function TallasPage() {
 
             cerrarFormulario();
 
-            await cargarTallas();
+            await cargarTallas(obtenerFiltros());
             mostrarSnackbar(
                 'Talla creada correctamente.',
                 'success'
@@ -265,14 +255,12 @@ function TallasPage() {
         }
     }
 
-    /*
-      Solicita el cambio de estado del registro y actualiza el listado.
-    */
+    // Solicita el cambio de estado del registro y actualiza el listado.
     async function activarTalla(codigo) {
         try {
             setOperacion(`activar-${codigo}`);
             await activarTallaService(codigo);
-            await cargarTallas();
+            await cargarTallas(obtenerFiltros());
                 mostrarSnackbar(
                     'Talla activada correctamente.',
                     'success'
@@ -290,15 +278,13 @@ function TallasPage() {
     }
     }
 
-    /*
-      Solicita el cambio de estado del registro y actualiza el listado.
-    */
+    // Solicita el cambio de estado del registro y actualiza el listado.
     async function desactivarTalla(codigo) {
         try {
             setOperacion(`desactivar-${codigo}`);
 
             await desactivarTallaService(codigo);
-            await cargarTallas();
+            await cargarTallas(obtenerFiltros());
 
             mostrarSnackbar(
                 'Talla desactivada correctamente.',
@@ -317,9 +303,7 @@ function TallasPage() {
         }
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarTalla() {
         if (!tallaAEliminar) return;
 
@@ -327,7 +311,7 @@ function TallasPage() {
             setEliminando(true);
 
             await eliminarTallaService(tallaAEliminar.codigo);
-            await cargarTallas();
+            await cargarTallas(obtenerFiltros());
 
             mostrarSnackbar(
                 'Talla eliminada correctamente.',

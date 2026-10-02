@@ -17,6 +17,10 @@
 =============================================================================*/
 import { useRef } from 'react';
 
+/*
+  La página conserva distribución, RPM y resultados; este hijo comunica cambios por callbacks.
+  Los totales visibles y la navegación de celdas no registran información en el servidor.
+*/
 function NuevoTigimoliDistribucion({
     molinetes,
     tallas,
@@ -30,40 +34,25 @@ function NuevoTigimoliDistribucion({
     formatearNumero
 }) {
 
-    const inputsDistribucionRef = useRef({});
+    const inputsDistribucionRef = useRef({}); // Referencias DOM por molinete-talla para mover el foco sin alterar rollos.
 
-    function manejarNavegacionDistribucion(
-    event,
-    codigoMolinete,
-    codigoTalla
-) {
+    // Enter y flechas verticales saltan molinetes deshabilitados; las horizontales recorren tallas.
+    function manejarNavegacionDistribucion(event, codigoMolinete, codigoTalla) {
 
     const teclasNavegacion = [ 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight' ];
 
-    if ( 
-        !teclasNavegacion.includes(
-            event.key
-        )
-    ) {
+    if (!teclasNavegacion.includes(event.key)) {
         return;
     }
 
-    /*
-      Evita el comportamiento nativo de los inputs numéricos, especialmente aumentar o disminuir el valor con las flechas.
-    */
+    // Evita el comportamiento nativo de los inputs numéricos, especialmente aumentar o disminuir el valor con las flechas.
     event.preventDefault();
 
     const indiceMolinete = molinetes.findIndex((molinete) => molinete.codigo === codigoMolinete);
-
     const indiceTalla = tallas.findIndex((talla) => talla.codigo === codigoTalla);
 
-    /*
-      Lleva el foco a una combinación específica molinete-talla.
-    */
-    function enfocar(
-        nuevoCodigoMolinete,
-        nuevoCodigoTalla
-    ) {
+    // Lleva el foco a una combinación específica molinete-talla.
+    function enfocar(nuevoCodigoMolinete, nuevoCodigoTalla) {
 
         const clave = `${nuevoCodigoMolinete}-${nuevoCodigoTalla}`;
 
@@ -75,55 +64,32 @@ function NuevoTigimoliDistribucion({
         }
     }
 
-    /* =====================================================
-       ABAJO / ENTER
-       ===================================================== */
+    //ABAJO / ENTER
+    if (event.key === 'ArrowDown' || event.key === 'Enter') {
 
-    if (
-        event.key === 'ArrowDown' || event.key === 'Enter'
-    ) {
+        for (let indice = indiceMolinete + 1; indice < molinetes.length; indice++) {
 
-        for (
-            let indice = indiceMolinete + 1;
-            indice < molinetes.length;
-            indice++
-        ) {
             const siguienteMolinete = molinetes[indice];
 
-            if (
-                !molinetesHabilitados.includes(siguienteMolinete.codigo)
-            ) {
+            if (!molinetesHabilitados.includes(siguienteMolinete.codigo)) {
                 continue;
             }
 
-
-            enfocar(
-                siguienteMolinete.codigo,
-                codigoTalla
-            );
+            enfocar(siguienteMolinete.codigo, codigoTalla);
 
             return;
         }
 
     }
 
-    /* =====================================================
-       ARRIBA
-       ===================================================== */
-
+    //ARRIBA
     if (event.key === 'ArrowUp') {
 
-        for (
-            let indice = indiceMolinete - 1;
-            indice >= 0;
-            indice--
-        ) {
+        for (let indice = indiceMolinete - 1; indice >= 0; indice--) {
 
             const anteriorMolinete = molinetes[indice];
 
-            if (
-                !molinetesHabilitados.includes(anteriorMolinete.codigo)
-            ) {
+            if (!molinetesHabilitados.includes(anteriorMolinete.codigo)) {
                 continue;
             }
 
@@ -134,10 +100,7 @@ function NuevoTigimoliDistribucion({
         }
     }
 
-    /* =====================================================
-       DERECHA
-       ===================================================== */
-
+    //DERECHA
     if ( event.key === 'ArrowRight' && indiceTalla < tallas.length - 1) {
 
         const siguienteTalla = tallas[indiceTalla + 1];
@@ -146,10 +109,7 @@ function NuevoTigimoliDistribucion({
 
     }
 
-    /* =====================================================
-       IZQUIERDA
-       ===================================================== */
-
+    //IZQUIERDA
     if ( event.key === 'ArrowLeft' && indiceTalla > 0) {
 
         const anteriorTalla = tallas[indiceTalla - 1];
@@ -160,15 +120,14 @@ function NuevoTigimoliDistribucion({
 
 }
 
-    /*
-      Obtiene la cantidad de rollos asignada a una talla dentro de un molinete.
-    */
+    // ?? conserva el cero ingresado y solo muestra vacío cuando la celda no tiene un valor definido.
     function obtenerCantidad(codigoMolinete, codigoTalla) {
 
         return distribucion[codigoMolinete]?.[codigoTalla] ?? '';
 
     }
 
+    // Total visual de las tallas mostradas, excluyendo molinetes deshabilitados aunque conserven distribución.
     const totalRollosGeneral = molinetes.reduce( (total, molinete) => {
 
             const habilitado = molinetesHabilitados.includes(molinete.codigo);
@@ -203,13 +162,9 @@ function NuevoTigimoliDistribucion({
                         03 · DISTRIBUCIÓN
                     </span>
 
-                    <h2>
-                        Distribución por molinete
-                    </h2>
+                    <h2>Distribución por molinete</h2>
 
-                    <p>
-                        Distribuya los rollos entre los molinetes y ajuste las RPM para comparar los tiempos de giro estimados.
-                    </p>
+                    <p>Distribuya los rollos entre los molinetes y ajuste las RPM para comparar los tiempos de giro estimados.</p>
 
                 </div>
 
@@ -219,13 +174,9 @@ function NuevoTigimoliDistribucion({
 
                 <div className="distribucion-empty">
 
-                    <strong>
-                        Aún no hay tallas para distribuir.
-                    </strong>
+                    <strong>Aún no hay tallas para distribuir.</strong>
 
-                    <span>
-                        Seleccione al menos una talla para habilitar la matriz de distribución.
-                    </span>
+                    <span>Seleccione al menos una talla para habilitar la matriz de distribución.</span>
 
                 </div>
 
@@ -294,8 +245,7 @@ function NuevoTigimoliDistribucion({
 
                                     <tr
                                         key={molinete.codigo}
-                                        className={habilitado ? '' : 'disabled'
-                                        }
+                                        className={habilitado ? '' : 'disabled'}
                                     >
 
                                         <td className="distribucion-molinete">
@@ -343,15 +293,10 @@ function NuevoTigimoliDistribucion({
                                                 disabled={!habilitado}
                                                 value={rpmProgramacion[molinete.codigo] ?? ''}
                                                 onChange={(event) => {
-
                                                     const valor = event.target.value;
-
                                                     if (/^\d*$/.test(valor) && valor.length <= 3) {
-
                                                         onCambiarRpm(valor);
-
                                                     }
-
                                                 }}
                                                 onKeyDown={(event) => {
                                                     if (['-', '+', 'e', 'E', '.', ','].includes(event.key)) {
@@ -392,11 +337,9 @@ function NuevoTigimoliDistribucion({
                                                         value={cantidad}
                                                         onChange={(event) => {
                                                             const valor = event.target.value;
-
                                                             if (/^\d*$/.test(valor) && valor.length <= 4) {
                                                                 onCambiarDistribucion(molinete.codigo,talla.codigo,valor);
                                                             }
-
                                                         }}
                                                         onKeyDown={(event) => {
                                                             if (['-','+','e','E','.',','].includes(event.key)) {
@@ -473,15 +416,10 @@ function NuevoTigimoliDistribucion({
                                 {tallas.map((talla) => {
 
                                     const totalTalla = molinetes.reduce((total, molinete) => {
-
                                             const habilitado = molinetesHabilitados.includes(molinete.codigo);
-
                                             if (!habilitado) {return total;}
-
                                             const cantidad = Number(distribucion[molinete.codigo]?.[talla.codigo] || 0);
-
                                             return total + cantidad;
-
                                         },
                                         0
                                     );

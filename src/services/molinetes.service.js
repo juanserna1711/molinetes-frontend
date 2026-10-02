@@ -16,11 +16,13 @@
 
 import axios from 'axios';
 
+/*
+  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
+  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
+*/
 const API_URL = import.meta.env.VITE_API_URL;
 
-/*
-  Consulta los molinetes utilizando los filtros recibidos.
-*/
+// Consulta los molinetes utilizando los filtros recibidos.
 export async function consultarMolinetes(params = {}) {
     const response = await axios.get(`${API_URL}/molinetes`, {
         params
@@ -29,9 +31,7 @@ export async function consultarMolinetes(params = {}) {
     return response.data;
 }
 
-/*
-  Registra un nuevo molinete con la información recibida.
-*/
+// Registra un nuevo molinete con la información recibida.
 export async function crearMolinete(data) {
     const response = await axios.post(
         `${API_URL}/molinetes`,
@@ -41,9 +41,7 @@ export async function crearMolinete(data) {
     return response.data;
 }
 
-/*
-  Actualiza la información del molinete seleccionado.
-*/
+// Actualiza la información del molinete seleccionado.
 export async function actualizarMolinete(codigo, data) {
     const response = await axios.put(
         `${API_URL}/molinetes/${codigo}`,
@@ -54,9 +52,7 @@ export async function actualizarMolinete(codigo, data) {
 }
 
 
-/*
-  Elimina el molinete correspondiente al código recibido.
-*/
+// Elimina el molinete correspondiente al código recibido.
 export async function eliminarMolinete(codigo) {
     const response = await axios.delete(
         `${API_URL}/molinetes/${codigo}`

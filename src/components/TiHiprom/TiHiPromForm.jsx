@@ -40,6 +40,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
         usuarioTiHiProm: 4
     });
 
+    // Comprueba la pareja hilaza-talla tras 500 ms; en edición conserva la identidad del registro.
     useEffect(() => {
 
         const codTipoHilaza = formData.codTipoHilaza;
@@ -75,49 +76,26 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
     }, [formData.codTipoHilaza, formData.codTalla, modo]);
 
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
 
-        /*
-          Los campos de peso y ancho solamente permiten números y máximo 4 caracteres.
-        */
-        if (
-            ['pesoTiHiProm', 'anchoTiHiProm']
-                .includes(name) &&
-            value.length > 4
-        ) {
+        // Limita peso y ancho a cuatro caracteres; el tipo y las restricciones de captura están en los inputs.
+        if (['pesoTiHiProm', 'anchoTiHiProm'].includes(name) && value.length > 4) {
             return;
         }
 
-        if (
-            [
-                'codTipoHilaza',
-                'codTalla'
-            ].includes(name)
-        ) {
+        if (['codTipoHilaza', 'codTalla'].includes(name)) {
             setCombinacionDuplicada(false);
         }
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-
+        setFormData(prev => ({...prev, [name]: value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
     }
 
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -129,6 +107,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             return;
         }
 
+        // Convierte identificadores, medidas y usuario antes de delegar en la página según modo.
         const data = {
             codTipoHilaza: Number(formData.codTipoHilaza),
             codTalla: Number(formData.codTalla),
@@ -142,11 +121,8 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             setError(null);
             setFieldErrors({});
 
-            /* 
-            Mandamos también el modo a la página.
-            La página decide si llama: crearTiHiProm() o actualizarTiHiProm()
-            */
-            await onSubmit(data, modo);
+            await onSubmit(data, modo);//Mandamos también el modo a la página.
+            //La página decide si llama: crearTiHiProm() o actualizarTiHiProm()
 
         } catch (error) {
 
@@ -156,13 +132,10 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
 
             const campo = error.response?.data?.field;
 
-
+            // Los errores con field se asocian al control; el resto se muestra como error del formulario.
             if (campo) {
-
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                
+                setFieldErrors({[campo]: mensaje});
                 setError(null);
 
             } else {
@@ -174,9 +147,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             setLoading(false);
         }
     }
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};

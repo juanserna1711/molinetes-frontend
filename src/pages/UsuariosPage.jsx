@@ -45,12 +45,14 @@ function UsuariosPage() {
 
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
+    // La selección enlaza la fila de la tabla con el formulario; null representa creación.
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
+    // Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
 
-    const [operacion, setOperacion] = useState(null);
+    const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
@@ -95,6 +97,7 @@ function UsuariosPage() {
             return;
         }
 
+        // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
             setSnackbar({
@@ -114,9 +117,9 @@ function UsuariosPage() {
       =========================================================
     */
 
-
     /*
-      Prepara los filtros de búsqueda de la página.
+      Interpreta texto numérico como código y el resto como nombre.
+      La recarga después de una operación reutiliza estos criterios de búsqueda.
     */
     function obtenerFiltros() {
         const filtros = {};
@@ -136,17 +139,6 @@ function UsuariosPage() {
 
         return filtros;
     }
-
-
-    /*
-      =========================================================
-      CARGA INICIAL
-      =========================================================
-    */
-
-    useEffect(() => {
-        cargarUsuarios();
-    }, []);
 
     /*
       =========================================================
@@ -195,9 +187,7 @@ function UsuariosPage() {
     ]);
 
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarUsuarios(filtros = {}) {
 
         try {
@@ -225,6 +215,7 @@ function UsuariosPage() {
         }
     }
 
+    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -232,15 +223,13 @@ function UsuariosPage() {
 
     }
 
-    /*
-      Guarda los cambios del registro seleccionado y actualiza el listado.
-    */
+    // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarUsuario(usuario, data) {
         await actualizarUsuarioService(usuario.codigo, data);
 
         cerrarFormulario();
 
-        await cargarUsuarios();
+        await cargarUsuarios(obtenerFiltros());
         mostrarSnackbar(
             'Usuario actualizado correctamente.',
             'success'
@@ -248,7 +237,8 @@ function UsuariosPage() {
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
+      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
     */
     async function guardarUsuario(data) {
         if (usuarioSeleccionado) {
@@ -257,7 +247,7 @@ function UsuariosPage() {
             await crearUsuarioService(data);
 
             cerrarFormulario();
-            await cargarUsuarios();
+            await cargarUsuarios(obtenerFiltros());
             mostrarSnackbar(
                 'Usuario creado correctamente.',
                 'success'
@@ -265,14 +255,12 @@ function UsuariosPage() {
         }
     }
 
-    /*
-      Solicita el cambio de estado del registro y actualiza el listado.
-    */
+    // Solicita el cambio de estado del registro y actualiza el listado.
     async function activarUsuario(codigo) {
         try {
             setOperacion(`activar-${codigo}`);
             await activarUsuarioService(codigo);
-            await cargarUsuarios();
+            await cargarUsuarios(obtenerFiltros());
                 mostrarSnackbar(
                     'Usuario activado correctamente.',
                     'success'
@@ -290,15 +278,13 @@ function UsuariosPage() {
     }
     }
 
-    /*
-      Solicita el cambio de estado del registro y actualiza el listado.
-    */
+    // Solicita el cambio de estado del registro y actualiza el listado.
     async function desactivarUsuario(codigo) {
         try {
             setOperacion(`desactivar-${codigo}`);
 
             await desactivarUsuarioService(codigo);
-            await cargarUsuarios();
+            await cargarUsuarios(obtenerFiltros());
 
             mostrarSnackbar(
                 'Usuario desactivado correctamente.',
@@ -317,9 +303,7 @@ function UsuariosPage() {
         }
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarUsuario() {
             if (!usuarioAEliminar) return;
     
@@ -327,7 +311,7 @@ function UsuariosPage() {
                 setEliminando(true);
     
                 await eliminarUsuarioService(usuarioAEliminar.codigo);
-                await cargarUsuarios();
+                await cargarUsuarios(obtenerFiltros());
     
                 setUsuarioAEliminar(null);
     

@@ -19,6 +19,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
+// Los cambios de estado envían el código; edición y eliminación entregan el registro completo a la página.
 function UsuariosTable({
     usuarios,
     onEdit,

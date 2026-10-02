@@ -32,6 +32,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
         estaTalla: talla?.estado ?? 'A'
     });
 
+    // Espera 500 ms para consultar duplicados al crear; en edición el código original no se vuelve a comprobar.
     useEffect(() => {
 
         const codigo = formData.codTalla;
@@ -64,9 +65,7 @@ function TallaForm({ onClose, onSubmit, talla }) {
 
     }, [formData.codTalla, talla]);
 
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -77,25 +76,13 @@ function TallaForm({ onClose, onSubmit, talla }) {
         if (name === 'codTalla') {
             setCodigoDuplicado(false);
         }
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'nomTalla'
-                ? value.toUpperCase()
-                : value
-        }));
-
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-
+        
+        setFormData(prev => ({...prev, [name]: name === 'nomTalla' ? value.toUpperCase() : value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
     }
     
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -107,10 +94,8 @@ function TallaForm({ onClose, onSubmit, talla }) {
             return;
         }
 
-        const data = {
-            ...formData,
-            codTalla: Number(formData.codTalla)
-        };
+        // Convierte el identificador a número antes de delegar la persistencia en la página mediante onSubmit.
+        const data = {...formData, codTalla: Number(formData.codTalla)};
 
         try {
             setLoading(true);
@@ -125,12 +110,10 @@ function TallaForm({ onClose, onSubmit, talla }) {
             const mensaje = error.response?.data?.message || 'No fue posible guardar la talla.';
             const campo = error.response?.data?.field;
 
+            // field identifica el control que mostrará el error; sin ese dato se usa el mensaje general.
             if (campo) {
 
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                setFieldErrors({[campo]: mensaje});
                 setError(null);
 
             } else {
@@ -142,9 +125,8 @@ function TallaForm({ onClose, onSubmit, talla }) {
             setLoading(false);
         }
     }
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};

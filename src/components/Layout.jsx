@@ -25,6 +25,7 @@ import Sidebar from './Sidebar';
 import logoMoliplus from '../assets/logo-moliplus.png';
 import logoTextilesPacifico from '../assets/logo-textiles-pacifico.png';
 
+// Combina children y la ruta anidada del Outlet; el estado local solo controla la apertura del menú.
 function Layout({ children }) {
     const [sidebarAbierto, setSidebarAbierto] = useState(true);
 

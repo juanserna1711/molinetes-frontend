@@ -19,12 +19,16 @@
 
 import axios from 'axios';
 
+/*
+  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
+  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
+*/
 const API_URL = import.meta.env.VITE_API_URL;
 
 
 /*
-  Registra un nuevo cálculo TIGIMOLI y genera
-  la respectiva Orden de Trabajo.
+  Envía el cálculo preparado por la página, conservando el orden de las listas paralelas.
+  La respuesta del registro permite identificar la Orden de Trabajo generada.
 */
 export async function crearTigimoli(data) {
 

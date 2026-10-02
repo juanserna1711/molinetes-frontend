@@ -14,7 +14,7 @@
   Autor: JUAN ANDRES SERNA CASTRO
   Fecha: 25/Septiembre/2026
   Descripcion:
-  Se agrega selección y aplicación automática del tipo de hilaza,
+  Se agrega selección del tipo de hilaza,
   registro de TIGIMOLI y ORDEPROD, gráfico de tiempos de giro y acciones
   de limpiar, guardar e imprimir.
 =============================================================================*/
@@ -36,7 +36,7 @@ import { consultarRendTallas } from '../services/rendtallas.service.js';
 import { consultarTiposHilaza } from '../services/tipohilaza.service.js';
 import { consultarDetalleOrdeProd } from '../services/ordeprod.service.js';
 import { generarOrdenTrabajoPdf } from '../utils/generarOrdenTrabajoPdf.js';
-import { aplicarTipoHilaza, consultarTiHiProm } from '../services/tihiprom.service.js';
+import { consultarTiHiProm } from '../services/tihiprom.service.js';
 import { crearTigimoli } from '../services/tigimoli.service.js';
 import logoMoliplus from '../assets/logo-moliplus.png';
 import logoTextiles from '../assets/logo-textiles-pacifico.png';
@@ -48,27 +48,20 @@ function NuevoTigimoliPage() {
     const [tiposHilaza, setTiposHilaza] = useState([]);
     const [tipoHilazaSeleccionado, setTipoHilazaSeleccionado] = useState('');
     const [tallasSeleccionadas, setTallasSeleccionadas] = useState([]);
-    const [distribucion, setDistribucion] = useState({});
+    const [distribucion, setDistribucion] = useState({}); // Rollos por código de molinete y talla, aún sin persistir.
     const [molinetesHabilitados, setMolinetesHabilitados] = useState([]);
     const [rpmProgramacion, setRpmProgramacion] = useState({});
-    const [codigoOrden, setCodigoOrden] = useState(null);
+    const [codigoOrden, setCodigoOrden] = useState(null); // Vincula la programación guardada con su impresión.
     const [loading, setLoading] = useState(true);
-    const [aplicandoHilaza, setAplicandoHilaza] = useState(false);
-    const [guardando, setGuardando] = useState(false);
-    const [snackbar, setSnackbar] = useState({
-        message: '',
-        type: 'success'
-    });
+    const [guardando, setGuardando] = useState(false); // Evita editar la programación mientras se envía la orden.
+    const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
 
     /* =========================================================
        SNACKBAR
        ========================================================= */
     function mostrarSnackbar(message, type = 'success') {
 
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
 
     }
 
@@ -91,31 +84,18 @@ function NuevoTigimoliPage() {
                 setMolinetes(datosMolinetes);
                 setTiposHilaza(datosTiposHilaza);
 
-                /*
-                  Inicialmente todos los molinetes quedan habilitados para la programación.
-                */
+                // Inicialmente todos los molinetes quedan habilitados para la programación.
                 setMolinetesHabilitados(
                     datosMolinetes.map((molinete) => molinete.codigo)
                 );
 
-                /*
-                  Inicializa el RPM de programación con el valor configurado actualmente en MOLINETE.
-                */
-                setRpmProgramacion(
-                    Object.fromEntries(
-                        datosMolinetes.map(
-                            (molinete) => [molinete.codigo,molinete.rpm]
-                        )
-                    )
-                );
+                // Inicializa el RPM de programación con el valor configurado actualmente en MOLINETE.
+                setRpmProgramacion(Object.fromEntries(datosMolinetes.map((molinete) => [molinete.codigo,molinete.rpm])));
 
             } catch (error) {
 
                 console.error(error);
-                mostrarSnackbar(
-                    'No fue posible cargar la información de la programación.',
-                    'error'
-                );
+                mostrarSnackbar('No fue posible cargar la información de la programación.', 'error');
 
             } finally {
                 setLoading(false);
@@ -131,9 +111,7 @@ function NuevoTigimoliPage() {
        ORDEN GUARDADA
        ========================================================= */
 
-    /*
-      Cualquier cambio posterior a guardar invalida la orden actualmente habilitada para impresión.
-    */
+    // Cualquier cambio posterior a guardar invalida la orden actualmente habilitada para impresión.
     function invalidarOrdenGuardada() {
 
         if (codigoOrden !== null) {
@@ -146,7 +124,12 @@ function NuevoTigimoliPage() {
        TIPO DE HILAZA
        ========================================================= */
 
+    //Reconstruye las tallas disponibles para la hilaza y descarta selecciones y rollos anteriores al completar la carga. No actualiza RENDTALL desde aquí.
     async function cambiarTipoHilaza(valor) {
+
+        if (guardando) {
+            return;
+        }
 
         setTipoHilazaSeleccionado(valor);
         setCodigoOrden(null);
@@ -162,83 +145,64 @@ function NuevoTigimoliPage() {
 
         try {
 
-            setAplicandoHilaza(true);
-
-            /*
-              Aplica automáticamente los parámetros del tipo de hilaza seleccionado sobre RENDTALL.
-            */
-            await aplicarTipoHilaza(Number(valor),
-                {
-                    usuarioRendtall: 4
-                }
-            );
-
-            /*
-              Recarga RENDTALL para trabajar con los nuevos metros por rollo calculados.
-            */
-            const [
-                respuestaTallas,
-                respuestaAsociaciones
-            ] = await Promise.all([
-                consultarRendTallas({
-                    estado: 'A'
-                }),
-                consultarTiHiProm({
-                    tipoHilaza: Number(valor)
-                })
-            ]);
-
+            // Consulta los datos base de RENDTALL y los parámetros asociados al tipo de hilaza para calcular la programación en memoria.
+            const [respuestaTallas, respuestaAsociaciones] = await Promise.all([consultarRendTallas({estado: 'A'}), consultarTiHiProm({tipoHilaza: Number(valor)})]);
             const datosTallas = respuestaTallas.data || respuestaTallas;
+            const asociaciones = respuestaAsociaciones.data || respuestaAsociaciones;
 
-            const asociaciones =
-                respuestaAsociaciones.data ||
-                respuestaAsociaciones;
+            // Permite combinar el rendimiento base con la asociación TIHIPROM por código de talla.
+            const asociacionesPorTalla = new Map(asociaciones.map((registro) => [registro.codigoTalla, registro]));
+            const tallasCalculadas = datosTallas.map((talla) => {
 
-            const codigosTallasAsociadas =
-                new Set(
-                    asociaciones.map(
-                        (registro) =>
-                            registro.codigoTalla
-                    )
-                );
+                const esRib = talla.nombre ?.trim().toUpperCase() === 'RIB';
 
-            /*
-            RIB es independiente del tipo de hilaza, por lo que siempre
-            permanece disponible. Las demás tallas deben estar asociadas
-            al tipo de hilaza seleccionado en TIHIPROM.
-            */
-            const tallasFiltradas =
-                datosTallas.filter(
-                    (talla) => {
+                let ancho;
+                let pesoCalculo;
 
-                        const esRib =
-                            talla.nombre
-                                ?.trim()
-                                .toUpperCase() === 'RIB';
+                // RIB usa sus medidas base; las demás tallas usan ancho y promedio de la hilaza.
+                if (esRib) {
 
-                        return (
-                            esRib ||
-                            codigosTallasAsociadas.has(
-                                talla.codigo
-                            )
-                        );
+                    ancho = Number(talla.ancho);
+                    pesoCalculo = Number(talla.peso);
 
+                } else {
+
+                    const asociacion = asociacionesPorTalla.get(talla.codigo);
+
+                    if (!asociacion) {
+                        return talla;
                     }
-                );
+
+                    ancho = Number(asociacion.ancho);
+                    pesoCalculo = Number(asociacion.promedio);
+
+                }
+
+                const pesoRollo = Number(talla.pesoRollo);
+                // Convierte ancho y peso en rendimiento, y el peso del rollo en metros para la vista previa.
+                const rendimiento = ancho > 0 && pesoCalculo > 0 && pesoRollo > 0 ? 1000 / ((ancho * 2 / 100) * pesoCalculo) : 0;
+                const metrosRollo = pesoRollo * rendimiento;
+
+                return {...talla, rendimiento, metrosRollo};
+            });
+
+            const codigosTallasAsociadas = new Set(asociaciones.map((registro) => registro.codigoTalla));
+
+            //RIB es independiente del tipo de hilaza, por lo que siempre permanece disponible. Las demás tallas deben estar asociadas al tipo de hilaza seleccionado en TIHIPROM.
+            const tallasFiltradas = tallasCalculadas.filter((talla) => {
+
+                        const esRib = talla.nombre?.trim().toUpperCase() === 'RIB';
+
+                        return (esRib || codigosTallasAsociadas.has(talla.codigo));
+
+                    });
 
 
-            setTallas(
-                tallasFiltradas
-            );
-            /*
-              El cambio de hilaza invalida la distribución previamente calculada.
-            */
+            setTallas(tallasFiltradas);
+            // El cambio de hilaza invalida la distribución previamente calculada.
             setTallasSeleccionadas([]);
             setDistribucion({});
-            mostrarSnackbar(
-                'Tipo de hilaza aplicado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Tipo de hilaza seleccionado correctamente.', 'success');
 
         } catch (error) {
 
@@ -246,17 +210,10 @@ function NuevoTigimoliPage() {
 
             setTipoHilazaSeleccionado('');
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible aplicar el tipo de hilaza.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible cargar la información del tipo de hilaza.','error');
 
-        } finally {
-            setAplicandoHilaza(false);
         }
     }
-
 
     /* =========================================================
        TALLAS
@@ -264,46 +221,46 @@ function NuevoTigimoliPage() {
 
     function cambiarTalla(codigoTalla) {
 
-        if (!tipoHilazaSeleccionado || aplicandoHilaza) {return;}
+        if (!tipoHilazaSeleccionado || guardando) {
+            return;
+        }
 
         invalidarOrdenGuardada();
 
-        setTallasSeleccionadas((actuales) => {
-            if (actuales.includes(codigoTalla)) {
-                /*
-                  Al retirar una talla también elimina su distribución de todos los molinetes.
-                */
-                setDistribucion((actual) => {
+        const tallaSeleccionada = tallasSeleccionadas.includes(codigoTalla);
 
-                    const nuevaDistribucion = {};
+        if (tallaSeleccionada) {
 
-                    Object.entries(actual).forEach(
-                        ([codigoMolinete, distribucionMolinete]) => {
+            setTallasSeleccionadas((actuales) => actuales.filter((codigo) => codigo !== codigoTalla));
 
-                            const nuevaDistribucionMolinete = {...distribucionMolinete};
+            // Al retirar una talla también elimina su distribución de todos los molinetes.
+            setDistribucion((actual) => {
 
-                            delete nuevaDistribucionMolinete[codigoTalla];
+                const nuevaDistribucion = {};
 
-                            nuevaDistribucion[codigoMolinete] = nuevaDistribucionMolinete;
+                Object.entries(actual).forEach(([codigoMolinete, distribucionMolinete]) => {
 
-                        }
-                    );
+                        const nuevaDistribucionMolinete = {...distribucionMolinete};
 
-                    return nuevaDistribucion;
+                        delete nuevaDistribucionMolinete[codigoTalla];
 
-                });
+                        nuevaDistribucion[codigoMolinete] = nuevaDistribucionMolinete;
 
-                return actuales.filter((codigo) => codigo !== codigoTalla);
+                    });
 
-            }
+                return nuevaDistribucion;
 
-            return [...actuales,codigoTalla];
+            });
 
-        });
+            return;
+        }
+
+        setTallasSeleccionadas((actuales) => [...actuales, codigoTalla]);
 
     }
 
 
+    // Conserva el orden del catálogo y limita cálculos y columnas a las tallas seleccionadas.
     const tallasProgramacion = useMemo(() => {
 
         return tallas.filter((talla) => tallasSeleccionadas.includes(talla.codigo));
@@ -314,47 +271,31 @@ function NuevoTigimoliPage() {
        MOLINETES
        ========================================================= */
 
+    // Cambia la participación del molinete sin borrar sus rollos; el guardado excluye los deshabilitados.
     function cambiarMolinete(codigoMolinete) {
-        if (!tipoHilazaSeleccionado || aplicandoHilaza) {return;}
+        if (!tipoHilazaSeleccionado || guardando) {return;}
 
         invalidarOrdenGuardada();
 
         setMolinetesHabilitados((actuales) => {
             if (actuales.includes(codigoMolinete)) {
-                return actuales.filter(
-                    (codigo) =>
-                        codigo !== codigoMolinete
-                );
+                return actuales.filter((codigo) => codigo !== codigoMolinete);
             }
-            return [...actuales,codigoMolinete];
+            return [...actuales, codigoMolinete];
 
         });
 
     }
 
-
-    /*
-    Actualiza el RPM utilizado por todos los molinetes de la programación,
-    ya que tecnológicamente trabajan con una misma velocidad.
-    */
+    //Actualiza el RPM utilizado por todos los molinetes de la programación, ya que tecnológicamente trabajan con una misma velocidad.
     function cambiarRpm(valor) {
 
-        if (!tipoHilazaSeleccionado || aplicandoHilaza) {
+        if (!tipoHilazaSeleccionado || guardando) {
             return;
         }
 
         invalidarOrdenGuardada();
-
-        setRpmProgramacion(
-            Object.fromEntries(
-                molinetes.map(
-                    (molinete) => [
-                        molinete.codigo,
-                        valor
-                    ]
-                )
-            )
-        );
+        setRpmProgramacion(Object.fromEntries(molinetes.map((molinete) => [molinete.codigo, valor])));
 
     }
 
@@ -363,31 +304,22 @@ function NuevoTigimoliPage() {
        DISTRIBUCIÓN
        ========================================================= */
 
-    function cambiarDistribucion(
-        codigoMolinete,
-        codigoTalla,
-        cantidad
-    ) {
-        if (!tipoHilazaSeleccionado || aplicandoHilaza) {return;}
+    // Actualiza una celda conservando el resto de la distribución y desvincula la orden anterior.
+    function cambiarDistribucion(codigoMolinete, codigoTalla, cantidad) {
+        if (!tipoHilazaSeleccionado || guardando) {return;}
 
         invalidarOrdenGuardada();
 
-        setDistribucion((actual) => ({
-            ...actual,
-            [codigoMolinete]: {
-                ...(actual[codigoMolinete] || {}),
-                [codigoTalla]: cantidad
-            }
-
-        }));
+        setDistribucion((actual) => ({...actual, [codigoMolinete]: {...(actual[codigoMolinete] || {}), [codigoTalla]: cantidad}}));
 
     }
-
 
     /* =========================================================
        RESULTADOS POR MOLINETE
        ========================================================= */
 
+      //Resume solo rollos positivos de las tallas seleccionadas para cada molinete.
+      //Estos totales alimentan la tabla y el gráfico; no se incluyen en el payload.
     const resultadosMolinetes = useMemo(() => {
 
         const resultados = {};
@@ -414,8 +346,10 @@ function NuevoTigimoliPage() {
 
             });
 
-            const rpm = Number(rpmProgramacion[molinete.codigo] || molinete.rpm || 0);
+            // ?? conserva un cero explícito; solo usa la RPM del catálogo ante null o undefined.
+            const rpm = Number(rpmProgramacion[molinete.codigo] ?? molinete.rpm ?? 0);
             const perimetro = Number(molinete.perimetro || 0);
+            // El avance RPM × perímetro / 100 permite expresar el tiempo estimado en minutos.
             const tiempoGiro = rpm > 0 && perimetro > 0 && totalMetros > 0 ? totalMetros/((rpm * perimetro) / 100) : 0;
 
             resultados[molinete.codigo] = {
@@ -436,37 +370,21 @@ function NuevoTigimoliPage() {
        GRÁFICO
        ========================================================= */
 
+    // El gráfico muestra únicamente molinetes habilitados con tiempo calculado positivo.
     const datosGrafica = useMemo(() => {
 
-        return molinetes
-            .filter(
-                (molinete) =>
-                    molinetesHabilitados.includes(
-                        molinete.codigo
-                    )
-            )
-            .map((molinete) => ({
+        return molinetes.filter((molinete) => molinetesHabilitados.includes(molinete.codigo)).map((molinete) => ({
                 codigo: molinete.codigo,
                 nombre: molinete.nombre,
-                tiempoGiro:
-                    resultadosMolinetes[molinete.codigo]
-                        ?.tiempoGiro || 0
-            }))
-            .filter(
-                (molinete) =>
-                    molinete.tiempoGiro > 0
-            );
+                tiempoGiro: resultadosMolinetes[molinete.codigo] ?.tiempoGiro || 0})).filter((molinete) => molinete.tiempoGiro > 0);
 
     }, [molinetes,molinetesHabilitados,resultadosMolinetes]);
 
 
+    // La referencia mínima de uno evita una escala nula al dimensionar las barras visuales.
     const tiempoMaximoGrafica = useMemo(() => {
-        return Math.max(
-            ...datosGrafica.map(
-                (molinete) => molinete.tiempoGiro
-            ),
-            1
-        );
+
+        return Math.max(...datosGrafica.map((molinete) => molinete.tiempoGiro), 1);
 
     }, [datosGrafica]);
 
@@ -475,14 +393,12 @@ function NuevoTigimoliPage() {
        GUARDAR
        ========================================================= */
 
+    // Valida selección, detalles con rollos y RPM antes de registrar la orden mediante el servicio.
     async function guardarProgramacion() {
 
         if (!tipoHilazaSeleccionado) {
 
-            mostrarSnackbar(
-                'Debe seleccionar un tipo de hilaza.',
-                'warning'
-            );
+            mostrarSnackbar('Debe seleccionar un tipo de hilaza.', 'warning');
 
             return;
 
@@ -490,10 +406,7 @@ function NuevoTigimoliPage() {
 
         if (tallasSeleccionadas.length === 0) {
 
-            mostrarSnackbar(
-                'Debe seleccionar al menos una talla.',
-                'warning'
-            );
+            mostrarSnackbar('Debe seleccionar al menos una talla.', 'warning');
 
             return;
 
@@ -504,20 +417,16 @@ function NuevoTigimoliPage() {
         const cantidadesRollos = [];
         const rpmsMolinetes = [];
 
-        /*
-          Construye las listas paralelas que recibe PKG_TIGIMOLI.
-        */
+          //Cada índice de las cuatro listas representa un mismo detalle molinete-talla.
+          //Solo se envían molinetes habilitados con rollos positivos; Oracle calcula sus resultados.
         molinetes.forEach((molinete) => {
 
-            if (
-                !molinetesHabilitados.includes(
-                    molinete.codigo
-                )
-            ) {
+            if (!molinetesHabilitados.includes(molinete.codigo)) {
                 return;
             }
 
-            const rpm = Number(rpmProgramacion[molinete.codigo] || molinete.rpm || 0);
+            // ?? conserva un cero explícito; solo usa la RPM del catálogo ante null o undefined.
+            const rpm = Number(rpmProgramacion[molinete.codigo] ?? molinete.rpm ?? 0);
 
             tallasProgramacion.forEach((talla) => {
 
@@ -536,10 +445,7 @@ function NuevoTigimoliPage() {
 
         if (codigosMolinetes.length === 0) {
 
-            mostrarSnackbar(
-                'Debe ingresar rollos en al menos una combinación.',
-                'warning'
-            );
+            mostrarSnackbar('Debe ingresar rollos en al menos una combinación.', 'warning');
 
             return;
 
@@ -549,10 +455,7 @@ function NuevoTigimoliPage() {
 
         if (rpmInvalido) {
 
-            mostrarSnackbar(
-                'Los RPM utilizados deben ser mayores a cero.',
-                'warning'
-            );
+            mostrarSnackbar('Los RPM utilizados deben ser mayores a cero.', 'warning');
 
             return;
 
@@ -567,30 +470,19 @@ function NuevoTigimoliPage() {
                 codigosTallas,
                 cantidadesRollos,
                 rpmsMolinetes,
-                codTipoHilaza: Number(
-                    tipoHilazaSeleccionado
-                ),
+                codTipoHilaza: Number(tipoHilazaSeleccionado),
                 usuario: 4
             });
 
-            setCodigoOrden(
-                response.codigoOrden
-            );
+            setCodigoOrden(response.codigoOrden);
 
-            mostrarSnackbar(
-                `Orden de Trabajo #${response.codigoOrden} generada correctamente.`,
-                'success'
-            );
+            mostrarSnackbar(`Orden de Trabajo #${response.codigoOrden} generada correctamente.`, 'success');
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible generar la Orden de Trabajo.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible generar la Orden de Trabajo.', 'error');
 
         } finally {
 
@@ -604,6 +496,7 @@ function NuevoTigimoliPage() {
        IMPRIMIR
        ========================================================= */
 
+    // Consulta el detalle persistido por codigoOrden para que el PDF represente la orden guardada.
     async function imprimirOrden() {
 
         if (!codigoOrden) {return;}
@@ -612,23 +505,13 @@ function NuevoTigimoliPage() {
 
             const response = await consultarDetalleOrdeProd(codigoOrden);
 
-            await generarOrdenTrabajoPdf(
-                response.data,
-                {
-                    logoMoliplus,
-                    logoTextiles
-                }
-            );
+            await generarOrdenTrabajoPdf(response.data,{logoMoliplus,logoTextiles});
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible generar la Orden de Trabajo.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message ||'No fue posible generar la Orden de Trabajo.','error');
 
         }
 
@@ -640,15 +523,7 @@ function NuevoTigimoliPage() {
 
     function formatearNumero(valor) {
 
-        return Number(
-            valor || 0
-        ).toLocaleString(
-            'es-CO',
-            {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1
-            }
-        );
+        return Number(valor || 0).toLocaleString('es-CO',{minimumFractionDigits: 1, maximumFractionDigits: 1});
 
     }
 
@@ -656,31 +531,25 @@ function NuevoTigimoliPage() {
        LIMPIAR
        ========================================================= */
 
+    // Descarta el borrador y la referencia de impresión, restaurando habilitación y RPM del catálogo.
     function limpiarProgramacion() {
 
-        setTipoHilazaSeleccionado('');
+        if (guardando) {
+            return;
+        }
 
+        setTipoHilazaSeleccionado('');
         setTallasSeleccionadas([]);
         setDistribucion({});
-
         setMolinetesHabilitados(molinetes.map((molinete) => molinete.codigo));
-
-        setRpmProgramacion(
-            Object.fromEntries(
-                molinetes.map(
-                    (molinete) => [
-                        molinete.codigo,
-                        molinete.rpm
-                    ]
-                )
-            )
-        );
+        setRpmProgramacion(Object.fromEntries(molinetes.map((molinete) => [molinete.codigo, molinete.rpm])));
 
         setCodigoOrden(null);
 
     }
 
-    const programacionHabilitada = Boolean(tipoHilazaSeleccionado) && !aplicandoHilaza;
+    // El padre controla la edición y entrega selecciones, resultados y callbacks a los dos componentes hijos.
+    const programacionHabilitada = Boolean(tipoHilazaSeleccionado) && !guardando;
 
 
     /* =========================================================
@@ -725,13 +594,9 @@ function NuevoTigimoliPage() {
 
                 <div className="page-header-info">
 
-                    <h1>
-                        Registrar Cálculo
-                    </h1>
+                    <h1>Registrar Cálculo</h1>
 
-                    <p>
-                        Distribuya la producción entre los molinetes disponibles.
-                    </p>
+                    <p>Distribuya la producción entre los molinetes disponibles.</p>
 
                 </div>
 
@@ -756,7 +621,6 @@ function NuevoTigimoliPage() {
                 tiposHilaza={tiposHilaza}
                 tipoHilazaSeleccionado={tipoHilazaSeleccionado}
                 onCambiarTipoHilaza={cambiarTipoHilaza}
-                aplicandoHilaza={aplicandoHilaza}
                 tallas={tallas}
                 tallasSeleccionadas={tallasSeleccionadas}
                 onCambiarTalla={cambiarTalla}
@@ -798,13 +662,9 @@ function NuevoTigimoliPage() {
                         <BarChartOutlinedIcon />
 
                         <div>
-                            <h2>
-                                Tiempo de giro por molinete
-                            </h2>
+                            <h2>Tiempo de giro por molinete</h2>
 
-                            <p>
-                                Comparación del tiempo estimado de la programación actual.
-                            </p>
+                            <p>Comparación del tiempo estimado de la programación actual.</p>
                         </div>
 
                     </div>
@@ -879,7 +739,7 @@ function NuevoTigimoliPage() {
                     type="button"
                     className="secondary-action"
                     onClick={limpiarProgramacion}
-                    disabled={guardando || aplicandoHilaza}
+                    disabled={guardando}
                 >
                     <CleaningServicesOutlinedIcon />
 
@@ -892,7 +752,7 @@ function NuevoTigimoliPage() {
                         type="button"
                         className="primary-action"
                         onClick={guardarProgramacion}
-                        disabled={guardando || aplicandoHilaza || !tipoHilazaSeleccionado || Boolean(codigoOrden)}
+                        disabled={guardando || !tipoHilazaSeleccionado || Boolean(codigoOrden)}
                     >
 
                         {guardando ? (
@@ -946,24 +806,14 @@ function NuevoTigimoliPage() {
             <Snackbar
                 open={Boolean(snackbar.message)}
                 autoHideDuration={3000}
-                onClose={() =>
-                    setSnackbar({
-                        message: '',
-                        type: 'success'
-                    })
-                }
+                onClose={() => setSnackbar({message: '', type: 'success'})}
                 anchorOrigin={{vertical: 'bottom',horizontal: 'right'}}
             >
 
                 <Alert
                     severity={snackbar.type}
                     variant="filled"
-                    onClose={() =>
-                        setSnackbar({
-                            message: '',
-                            type: 'success'
-                        })
-                    }
+                    onClose={() => setSnackbar({message: '', type: 'success'})}
                 >
                     {snackbar.message}
                 </Alert>

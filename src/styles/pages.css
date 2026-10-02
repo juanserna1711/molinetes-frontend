@@ -249,22 +249,6 @@
     min-width: 170px;
 }
 
-/* ---------- Filtro de Hilaza ---------- */
-.hilaza-apply-control {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.hilaza-select-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.hilaza-apply-control select {
-    min-width: 160px;
-}
 /* ---------- Input numérico ---------- */
 
 .filter-field input[type="number"]::-webkit-outer-spin-button,

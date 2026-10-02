@@ -17,6 +17,10 @@
 
 import axios from 'axios';
 
+/*
+  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
+  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
+*/
 const API_URL = import.meta.env.VITE_API_URL;
 
 
@@ -37,9 +41,7 @@ export async function consultarOrdeProd(params = {}) {
 }
 
 
-/*
-  Consulta el detalle de una Orden de Trabajo.
-*/
+// Consulta el detalle de una Orden de Trabajo.
 export async function consultarDetalleOrdeProd(codigoOrden) {
 
     const response = await axios.get(

@@ -29,7 +29,7 @@ import {
 import {consultarTiposHilaza} from '../services/tipohilaza.service';
 import {consultarTallas} from '../services/tallas.service';
 import TiHiPromTable from '../components/TiHiprom/TiHiPromTable';
-import TiHiPromForm from '../components/Tihiprom/TiHiPromForm';
+import TiHiPromForm from '../components/TiHiprom/TiHiPromForm';
 import Snackbar from '../components/Snackbar';
 import ConfirmModal from '../components/ConfirmModal';
 
@@ -42,8 +42,8 @@ function TiHiPromPage() {
     const [error, setError] = useState(null);
     const [tipoHilazaFiltro, setTipoHilazaFiltro] = useState('');
     const [tallaFiltro, setTallaFiltro] = useState('');
-    const [tihipromSeleccionado, setTiHiPromSeleccionado] = useState(null);
-    const [tihipromAEliminar, setTiHiPromAEliminar] = useState(null);
+    const [tihipromSeleccionado, setTiHiPromSeleccionado] = useState(null); // null abre creación; un registro inicializa edición.
+    const [tihipromAEliminar, setTiHiPromAEliminar] = useState(null); // Conserva la pareja hilaza-talla pendiente de confirmar.
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({
@@ -57,6 +57,7 @@ function TiHiPromPage() {
       =========================================================
     */
 
+    // La tabla entrega el registro; el formulario hijo recibe la selección y delega el guardado en esta página.
     function editarTiHiProm(registro) {
         setTiHiPromSeleccionado(registro);
         setMostrarFormulario(true);
@@ -88,6 +89,7 @@ function TiHiPromPage() {
             return;
         }
 
+        // Reemplaza el temporizador al cambiar el mensaje y lo cancela al desmontar el componente.
         const timer = setTimeout(() => {
 
             setSnackbar({
@@ -108,7 +110,8 @@ function TiHiPromPage() {
       =========================================================
     */
     /*
-      Prepara los filtros de tipo de hilaza y talla.
+      Omite selecciones vacías y convierte los códigos para las recargas
+      posteriores al guardado, borrado o reintento.
     */
     function obtenerFiltros() {
 
@@ -156,6 +159,7 @@ function TiHiPromPage() {
                 );
 
 
+                // RIB se excluye de las asociaciones editables de TIHIPROM; solo se ofrecen tallas activas.
                 setTallas(
                     respuestaTallas.data.filter(
                         talla =>
@@ -211,6 +215,7 @@ function TiHiPromPage() {
         }
 
 
+        // La búsqueda automática usa los valores actuales de los selectores sin esperar un botón de consulta.
         cargarTiHiProm(
             filtros
         );
@@ -220,9 +225,7 @@ function TiHiPromPage() {
         tallaFiltro
     ]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarTiHiProm(filtros = {}) {
 
         try {
@@ -259,6 +262,7 @@ function TiHiPromPage() {
       =========================================================
     */
 
+    // Limpia la selección para que la siguiente apertura de creación no reutilice el registro editado.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -267,7 +271,8 @@ function TiHiPromPage() {
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      El modo enviado por el formulario decide crear o actualizar la pareja hilaza-talla.
+      Tras guardar, cierra el panel y recarga respetando los filtros actuales.
     */
     async function guardarTiHiProm(data, modo) {
 
@@ -299,17 +304,13 @@ function TiHiPromPage() {
 
             cerrarFormulario();
 
-            await cargarTiHiProm(
-                obtenerFiltros()
-            );
+            await cargarTiHiProm(obtenerFiltros());
 
         } catch (error) {
 
             console.error(error);
 
-            /*
-              Se relanza para que el formulario pueda mostrar los errores recibidos por campo o de negocio.
-            */
+            // Se relanza para que el formulario pueda mostrar los errores recibidos por campo o de negocio.
             throw error;
 
         }
@@ -322,9 +323,7 @@ function TiHiPromPage() {
       =========================================================
     */
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarTiHiProm() {
 
         if (!tihipromAEliminar) {
@@ -366,6 +365,7 @@ function TiHiPromPage() {
 
     }
 
+    // Distingue una búsqueda sin coincidencias de un catálogo sin registros en el estado vacío.
     const hayFiltros = tipoHilazaFiltro !== '' || tallaFiltro !== '';
 
     return (
