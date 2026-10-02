@@ -32,17 +32,9 @@ const COLORES = {
 };
 
 // Genera el archivo PDF correspondiente a una Orden de Trabajo.
-export async function generarOrdenTrabajoPdf(
-    datosOrden,
-    {
-        logoMoliplus = null,
-        logoTextiles = null
-    } = {}
-) {
+export async function generarOrdenTrabajoPdf(datosOrden, {logoMoliplus = null, logoTextiles = null} = {}) {
 
-    if (
-        !Array.isArray(datosOrden) || datosOrden.length === 0
-    ) {
+    if (!Array.isArray(datosOrden) || datosOrden.length === 0) {
         throw new Error( 'La Orden de Trabajo no contiene información para imprimir.');
     }
 
@@ -119,15 +111,8 @@ export async function generarOrdenTrabajoPdf(
        DOCUMENTO
        ========================================================= */
 
-    const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
-    });
-
-
-    const anchoPagina =
-        pdf.internal.pageSize.getWidth();
+    const pdf = new jsPDF({orientation: 'landscape', unit: 'mm', format: 'a4'});
+    const anchoPagina = pdf.internal.pageSize.getWidth();
 
     /* =========================================================
        LOGOS
@@ -330,10 +315,7 @@ pdf.text(
     */
     const encabezadoDetalle = [];
     tallasUsadas.forEach(() => {
-        encabezadoDetalle.push(
-            'Rollos',
-            'Metros'
-        );
+        encabezadoDetalle.push('Rollos', 'Metros');
     });
 
     /* =========================================================
@@ -351,38 +333,24 @@ pdf.text(
                         textColor:COLORES.primario
                     }
                 },
-                formatearNumero(
-                    molinete.rpm,
-                    0
-                )
+                formatearNumero(molinete.rpm, 0)
             ];
 
             // Agrega las columnas dinámicas de cada talla.
             tallasUsadas.forEach((talla) => {
-                const detalle =
-                    detallesPorCombinacion.get(
-                        `${molinete.codigo}-${talla.codigo}`
-                    );
+                const detalle = detallesPorCombinacion.get(`${molinete.codigo}-${talla.codigo}`);
 
-                const tieneDatos =
-                    detalle &&
-                    Number(
-                        detalle.rollos || 0
-                    ) > 0;
+                const tieneDatos = detalle && Number(detalle.rollos || 0) > 0;
 
                 /*
                   Cuando existe producción, resalta suavemente Rollos y Metros.
                   Cuando no existe producción para esa talla en el molinete se muestra únicamente "-".
                 */
                 fila.push(
-
                     tieneDatos
                         ? {
                             content:
-                                formatearNumero(
-                                    detalle.rollos,
-                                    1
-                                ),
+                                formatearNumero(detalle.rollos, 1),
                             styles: {
                                 textColor: COLORES.primario,
                                 fontStyle: 'bold'
@@ -398,10 +366,7 @@ pdf.text(
                     tieneDatos
                         ? {
                             content:
-                                formatearNumero(
-                                    detalle.totalMetrosTalla,
-                                    1
-                                ),
+                                formatearNumero(detalle.totalMetrosTalla, 1),
                             styles: {
                                 textColor: COLORES.primario
                             }
@@ -419,10 +384,7 @@ pdf.text(
             fila.push(
                 {
                     content:
-                        formatearNumero(
-                            molinete.totalMetros,
-                            1
-                        ),
+                        formatearNumero(molinete.totalMetros, 1),
                     styles: {
                         fontStyle: 'bold',
                         textColor: COLORES.primario
@@ -430,10 +392,7 @@ pdf.text(
                 },
                 {
                     content:
-                        formatearNumero(
-                            molinete.tiempoGiro,
-                            1
-                        ),
+                        formatearNumero(molinete.tiempoGiro, 1),
                     styles: {
                         fillColor: COLORES.rosadoSuave,
                         textColor: COLORES.rosado,
@@ -442,10 +401,7 @@ pdf.text(
                 },
                 {
                     content:
-                        formatearNumero(
-                            molinete.totalRollos,
-                            1
-                        ),
+                        formatearNumero(molinete.totalRollos, 1),
                     styles: {
                         fontStyle: 'bold',
                         textColor: COLORES.primario
@@ -477,12 +433,7 @@ pdf.text(
         filaTotales.push(
             {
                 content:
-                    formatearNumero(
-                        totalRollosPorTalla[
-                            talla.codigo
-                        ],
-                        1
-                    ),
+                    formatearNumero(totalRollosPorTalla[talla.codigo], 1),
                 styles: {
                     fontStyle: 'bold',
                     textColor: COLORES.rosado
@@ -498,19 +449,14 @@ pdf.text(
         '',
         {
             content:
-                formatearNumero(
-                    totalRollosOrden,
-                    1
-                ),
+                formatearNumero(totalRollosOrden, 1),
             styles: {
                 fontStyle: 'bold',
                 textColor: COLORES.rosado
             }
         }
     );
-    body.push(
-        filaTotales
-    );
+    body.push(filaTotales);
 
     /* =========================================================
        TAMAÑO DINÁMICO
@@ -609,34 +555,13 @@ pdf.text(
        ========================================================= */
 
     // Abre el documento generado en otra pestaña para su visualización o impresión.
-    const urlPdf =
-        pdf.output(
-            'bloburl'
-        );
+    const urlPdf = pdf.output('bloburl');
 
-    window.open(
-        urlPdf,
-        '_blank'
-    );
-/*
-    const numeroOrden =
-        String(
-            orden.codigoOrden
-        ).padStart(
-            4,
-            '0'
-        );
-
-    pdf.save(
-        `Orden_Trabajo_${numeroOrden}.pdf`
-    );*/
+    window.open(urlPdf, '_blank');
 }
 
 // Aplica decimales y separadores solo a la presentación de los valores del reporte.
-function formatearNumero(
-    valor,
-    decimales = 1
-) {
+function formatearNumero(valor, decimales = 1) {
     return Number( valor || 0 ).toLocaleString('es-CO',
         {
             minimumFractionDigits: decimales,

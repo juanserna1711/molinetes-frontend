@@ -66,19 +66,3 @@ export async function eliminarTiHiProm(
 
     return response.data;
 }
-
-/*
-  Persiste en RENDTALL la parametrización del tipo de hilaza seleccionado.
-  La página debe volver a consultar los rendimientos para mostrar el resultado.
-*/
-export async function aplicarTipoHilaza(
-    tipoHilaza,
-    data
-) {
-    const response = await axios.patch(
-        `${API_URL}/tihiprom/${tipoHilaza}/aplicar`,
-        data
-    );
-
-    return response.data;
-}

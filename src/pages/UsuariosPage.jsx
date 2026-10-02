@@ -20,7 +20,6 @@ import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
-
 import {
     consultarUsuarios,
     crearUsuario as crearUsuarioService,
@@ -29,12 +28,9 @@ import {
     desactivarUsuario as desactivarUsuarioService,
     eliminarUsuario as eliminarUsuarioService
 } from '../services/usuarios.service';
-
 import UsuariosTable from '../components/Usuario/UsuariosTable';
 import UsuarioForm from '../components/Usuario/UsuarioForm';
-
 import ConfirmModal from '../components/ConfirmModal';
-
 import Snackbar from '../components/Snackbar';
 
 function UsuariosPage() {
@@ -42,31 +38,20 @@ function UsuariosPage() {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
-    // La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-
-    // Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [eliminando, setEliminando] = useState(false);
-
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
-
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
-    const [snackbar, setSnackbar] = useState({
-        message: '',
-        type: 'success'
-    });
+    const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
 
     /*
       =========================================================
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
 
     function solicitarEliminarUsuario(usuario) {
         setUsuarioAEliminar(usuario);
@@ -83,12 +68,8 @@ function UsuariosPage() {
       =========================================================
     */
 
-
     function mostrarSnackbar(message, type = 'success') {
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
     }
 
     useEffect(() => {
@@ -100,10 +81,7 @@ function UsuariosPage() {
         // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
-            setSnackbar({
-                message: '',
-                type: 'success'
-            });
+            setSnackbar({message: '', type: 'success'});
 
         }, 3000);
 
@@ -151,20 +129,17 @@ function UsuariosPage() {
 
         const filtros = {};
 
-        const valor =
-            busqueda.trim();
+        const valor = busqueda.trim();
 
         if (valor !== '') {
 
             if (!isNaN(valor)) {
 
-                filtros.codigo =
-                    Number(valor);
+                filtros.codigo = Number(valor);
 
             } else {
 
-                filtros.nombre =
-                    valor;
+                filtros.nombre = valor;
 
             }
 
@@ -172,19 +147,13 @@ function UsuariosPage() {
 
         if (estado !== '') {
 
-            filtros.estado =
-                estado;
+            filtros.estado = estado;
 
         }
 
-        cargarUsuarios(
-            filtros
-        );
+        cargarUsuarios(filtros);
 
-    }, [
-        busqueda,
-        estado
-    ]);
+    }, [busqueda, estado]);
 
 
     // Consulta los registros y actualiza el listado y los mensajes de la página.
@@ -203,10 +172,7 @@ function UsuariosPage() {
 
             console.error(error);
 
-            setError(
-                error.response?.data?.message ||
-                'No fue posible cargar los usuarios.'
-            );
+            setError(error.response?.data?.message || 'No fue posible cargar los usuarios.');
 
         } finally {
 
@@ -226,14 +192,9 @@ function UsuariosPage() {
     // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarUsuario(usuario, data) {
         await actualizarUsuarioService(usuario.codigo, data);
-
         cerrarFormulario();
-
         await cargarUsuarios(obtenerFiltros());
-        mostrarSnackbar(
-            'Usuario actualizado correctamente.',
-            'success'
-        );
+        mostrarSnackbar('Usuario actualizado correctamente.', 'success');
     }
 
     /*
@@ -245,13 +206,9 @@ function UsuariosPage() {
             await actualizarUsuario(usuarioSeleccionado, data);
         } else {
             await crearUsuarioService(data);
-
             cerrarFormulario();
             await cargarUsuarios(obtenerFiltros());
-            mostrarSnackbar(
-                'Usuario creado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Usuario creado correctamente.', 'success');
         }
     }
 
@@ -261,18 +218,11 @@ function UsuariosPage() {
             setOperacion(`activar-${codigo}`);
             await activarUsuarioService(codigo);
             await cargarUsuarios(obtenerFiltros());
-                mostrarSnackbar(
-                    'Usuario activado correctamente.',
-                    'success'
-                );
+            mostrarSnackbar('Usuario activado correctamente.', 'success');
         } catch (error) {
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible activar el usuario.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible activar el usuario.', 'error');
         } finally {
         setOperacion(null);
     }
@@ -286,18 +236,11 @@ function UsuariosPage() {
             await desactivarUsuarioService(codigo);
             await cargarUsuarios(obtenerFiltros());
 
-            mostrarSnackbar(
-                'Usuario desactivado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Usuario desactivado correctamente.', 'success');
         } catch (error) {
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible desactivar el usuario.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible desactivar el usuario.', 'error');
         } finally {
             setOperacion(null);
         }
@@ -315,18 +258,11 @@ function UsuariosPage() {
     
                 setUsuarioAEliminar(null);
     
-                mostrarSnackbar(
-                    'Usuario eliminado correctamente.',
-                    'success'
-                );
+                mostrarSnackbar('Usuario eliminado correctamente.', 'success');
             } catch (error) {
                 console.error(error);
     
-                mostrarSnackbar(
-                    error.response?.data?.message ||
-                    'No fue posible eliminar el usuario.',
-                    'error'
-                );
+                mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el usuario.', 'error');
             } finally {
                 setEliminando(false);
             }
@@ -345,9 +281,7 @@ function UsuariosPage() {
                 <div className="page-header-info">
                     <h1>Gestión de Usuarios</h1>
 
-                    <p>
-                        Administración de usuarios y estado operativo.
-                    </p>
+                    <p>Administración de usuarios y estado operativo.</p>
                 </div>
 
                 <button
@@ -370,18 +304,14 @@ function UsuariosPage() {
                         type="text"
                         placeholder="Buscar por código o nombre..."
                         value={busqueda}
-                        onChange={(event) => {
-                            setBusqueda(event.target.value);
-                        }}
+                        onChange={(event) => {setBusqueda(event.target.value);}}
                         maxLength={60}
                     />
                 </div>
                 <div className="filter-field">      
                 <select
                     value={estado}
-                    onChange={(event) => {
-                        setEstado(event.target.value);
-                    }}
+                    onChange={(event) => {setEstado(event.target.value);}}
                 >
                     <option value="">Todos los estados</option>
                     <option value="A">Activos</option>
@@ -417,9 +347,7 @@ function UsuariosPage() {
                         <div className="state-content">
                             <h2>No fue posible cargar los usuarios</h2>
 
-                            <p>
-                                {error}
-                            </p>
+                            <p>{error}</p>
 
                             <button
                                 type="button"
@@ -443,15 +371,11 @@ function UsuariosPage() {
                         <div className="state-content">
 
                             <h2>
-                                {hayFiltros
-                                    ? 'No se encontraron usuarios'
-                                    : 'No hay usuarios registrados'}
+                                {hayFiltros ? 'No se encontraron usuarios' : 'No hay usuarios registrados'}
                             </h2>
 
                             <p>
-                                {hayFiltros
-                                    ? 'No hay usuarios que coincidan con los criterios de búsqueda.'
-                                    : 'Aún no existen usuarios registrados en el sistema.'}
+                                {hayFiltros ? 'No hay usuarios que coincidan con los criterios de búsqueda.' : 'Aún no existen usuarios registrados en el sistema.'}
                             </p>
 
                         </div>
@@ -475,16 +399,9 @@ function UsuariosPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <UsuarioForm
-                            key={
-                                usuarioSeleccionado
-                                    ? `editar-${usuarioSeleccionado.codigo}`
-                                    : 'crear-usuario'
-                            }
+                            key={usuarioSeleccionado ? `editar-${usuarioSeleccionado.codigo}` : 'crear-usuario'}
                             usuario={usuarioSeleccionado}
-                            onClose={() => {
-                                setMostrarFormulario(false);
-                                setUsuarioSeleccionado(null);
-                            }}
+                            onClose={() => {setMostrarFormulario(false); setUsuarioSeleccionado(null);}}
                             onSubmit={guardarUsuario}
                         />
                     </aside>

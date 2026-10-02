@@ -68,7 +68,7 @@ function NuevoTigimoliHilazaTallas({
                         })}
 
                     </div>
-
+                    
                 </div>
 
                 <div

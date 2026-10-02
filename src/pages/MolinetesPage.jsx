@@ -65,10 +65,7 @@ function MolinetesPage() {
     */
 
     function mostrarSnackbar(message, type = 'success') {
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
     }
 
     useEffect(() => {
@@ -139,9 +136,7 @@ function MolinetesPage() {
 
         }
 
-        cargarMolinetes(
-            filtros
-        );
+        cargarMolinetes(filtros);
 
     }, [busqueda]);
 
@@ -185,10 +180,7 @@ function MolinetesPage() {
         cerrarFormulario();
 
         await cargarMolinetes(obtenerFiltros());
-        mostrarSnackbar(
-            'Molinete actualizado correctamente.',
-            'success'
-        );
+        mostrarSnackbar('Molinete actualizado correctamente.', 'success');
     }
 
     /*
@@ -202,10 +194,7 @@ function MolinetesPage() {
             await crearMolineteService(data);
             cerrarFormulario();
             await cargarMolinetes(obtenerFiltros());
-            mostrarSnackbar(
-                'Molinete creado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Molinete creado correctamente.', 'success');
         }
     }
 
@@ -217,24 +206,15 @@ function MolinetesPage() {
         try {
 
             setEliminando(true);
-
             await eliminarMolineteService(molineteAEliminar.codigo);
             await cargarMolinetes(obtenerFiltros());
-
-            mostrarSnackbar(
-                'Molinete eliminado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Molinete eliminado correctamente.', 'success');
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar el molinete.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el molinete.', 'error');
 
         } finally {
 

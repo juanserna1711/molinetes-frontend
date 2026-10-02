@@ -41,23 +41,14 @@ function TallasPage() {
     const [tallas, setTallas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
-    // La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
-
-    // Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [tallaAEliminar, setTallaAEliminar] = useState(null);
+    const [tallaSeleccionada, setTallaSeleccionada] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
+    const [tallaAEliminar, setTallaAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [eliminando, setEliminando] = useState(false);
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
-
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
-    const [snackbar, setSnackbar] = useState({
-        message: '',
-        type: 'success'
-    });
+    const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
 
     /*
       =========================================================
@@ -83,10 +74,7 @@ function TallasPage() {
 
 
     function mostrarSnackbar(message, type = 'success') {
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
     }
 
     useEffect(() => {
@@ -98,10 +86,7 @@ function TallasPage() {
         // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
-            setSnackbar({
-                message: '',
-                type: 'success'
-            });
+            setSnackbar({message: '', type: 'success'});
 
         }, 3000);
 
@@ -150,8 +135,7 @@ function TallasPage() {
 
         const filtros = {};
 
-        const valor =
-            busqueda.trim();
+        const valor = busqueda.trim();
 
         if (valor !== '') {
 
@@ -162,8 +146,7 @@ function TallasPage() {
 
             } else {
 
-                filtros.nombre =
-                    valor;
+                filtros.nombre = valor;
 
             }
 
@@ -171,19 +154,13 @@ function TallasPage() {
 
         if (estado !== '') {
 
-            filtros.estado =
-                estado;
+            filtros.estado = estado;
 
         }
 
-        cargarTallas(
-            filtros
-        );
+        cargarTallas(filtros);
 
-    }, [
-        busqueda,
-        estado
-    ]);
+    }, [busqueda, estado]);
 
     // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarTallas(filtros = {}) {
@@ -202,10 +179,7 @@ function TallasPage() {
 
             console.error(error);
 
-            setError(
-                error.response?.data?.message ||
-                'No fue posible cargar las tallas.'
-            );
+            setError(error.response?.data?.message || 'No fue posible cargar las tallas.');
 
         } finally {
 
@@ -229,10 +203,7 @@ function TallasPage() {
         cerrarFormulario();
 
         await cargarTallas(obtenerFiltros());
-        mostrarSnackbar(
-            'Talla actualizada correctamente.',
-            'success'
-        );
+        mostrarSnackbar('Talla actualizada correctamente.', 'success');
     }
 
     /*
@@ -248,10 +219,7 @@ function TallasPage() {
             cerrarFormulario();
 
             await cargarTallas(obtenerFiltros());
-            mostrarSnackbar(
-                'Talla creada correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Talla creada correctamente.', 'success');
         }
     }
 
@@ -261,18 +229,11 @@ function TallasPage() {
             setOperacion(`activar-${codigo}`);
             await activarTallaService(codigo);
             await cargarTallas(obtenerFiltros());
-                mostrarSnackbar(
-                    'Talla activada correctamente.',
-                    'success'
-                );
+            mostrarSnackbar('Talla activada correctamente.', 'success');
         } catch (error) {
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible activar la talla.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible activar la talla.', 'error');
         } finally {
         setOperacion(null);
     }
@@ -286,18 +247,11 @@ function TallasPage() {
             await desactivarTallaService(codigo);
             await cargarTallas(obtenerFiltros());
 
-            mostrarSnackbar(
-                'Talla desactivada correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Talla desactivada correctamente.', 'success');
         } catch (error) {
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible desactivar la talla.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible desactivar la talla.', 'error');
         } finally {
             setOperacion(null);
         }
@@ -313,18 +267,11 @@ function TallasPage() {
             await eliminarTallaService(tallaAEliminar.codigo);
             await cargarTallas(obtenerFiltros());
 
-            mostrarSnackbar(
-                'Talla eliminada correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Talla eliminada correctamente.', 'success');
         } catch (error) {
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar la talla.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar la talla.', 'error');
         } finally {
             setEliminando(false);
             setTallaAEliminar(null);
@@ -344,9 +291,7 @@ function TallasPage() {
                 <div className="page-header-info">
                     <h1>Gestión de Tallas</h1>
 
-                    <p>
-                        Administración de tallas y estado operativo.
-                    </p>
+                    <p>Administración de tallas y estado operativo.</p>
                 </div>
 
                 <button
@@ -443,15 +388,11 @@ function TallasPage() {
                         <div className="state-content">
 
                             <h2>
-                                {hayFiltros
-                                    ? 'No se encontraron tallas'
-                                    : 'No hay tallas registradas'}
+                                {hayFiltros ? 'No se encontraron tallas' : 'No hay tallas registradas'}
                             </h2>
 
                             <p>
-                                {hayFiltros
-                                    ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                    : 'Aún no existen tallas registradas en el sistema.'}
+                                {hayFiltros ? 'No hay tallas que coincidan con los criterios de búsqueda.' : 'Aún no existen tallas registradas en el sistema.'}
                             </p>
 
                         </div>
@@ -475,11 +416,7 @@ function TallasPage() {
                 {mostrarFormulario && (
                     <aside className="form-section">
                         <TallaForm
-                            key={
-                                tallaSeleccionada
-                                    ? `editar-${tallaSeleccionada.codigo}`
-                                    : 'crear-talla'
-                            }
+                            key={tallaSeleccionada ? `editar-${tallaSeleccionada.codigo}` : 'crear-talla'}
                             talla={tallaSeleccionada}
                             onClose={() => {
                                 setMostrarFormulario(false);

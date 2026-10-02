@@ -124,7 +124,7 @@ function NuevoTigimoliPage() {
        TIPO DE HILAZA
        ========================================================= */
 
-    //Reconstruye las tallas disponibles para la hilaza y descarta selecciones y rollos anteriores al completar la carga. No actualiza RENDTALL desde aquí.
+    //Reconstruye las tallas disponibles para la hilaza y descarta selecciones y rollos anteriores al completar la carga.
     async function cambiarTipoHilaza(valor) {
 
         if (guardando) {
@@ -145,21 +145,22 @@ function NuevoTigimoliPage() {
 
         try {
 
-            // Consulta los datos base de RENDTALL y los parámetros asociados al tipo de hilaza para calcular la programación en memoria.
-            const [respuestaTallas, respuestaAsociaciones] = await Promise.all([consultarRendTallas({estado: 'A'}), consultarTiHiProm({tipoHilaza: Number(valor)})]);
+            //Recarga RENDTALL para trabajar con los nuevos metros por rollo calculados.
+            const [respuestaTallas, respuestaAsociaciones] = await Promise.all([
+                consultarRendTallas({estado: 'A'}),
+                consultarTiHiProm({tipoHilaza: Number(valor)})
+            ]);
+
             const datosTallas = respuestaTallas.data || respuestaTallas;
             const asociaciones = respuestaAsociaciones.data || respuestaAsociaciones;
-
-            // Permite combinar el rendimiento base con la asociación TIHIPROM por código de talla.
             const asociacionesPorTalla = new Map(asociaciones.map((registro) => [registro.codigoTalla, registro]));
             const tallasCalculadas = datosTallas.map((talla) => {
 
-                const esRib = talla.nombre ?.trim().toUpperCase() === 'RIB';
+                const esRib = talla.nombre?.trim().toUpperCase() === 'RIB';
 
                 let ancho;
                 let pesoCalculo;
 
-                // RIB usa sus medidas base; las demás tallas usan ancho y promedio de la hilaza.
                 if (esRib) {
 
                     ancho = Number(talla.ancho);
@@ -179,8 +180,7 @@ function NuevoTigimoliPage() {
                 }
 
                 const pesoRollo = Number(talla.pesoRollo);
-                // Convierte ancho y peso en rendimiento, y el peso del rollo en metros para la vista previa.
-                const rendimiento = ancho > 0 && pesoCalculo > 0 && pesoRollo > 0 ? 1000 / ((ancho * 2 / 100) * pesoCalculo) : 0;
+                const rendimiento = ancho > 0 && pesoCalculo > 0 && pesoRollo > 0 ? 1000 / ((ancho * 2 / 100) * pesoCalculo): 0;
                 const metrosRollo = pesoRollo * rendimiento;
 
                 return {...talla, rendimiento, metrosRollo};
@@ -191,15 +191,15 @@ function NuevoTigimoliPage() {
             //RIB es independiente del tipo de hilaza, por lo que siempre permanece disponible. Las demás tallas deben estar asociadas al tipo de hilaza seleccionado en TIHIPROM.
             const tallasFiltradas = tallasCalculadas.filter((talla) => {
 
-                        const esRib = talla.nombre?.trim().toUpperCase() === 'RIB';
+                    const esRib = talla.nombre ?.trim().toUpperCase() === 'RIB';
 
-                        return (esRib || codigosTallasAsociadas.has(talla.codigo));
+                    return (esRib || codigosTallasAsociadas.has(talla.codigo));
 
-                    });
-
+                });
 
             setTallas(tallasFiltradas);
-            // El cambio de hilaza invalida la distribución previamente calculada.
+
+            //El cambio de hilaza invalida la distribución previamente calculada.
             setTallasSeleccionadas([]);
             setDistribucion({});
             mostrarSnackbar('Tipo de hilaza seleccionado correctamente.', 'success');
@@ -207,10 +207,8 @@ function NuevoTigimoliPage() {
         } catch (error) {
 
             console.error(error);
-
             setTipoHilazaSeleccionado('');
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible cargar la información del tipo de hilaza.','error');
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible cargar la información del tipo de hilaza.', 'error');
 
         }
     }
