@@ -22,6 +22,7 @@ import logoMoliplus from '../assets/logo-moliplus.png';
 
 import '../styles/inicio.css';
 
+// Presenta las áreas del sistema como contenido informativo, sin cargar catálogos ni programaciones.
 function InicioPage() {
 
     return (
@@ -35,9 +36,7 @@ function InicioPage() {
 
                 <div className="inicio-header-info">
 
-                    <h1>
-                        Bienvenido a
-                    </h1>
+                    <h1>Bienvenido a</h1>
                     
                     <img
                         src={logoMoliplus}
@@ -45,10 +44,7 @@ function InicioPage() {
                         className="inicio-logo"
                     />
 
-                    <p>
-                        Gestione los parámetros textiles y las operaciones
-                        necesarias para la programación de producción.
-                    </p>
+                    <p>Gestione los parámetros textiles y las operaciones necesarias para la programación de producción.</p>
 
                 </div>
 
@@ -72,41 +68,21 @@ function InicioPage() {
 
                         <div className="inicio-card-content">
 
-                            <h2>
-                                Parámetros
-                            </h2>
+                            <h2>Parámetros</h2>
 
-                            <p>
-                                Administre la información base utilizada
-                                por los procesos de MOLIPLUS.
-                            </p>
+                            <p>Administre la información base utilizada por los procesos de MOLIPLUS.</p>
 
                             <ul>
-                                <li>
-                                    Tallas
-                                </li>
-
-                                <li>
-                                    Usuarios
-                                </li>
-
-                                <li>
-                                    Molinetes
-                                </li>
-
-                                <li>
-                                    Tipos de hilaza y promedios
-                                </li>
-
-                                <li>
-                                    Rendimientos por talla
-                                </li>
+                                <li>Tallas</li>
+                                <li>Usuarios</li>
+                                <li>Molinetes</li>
+                                <li>Tipos de hilaza y promedios</li>
+                                <li>Rendimientos por talla</li>
                             </ul>
 
                         </div>
 
                     </article>
-
 
                     <article className="inicio-card">
 
@@ -116,31 +92,15 @@ function InicioPage() {
 
                         <div className="inicio-card-content">
 
-                            <h2>
-                                Operaciones
-                            </h2>
+                            <h2>Operaciones</h2>
 
-                            <p>
-                                Realice la programación y consulte
-                                las órdenes generadas.
-                            </p>
+                            <p>Realice la programación y consulte las órdenes generadas.</p>
 
                             <ul>
-                                <li>
-                                    Cálculo de tiempo de giro
-                                </li>
-
-                                <li>
-                                    Distribución por molinete
-                                </li>
-
-                                <li>
-                                    Generación de órdenes de trabajo
-                                </li>
-
-                                <li>
-                                    Consulta e impresión de órdenes
-                                </li>
+                                <li>Cálculo de tiempo de giro</li>
+                                <li>Distribución por molinete</li>
+                                <li>Generación de órdenes de trabajo</li>
+                                <li>Consulta e impresión de órdenes</li>
                             </ul>
 
                         </div>

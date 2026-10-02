@@ -38,18 +38,17 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
         rolloRendtall: rendtalla?.pesoRollo ?? '',
         usuarioRendtall: 4
     });
-    /*
-      Calcula la vista previa del rendimiento y de los metros por rollo.
-    */
+
+    //La vista previa convierte las entradas a números para calcular rendimiento y metros.
+    //Estos resultados son visuales: el payload envía las medidas y Oracle vuelve a calcularlos.
     const ancho = Number(formData.anchoRendtall);
     const peso = Number(formData.pesoRendtall);
     const rollo = Number(formData.rolloRendtall);
     const rendimiento = ancho > 0 && peso > 0 ? 1000 / ((ancho * 2 / 100) * peso) : 0;
     const metrosRollo = rendimiento > 0 && rollo > 0 ? rollo * rendimiento : 0;
 
-    /*
-      Carga los datos de la talla seleccionada y determina si se crea o edita su rendimiento.
-    */
+    // Carga los datos de la talla seleccionada y determina si se crea o edita su rendimiento.
+    // La igualdad como texto permite enlazar el valor del select con códigos numéricos del catálogo.
     function handleTallaChange(event) {
 
         const codigo = event.target.value;
@@ -97,52 +96,22 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
         setError(null);
     }
 
-    /*
-      =========================================================
-      CAMBIAR CAMPOS
-      =========================================================
-    */
-
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
 
-        /* 
-        Los campos de rendimiento solamente permiten números y máximo 4 caracteres.
-        */
-        if (
-            ['anchoRendtall', 'pesoRendtall', 'rolloRendtall']
-                .includes(name) &&
-            value.length > 4
-        ) {
+        // Limita la longitud de las medidas a cuatro caracteres; los inputs controlan el tipo de captura.
+        if (['anchoRendtall', 'pesoRendtall', 'rolloRendtall'].includes(name) && value.length > 4) {
             return;
         }
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-
+        setFormData(prev => ({...prev, [name]: value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
     }
 
-    /*
-      =========================================================
-      ENVIAR FORMULARIO
-      =========================================================
-    */
-
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
 
         event.preventDefault();
@@ -151,6 +120,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             return;
         }
 
+        // Envía medidas, talla y usuario como números; modo indica a la página qué operación ejecutar.
         const data = {
             codTalla: Number(formData.codTalla),
             anchoRendtall: Number(formData.anchoRendtall),
@@ -164,11 +134,9 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             setLoading(true);
             setError(null);
             setFieldErrors({});
-            /*
-              Mandamos también el modo a la página.
-              La página decide si llama: crearRendTalla() o actualizarRendTalla()
-             */
-            await onSubmit(data, modo);
+
+            await onSubmit(data, modo);// La página recibe el modo de persistencia.
+            // La página decide si llama: crearRendTalla() o actualizarRendTalla()
 
         } catch (error) {
 
@@ -191,9 +159,8 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
         }
     }
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};
@@ -250,7 +217,6 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                         <option value="">Seleccione</option>
 
                         {rendtallas.map((talla) => (
-
                             <option key={talla.codigo} value={talla.codigo}>
                                 {talla.nombre}
                             </option>
@@ -279,11 +245,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                                     event.preventDefault();
                                 }
                         }}
-                        className={
-                            fieldErrors.anchoRendtall
-                                ? 'input-error'
-                                : ''
-                        }
+                        className={fieldErrors.anchoRendtall ? 'input-error' : ''}
                     />
 
                     {fieldErrors.anchoRendtall && (
@@ -427,9 +389,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
 
                         ) : (
 
-                            modo === 'editar'
-                                ? 'Actualizar'
-                                : 'Guardar'
+                            modo === 'editar' ? 'Actualizar' : 'Guardar'
 
                         )}
 

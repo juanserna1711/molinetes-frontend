@@ -17,6 +17,7 @@
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 
+// La página controla visibilidad y persistencia; loading impide confirmar o cancelar mientras procesa.
 function ConfirmModal({
     title,
     message,

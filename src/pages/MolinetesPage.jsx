@@ -37,14 +37,11 @@ function MolinetesPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
-    const [molineteSeleccionado, setMolineteSeleccionado] = useState(null);
-    const [molineteAEliminar, setMolineteAEliminar] = useState(null);
+    const [molineteSeleccionado, setMolineteSeleccionado] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
+    const [molineteAEliminar, setMolineteAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [snackbar, setSnackbar] = useState({
-        message: '',
-        type: 'success'
-    });
+    const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
 
     /*
       =========================================================
@@ -68,10 +65,7 @@ function MolinetesPage() {
     */
 
     function mostrarSnackbar(message, type = 'success') {
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
     }
 
     useEffect(() => {
@@ -80,12 +74,10 @@ function MolinetesPage() {
             return;
         }
 
+        // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
-            setSnackbar({
-                message: '',
-                type: 'success'
-            });
+            setSnackbar({message: '', type: 'success'});
 
         }, 3000);
 
@@ -100,7 +92,8 @@ function MolinetesPage() {
     */
 
     /*
-      Prepara los filtros de búsqueda de la página.
+      Interpreta texto numérico como código y el resto como nombre.
+      La recarga después de una operación reutiliza estos criterios de búsqueda.
     */
     function obtenerFiltros() {
         const filtros = {};
@@ -116,16 +109,6 @@ function MolinetesPage() {
 
         return filtros;
     }
-    
-    /*
-      =========================================================
-      CARGA INICIAL
-      =========================================================
-    */
-
-    useEffect(() => {
-        cargarMolinetes();
-    }, []);
 
     /*
       =========================================================
@@ -153,15 +136,11 @@ function MolinetesPage() {
 
         }
 
-        cargarMolinetes(
-            filtros
-        );
+        cargarMolinetes(filtros);
 
     }, [busqueda]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarMolinetes(filtros = {}) {
 
         try {
@@ -186,6 +165,7 @@ function MolinetesPage() {
         }
     }
 
+    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -193,23 +173,19 @@ function MolinetesPage() {
 
     }
 
-    /*
-      Guarda los cambios del registro seleccionado y actualiza el listado.
-    */
+    // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarMolinete(molinete, data) {
         await actualizarMolineteService(molinete.codigo, data);
 
         cerrarFormulario();
 
-        await cargarMolinetes();
-        mostrarSnackbar(
-            'Molinete actualizado correctamente.',
-            'success'
-        );
+        await cargarMolinetes(obtenerFiltros());
+        mostrarSnackbar('Molinete actualizado correctamente.', 'success');
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
+      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
     */
     async function guardarMolinete(data) {
         if (molineteSeleccionado) {
@@ -217,17 +193,12 @@ function MolinetesPage() {
         } else {
             await crearMolineteService(data);
             cerrarFormulario();
-            await cargarMolinetes();
-            mostrarSnackbar(
-                'Molinete creado correctamente.',
-                'success'
-            );
+            await cargarMolinetes(obtenerFiltros());
+            mostrarSnackbar('Molinete creado correctamente.', 'success');
         }
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarMolinete() {
 
         if (!molineteAEliminar) return;
@@ -235,24 +206,15 @@ function MolinetesPage() {
         try {
 
             setEliminando(true);
-
             await eliminarMolineteService(molineteAEliminar.codigo);
-            await cargarMolinetes();
-
-            mostrarSnackbar(
-                'Molinete eliminado correctamente.',
-                'success'
-            );
+            await cargarMolinetes(obtenerFiltros());
+            mostrarSnackbar('Molinete eliminado correctamente.', 'success');
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar el molinete.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el molinete.', 'error');
 
         } finally {
 
@@ -353,15 +315,11 @@ function MolinetesPage() {
                         <div className="state-content">
 
                             <h2>
-                                {hayFiltros
-                                    ? 'No se encontraron molinetes'
-                                    : 'No hay molinetes registrados'}
+                                {hayFiltros ? 'No se encontraron molinetes' : 'No hay molinetes registrados'}
                             </h2>
 
                             <p>
-                                {hayFiltros
-                                    ? 'No hay molinetes que coincidan con los criterios de búsqueda.'
-                                    : 'Aún no existen molinetes registrados en el sistema.'}
+                                {hayFiltros ? 'No hay molinetes que coincidan con los criterios de búsqueda.' : 'Aún no existen molinetes registrados en el sistema.'}
                             </p>
 
                         </div>
@@ -384,10 +342,7 @@ function MolinetesPage() {
                         <MolineteForm
                             key={molineteSeleccionado ? `editar-${molineteSeleccionado.codigo}` : 'crear-molinete'}
                             molinete={molineteSeleccionado}
-                            onClose={() => {
-                                setMostrarFormulario(false);
-                                setMolineteSeleccionado(null);
-                            }}
+                            onClose={() => {setMostrarFormulario(false); setMolineteSeleccionado(null);}}
                             onSubmit={guardarMolinete}
                         />
                     </aside>

@@ -31,32 +31,21 @@ const COLORES = {
     blanco: [255,255,255]
 };
 
-/*
-  Genera el archivo PDF correspondiente a una Orden de Trabajo.
-*/
-export async function generarOrdenTrabajoPdf(
-    datosOrden,
-    {
-        logoMoliplus = null,
-        logoTextiles = null
-    } = {}
-) {
+// Genera el archivo PDF correspondiente a una Orden de Trabajo.
+export async function generarOrdenTrabajoPdf(datosOrden, {logoMoliplus = null, logoTextiles = null} = {}) {
 
-    if (
-        !Array.isArray(datosOrden) || datosOrden.length === 0
-    ) {
+    if (!Array.isArray(datosOrden) || datosOrden.length === 0) {
         throw new Error( 'La Orden de Trabajo no contiene información para imprimir.');
     }
 
+    // Los datos comunes del encabezado se toman del primer detalle de la orden consultada.
     const orden = datosOrden[0];
 
     /* =========================================================
        TALLAS UTILIZADAS
        ========================================================= */
 
-    /*
-      Obtiene únicamente las tallas que realmente tuvieron rollos dentro de la Orden de Trabajo.
-    */
+    // Obtiene únicamente las tallas que realmente tuvieron rollos dentro de la Orden de Trabajo.
     const tallasUsadas = Array.from(
         new Map(
             datosOrden.filter((detalle) =>Number(detalle.rollos || 0) > 0).map((detalle) => [
@@ -74,7 +63,8 @@ export async function generarOrdenTrabajoPdf(
        ========================================================= */
 
     /*
-      Obtiene una sola vez cada molinete participante dentro de la Orden de Trabajo.
+      Agrupa cada molinete una sola vez y conserva los totales recibidos del backend.
+      Los metros y el tiempo de giro ya calculados se presentan sin recalcularlos.
     */
     const molinetes = Array.from(
         new Map(
@@ -96,9 +86,7 @@ export async function generarOrdenTrabajoPdf(
        DETALLE POR MOLINETE Y TALLA
        ========================================================= */
 
-    /*
-      Permite localizar rápidamente el detalle correspondiente a una combinación molinete-talla.
-    */
+    // Permite localizar rápidamente el detalle correspondiente a una combinación molinete-talla.
     const detallesPorCombinacion = new Map();
 
     datosOrden.forEach((detalle) => {
@@ -109,33 +97,22 @@ export async function generarOrdenTrabajoPdf(
        TOTALES
        ========================================================= */
 
-    /*
-      Calcula la cantidad total de rollos por talla.
-    */
+    // Calcula la cantidad total de rollos por talla.
     const totalRollosPorTalla = {};
 
     tallasUsadas.forEach((talla) => {
         totalRollosPorTalla[talla.codigo] = datosOrden.filter((detalle) => detalle.codigoTalla === talla.codigo).reduce( (total, detalle) =>  total + Number(detalle.rollos || 0), 0 );
     });
 
-    /*
-      Calcula la cantidad total de rollos correspondiente a toda la orden.
-    */
+    // Calcula la cantidad total de rollos correspondiente a toda la orden.
     const totalRollosOrden = datosOrden.reduce( (total, detalle) => total + Number( detalle.rollos || 0 ), 0 );
 
     /* =========================================================
        DOCUMENTO
        ========================================================= */
 
-    const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
-    });
-
-
-    const anchoPagina =
-        pdf.internal.pageSize.getWidth();
+    const pdf = new jsPDF({orientation: 'landscape', unit: 'mm', format: 'a4'});
+    const anchoPagina = pdf.internal.pageSize.getWidth();
 
     /* =========================================================
        LOGOS
@@ -186,9 +163,7 @@ export async function generarOrdenTrabajoPdf(
         {align: 'center'}
     );
 
-    /*
-      Número principal de la Orden de Trabajo.
-    */
+    // Número principal de la Orden de Trabajo.
     pdf.setTextColor(
         ...COLORES.primario
     );
@@ -200,9 +175,7 @@ export async function generarOrdenTrabajoPdf(
         {align: 'center'}
     );
 
-    /*
-      Línea decorativa bajo el número.
-    */
+    // Línea decorativa bajo el número.
     pdf.setDrawColor(
         ...COLORES.rosado
     );
@@ -227,7 +200,7 @@ pdf.setTextColor(
     ...COLORES.grisTexto
 );
 
-/* Tipo de Hilaza - izquierda */
+// Tipo de Hilaza - izquierda
 pdf.text(
     'Tipo de Hilaza',
     14,
@@ -235,7 +208,7 @@ pdf.text(
     {align: 'left'}
 );
 
-/* Fecha - centro */
+// Fecha - centro
 pdf.text(
     'Fecha',
     anchoPagina / 2,
@@ -243,7 +216,7 @@ pdf.text(
     {align: 'center'}
 );
 
-/* Usuario - derecha */
+// Usuario - derecha
 pdf.text(
     'Usuario',
     anchoPagina - 14,
@@ -258,7 +231,7 @@ pdf.setTextColor(
     ...COLORES.primario
 );
 
-/* Valor Tipo de Hilaza - izquierda */
+// Valor Tipo de Hilaza - izquierda
 pdf.text(
     orden.nombreTipoHilaza || '-',
     14,
@@ -266,7 +239,7 @@ pdf.text(
     {align: 'left'}
 );
 
-/* Valor Fecha - centro */
+// Valor Fecha - centro
 pdf.text(
     orden.fechaGeneracion
         ? new Date(
@@ -280,7 +253,7 @@ pdf.text(
     {align: 'center'}
 );
 
-/* Valor Usuario - derecha */
+// Valor Usuario - derecha
 pdf.text(
     orden.nombreUsuario || '-',
     anchoPagina - 14,
@@ -342,16 +315,14 @@ pdf.text(
     */
     const encabezadoDetalle = [];
     tallasUsadas.forEach(() => {
-        encabezadoDetalle.push(
-            'Rollos',
-            'Metros'
-        );
+        encabezadoDetalle.push('Rollos', 'Metros');
     });
 
     /* =========================================================
        CUERPO DE TABLA
        ========================================================= */
 
+    // Las filas y columnas comparten el orden de molinetes y tallas de los encabezados.
     const body =
         molinetes.map((molinete) => {
             const fila = [
@@ -362,40 +333,24 @@ pdf.text(
                         textColor:COLORES.primario
                     }
                 },
-                formatearNumero(
-                    molinete.rpm,
-                    0
-                )
+                formatearNumero(molinete.rpm, 0)
             ];
 
-            /*
-              Agrega las columnas dinámicas de cada talla.
-            */
+            // Agrega las columnas dinámicas de cada talla.
             tallasUsadas.forEach((talla) => {
-                const detalle =
-                    detallesPorCombinacion.get(
-                        `${molinete.codigo}-${talla.codigo}`
-                    );
+                const detalle = detallesPorCombinacion.get(`${molinete.codigo}-${talla.codigo}`);
 
-                const tieneDatos =
-                    detalle &&
-                    Number(
-                        detalle.rollos || 0
-                    ) > 0;
+                const tieneDatos = detalle && Number(detalle.rollos || 0) > 0;
 
                 /*
                   Cuando existe producción, resalta suavemente Rollos y Metros.
                   Cuando no existe producción para esa talla en el molinete se muestra únicamente "-".
                 */
                 fila.push(
-
                     tieneDatos
                         ? {
                             content:
-                                formatearNumero(
-                                    detalle.rollos,
-                                    1
-                                ),
+                                formatearNumero(detalle.rollos, 1),
                             styles: {
                                 textColor: COLORES.primario,
                                 fontStyle: 'bold'
@@ -411,10 +366,7 @@ pdf.text(
                     tieneDatos
                         ? {
                             content:
-                                formatearNumero(
-                                    detalle.totalMetrosTalla,
-                                    1
-                                ),
+                                formatearNumero(detalle.totalMetrosTalla, 1),
                             styles: {
                                 textColor: COLORES.primario
                             }
@@ -428,16 +380,11 @@ pdf.text(
                 );
             });
 
-            /*
-              Totales correspondientes únicamente al molinete de esta fila.
-            */
+            // Totales correspondientes únicamente al molinete de esta fila.
             fila.push(
                 {
                     content:
-                        formatearNumero(
-                            molinete.totalMetros,
-                            1
-                        ),
+                        formatearNumero(molinete.totalMetros, 1),
                     styles: {
                         fontStyle: 'bold',
                         textColor: COLORES.primario
@@ -445,10 +392,7 @@ pdf.text(
                 },
                 {
                     content:
-                        formatearNumero(
-                            molinete.tiempoGiro,
-                            1
-                        ),
+                        formatearNumero(molinete.tiempoGiro, 1),
                     styles: {
                         fillColor: COLORES.rosadoSuave,
                         textColor: COLORES.rosado,
@@ -457,10 +401,7 @@ pdf.text(
                 },
                 {
                     content:
-                        formatearNumero(
-                            molinete.totalRollos,
-                            1
-                        ),
+                        formatearNumero(molinete.totalRollos, 1),
                     styles: {
                         fontStyle: 'bold',
                         textColor: COLORES.primario
@@ -487,19 +428,12 @@ pdf.text(
         ''
     ];
 
-    /*
-      En cada talla únicamente se muestra el total correspondiente a la subcolumna Rollos.
-    */
+    // En cada talla únicamente se muestra el total correspondiente a la subcolumna Rollos.
     tallasUsadas.forEach((talla) => {
         filaTotales.push(
             {
                 content:
-                    formatearNumero(
-                        totalRollosPorTalla[
-                            talla.codigo
-                        ],
-                        1
-                    ),
+                    formatearNumero(totalRollosPorTalla[talla.codigo], 1),
                 styles: {
                     fontStyle: 'bold',
                     textColor: COLORES.rosado
@@ -509,34 +443,25 @@ pdf.text(
         );
     });
 
-    /*
-      Las columnas Total Metros y Tiempo no requieren un total general. La última columna muestra la cantidad total de rollos de la orden.
-    */
+    // Las columnas Total Metros y Tiempo no requieren un total general. La última columna muestra la cantidad total de rollos de la orden.
     filaTotales.push(
         '',
         '',
         {
             content:
-                formatearNumero(
-                    totalRollosOrden,
-                    1
-                ),
+                formatearNumero(totalRollosOrden, 1),
             styles: {
                 fontStyle: 'bold',
                 textColor: COLORES.rosado
             }
         }
     );
-    body.push(
-        filaTotales
-    );
+    body.push(filaTotales);
 
     /* =========================================================
        TAMAÑO DINÁMICO
        ========================================================= */
-    /*
-      Reduce ligeramente el tamaño cuando existen muchas tallas para intentar mantener el reporte en una sola página.
-    */
+    // Reduce ligeramente el tamaño cuando existen muchas tallas para intentar mantener el reporte en una sola página.
     let tamanioFuente = 7.2;
     let paddingCelda = 1.5;
 
@@ -588,9 +513,7 @@ pdf.text(
                     cellWidth: 14
                 }
             },
-            /*
-              Resalta uniformemente la fila final de totales.
-            */
+            // Resalta uniformemente la fila final de totales.
             didParseCell(data) {
                 if (
                     data.section === 'body' && data.row.index === body.length - 1
@@ -610,6 +533,7 @@ pdf.text(
        PIE DEL REPORTE
        ========================================================= */
 
+    // Ubica el pie debajo del final de la tabla, cuya altura depende del detalle.
     const finalY = pdf.lastAutoTable?.finalY || 40;
 
     pdf.setFont(
@@ -630,36 +554,14 @@ pdf.text(
        ABRIR PDF
        ========================================================= */
 
-    const urlPdf =
-        pdf.output(
-            'bloburl'
-        );
+    // Abre el documento generado en otra pestaña para su visualización o impresión.
+    const urlPdf = pdf.output('bloburl');
 
-    window.open(
-        urlPdf,
-        '_blank'
-    );
-/*
-    const numeroOrden =
-        String(
-            orden.codigoOrden
-        ).padStart(
-            4,
-            '0'
-        );
-
-    pdf.save(
-        `Orden_Trabajo_${numeroOrden}.pdf`
-    );*/
+    window.open(urlPdf, '_blank');
 }
 
-/*
-  Da formato numérico a los valores mostrados en el reporte.
-*/
-function formatearNumero(
-    valor,
-    decimales = 1
-) {
+// Aplica decimales y separadores solo a la presentación de los valores del reporte.
+function formatearNumero(valor, decimales = 1) {
     return Number( valor || 0 ).toLocaleString('es-CO',
         {
             minimumFractionDigits: decimales,

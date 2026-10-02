@@ -19,12 +19,8 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { formatearFecha } from '../../utils/formatters.js';
 
-function RendTallasTable({
-    rendtallas,
-    onEdit,
-    onAdd,
-    onDelete
-}) {
+// La presencia de ancho determina si la fila ofrece agregar rendimiento o editar y eliminar el existente.
+function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
     return (
         <div className="table-container">
 

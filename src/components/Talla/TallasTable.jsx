@@ -19,6 +19,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
+// operation combina acción y código para bloquear el cambio de estado de la fila que procesa la página.
 function TallasTable({
     tallas,
     onEdit,

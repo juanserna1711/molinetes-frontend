@@ -41,10 +41,7 @@ function RendTallasPage() {
     const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [snackbar, setSnackbar] = useState({
-        message: '',
-        type: 'success'
-    });
+    const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
 
 
     /*
@@ -78,10 +75,7 @@ function RendTallasPage() {
     */
 
     function mostrarSnackbar(message, type = 'success') {
-        setSnackbar({
-            message,
-            type
-        });
+        setSnackbar({message, type});
     }
 
     useEffect(() => {
@@ -91,10 +85,7 @@ function RendTallasPage() {
         }
 
         const timer = setTimeout(() => {
-            setSnackbar({
-                message: '',
-                type: 'success'
-            });
+            setSnackbar({ message: '', type: 'success'});
         }, 3000);
 
         return () => clearTimeout(timer);
@@ -106,9 +97,7 @@ function RendTallasPage() {
       FILTROS
       =========================================================
     */
-    /*
-      Prepara los filtros de búsqueda de la página.
-    */
+    // Filtra por nombre tras quitar espacios; la recarga conserva la búsqueda actual.
     function obtenerFiltros() {
 
         const filtros = {};
@@ -124,16 +113,6 @@ function RendTallasPage() {
 
     /*
       =========================================================
-      CARGA INICIAL
-      =========================================================
-    */
-
-    useEffect(() => {
-        cargarRendTallas();
-    }, []);
-
-    /*
-      =========================================================
       BÚSQUEDA AUTOMÁTICA
       =========================================================
     */
@@ -142,8 +121,7 @@ function RendTallasPage() {
 
         const filtros = {};
 
-        const valor =
-            busqueda.trim();
+        const valor = busqueda.trim();
 
         if (valor !== '') {
 
@@ -151,17 +129,11 @@ function RendTallasPage() {
 
         }
 
-        cargarRendTallas(
-            filtros
-        );
+        cargarRendTallas(filtros);
 
-    }, [
-        busqueda
-    ]);
+    }, [busqueda]);
 
-    /*
-      Consulta los registros y actualiza el listado y los mensajes de la página.
-    */
+    // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarRendTallas(filtros = {}) {
 
         try {
@@ -177,10 +149,7 @@ function RendTallasPage() {
 
             console.error(error);
 
-            setError(
-                error.response?.data?.message ||
-                'No fue posible cargar los rendimientos.'
-            );
+            setError(error.response?.data?.message || 'No fue posible cargar los rendimientos.');
 
         } finally {
 
@@ -189,6 +158,7 @@ function RendTallasPage() {
         }
     }
 
+    // Libera la talla seleccionada para que una nueva apertura no herede el registro anterior.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -197,7 +167,8 @@ function RendTallasPage() {
     }
 
     /*
-      Crea o actualiza el registro y recarga el listado al completar la operación.
+      El formulario indica si la talla requiere crear rendimiento o editar el existente.
+      El error se muestra en la página; el listado se recarga con los filtros tras el éxito.
     */
     async function guardarRendTalla(data, modo) {
 
@@ -205,24 +176,15 @@ function RendTallasPage() {
 
             if (modo === 'editar') {
 
-                await actualizarRendTallaService(
-                    data.codTalla,
-                    data
-                );
+                await actualizarRendTallaService(data.codTalla, data);
 
-                mostrarSnackbar(
-                    'Rendimiento actualizado correctamente.',
-                    'success'
-                );
+                mostrarSnackbar('Rendimiento actualizado correctamente.', 'success');
 
             } else {
 
                 await crearRendTallaService(data);
 
-                mostrarSnackbar(
-                    'Rendimiento creado correctamente.',
-                    'success'
-                );
+                mostrarSnackbar('Rendimiento creado correctamente.', 'success');
 
             }
 
@@ -234,18 +196,12 @@ function RendTallasPage() {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible guardar el rendimiento.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible guardar el rendimiento.', 'error');
 
         }
     }
 
-    /*
-      Elimina el registro confirmado y comunica el resultado de la operación.
-    */
+    // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarRendimiento() {
 
         if (!rendtallaAEliminar) {
@@ -261,20 +217,13 @@ function RendTallasPage() {
 
             setRendTallaAEliminar(null);
 
-            mostrarSnackbar(
-                'Rendimiento eliminado correctamente.',
-                'success'
-            );
+            mostrarSnackbar('Rendimiento eliminado correctamente.', 'success');
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(
-                error.response?.data?.message ||
-                'No fue posible eliminar el rendimiento.',
-                'error'
-            );
+            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el rendimiento.', 'error');
 
         } finally {
 

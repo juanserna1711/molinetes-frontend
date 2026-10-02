@@ -19,11 +19,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {formatearFecha} from '../../utils/formatters';
 
-function TiHiPromTable({
-    tihiprom,
-    onEdit,
-    onDelete
-}) {
+// La pareja hilaza-talla identifica cada fila; los callbacks reciben el registro con ambos códigos.
+function TiHiPromTable({tihiprom, onEdit, onDelete}) {
     return (
         <div className="table-container">
 

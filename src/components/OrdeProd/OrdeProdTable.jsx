@@ -20,11 +20,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { formatearFecha } from '../../utils/formatters';
 
 
-function OrdeProdTable({
-    ordenes,
-    imprimiendoOrden,
-    onDetalle
-}) {
+// La página consulta el detalle y genera el PDF; imprimiendoOrden bloquea solo el botón de esa fila.
+function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle}) {
     return (
 
         <div className="table-container">

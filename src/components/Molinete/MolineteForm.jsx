@@ -26,7 +26,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    // ?? mantiene valores definidos del registro, incluido cero, y usa vacío solo si falta el dato.
     const [formData, setFormData] = useState({
         codMolinete: molinete?.codigo ?? '',
         nomMolinete: molinete?.nombre.toUpperCase() ?? '',
@@ -34,6 +34,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
         periMolinete: molinete?.perimetro ?? ''
     });
 
+    // Comprueba duplicados solo al crear, tras 500 ms sin cambiar el código; la limpieza cancela la espera.
     useEffect(() => {
     
             const codigo = formData.codMolinete;
@@ -66,9 +67,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
     
     }, [formData.codMolinete, molinete]);
 
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -86,24 +85,12 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
                 setCodigoDuplicado(false);
             }
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'nomMolinete'
-                ? value.toUpperCase()
-                : value
-        }));
-
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-        
+        setFormData(prev => ({...prev, [name]: name === 'nomMolinete' ? value.toUpperCase() : value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
     }
 
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -115,10 +102,8 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
             return;
         }
 
-        const data = {
-            ...formData,
-            codMolinete: Number(formData.codMolinete)
-        };
+        // El payload convierte el código; los demás campos conservan su representación en el formulario.
+        const data = {...formData, codMolinete: Number(formData.codMolinete)};
 
         try {
             setLoading(true);
@@ -131,15 +116,12 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
             console.error(error);
 
             const mensaje = error.response?.data?.message || 'No fue posible guardar el molinete.';
-
             const campo = error.response?.data?.field;
 
+            // El backend puede asociar el mensaje a un campo; sin field se muestra como error general.
             if (campo) {
 
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                setFieldErrors({[campo]: mensaje});
                 setError(null);
 
             } else {
@@ -151,9 +133,8 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
             setLoading(false);
         }
     }
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};
@@ -201,9 +182,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Código Molinete
-                    </label>
+                    <label>Código Molinete</label>
 
                 <input
                     type="number"
@@ -225,9 +204,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Nombre Molinete
-                    </label>
+                    <label>Nombre Molinete</label>
 
                     <input
                         type="text"
@@ -248,9 +225,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
 
                 <div className="form-group">
 
-                    <label>
-                        RPM
-                    </label>
+                    <label>RPM</label>
 
                     <input
                         type="number"
@@ -276,9 +251,7 @@ function MolineteForm({ onClose, onSubmit, molinete }) {
 
                 <div className="form-group">
 
-                    <label>
-                        Perímetro
-                    </label>
+                    <label>Perímetro</label>
 
                     <input
                         type="number"

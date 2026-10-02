@@ -16,11 +16,13 @@
 
 import axios from 'axios';
 
+/*
+  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
+  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
+*/
 const API_URL = import.meta.env.VITE_API_URL;
 
-/*
-  Consulta los usuarios utilizando los filtros recibidos.
-*/
+// Consulta los usuarios utilizando los filtros recibidos.
 export async function consultarUsuarios(params = {}) {
     const response = await axios.get(`${API_URL}/usuarios`, {
         params
@@ -29,9 +31,7 @@ export async function consultarUsuarios(params = {}) {
     return response.data;
 }
 
-/*
-  Registra un nuevo usuario con la información recibida.
-*/
+// Registra un nuevo usuario con la información recibida.
 export async function crearUsuario(data) {
     const response = await axios.post(
         `${API_URL}/usuarios`,
@@ -41,9 +41,7 @@ export async function crearUsuario(data) {
     return response.data;
 }
 
-/*
-  Actualiza la información del usuario seleccionado.
-*/
+// Actualiza la información del usuario seleccionado.
 export async function actualizarUsuario(codigo, data) {
     const response = await axios.put(
         `${API_URL}/usuarios/${codigo}`,
@@ -53,9 +51,7 @@ export async function actualizarUsuario(codigo, data) {
     return response.data;
 }
 
-/*
-  Activa el registro correspondiente al código recibido.
-*/
+// Activa el registro correspondiente al código recibido.
 export async function activarUsuario(codigo) {
     const response = await axios.patch(
         `${API_URL}/usuarios/${codigo}/activar`
@@ -64,9 +60,7 @@ export async function activarUsuario(codigo) {
     return response.data;
 }
 
-/*
-  Desactiva el registro correspondiente al código recibido.
-*/
+// Desactiva el registro correspondiente al código recibido.
 export async function desactivarUsuario(codigo) {
     const response = await axios.patch(
         `${API_URL}/usuarios/${codigo}/desactivar`
@@ -75,9 +69,7 @@ export async function desactivarUsuario(codigo) {
     return response.data;
 }
 
-/*
-  Elimina el usuario correspondiente al código recibido.
-*/
+// Elimina el usuario correspondiente al código recibido.
 export async function eliminarUsuario(codigo) {
     const response = await axios.delete(
         `${API_URL}/usuarios/${codigo}`

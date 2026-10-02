@@ -17,6 +17,7 @@
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
+// La página controla cuánto dura el mensaje; este componente solo representa su contenido y tipo.
 function Snackbar({ message, type = 'success' }) {
     if (!message) {
         return null;

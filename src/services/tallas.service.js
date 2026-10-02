@@ -16,11 +16,13 @@
 
 import axios from 'axios';
 
+/*
+  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
+  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
+*/
 const API_URL = import.meta.env.VITE_API_URL;
 
-/*
-  Consulta los tallas utilizando los filtros recibidos.
-*/
+// Consulta las tallas utilizando los filtros recibidos.
 export async function consultarTallas(params = {}) {
     const response = await axios.get(`${API_URL}/tallas`, {
         params
@@ -29,9 +31,7 @@ export async function consultarTallas(params = {}) {
     return response.data;
 }
 
-/*
-  Registra un nuevo talla con la información recibida.
-*/
+// Registra una nueva talla con la información recibida.
 export async function crearTalla(data) {
     const response = await axios.post(
         `${API_URL}/tallas`,
@@ -41,9 +41,7 @@ export async function crearTalla(data) {
     return response.data;
 }
 
-/*
-  Actualiza la información del talla seleccionado.
-*/
+// Actualiza la información de la talla seleccionada.
 export async function actualizarTalla(codigo, data) {
     const response = await axios.put(
         `${API_URL}/tallas/${codigo}`,
@@ -53,9 +51,7 @@ export async function actualizarTalla(codigo, data) {
     return response.data;
 }
 
-/*
-  Activa el registro correspondiente al código recibido.
-*/
+// Activa el registro correspondiente al código recibido.
 export async function activarTalla(codigo) {
     const response = await axios.patch(
         `${API_URL}/tallas/${codigo}/activar`
@@ -64,9 +60,7 @@ export async function activarTalla(codigo) {
     return response.data;
 }
 
-/*
-  Desactiva el registro correspondiente al código recibido.
-*/
+// Desactiva el registro correspondiente al código recibido.
 export async function desactivarTalla(codigo) {
     const response = await axios.patch(
         `${API_URL}/tallas/${codigo}/desactivar`
@@ -75,9 +69,7 @@ export async function desactivarTalla(codigo) {
     return response.data;
 }
 
-/*
-  Elimina el talla correspondiente al código recibido.
-*/
+// Elimina la talla correspondiente al código recibido.
 export async function eliminarTalla(codigo) {
     const response = await axios.delete(
         `${API_URL}/tallas/${codigo}`

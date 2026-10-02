@@ -15,13 +15,15 @@
   Descripcion:
 =============================================================================*/
 
-import CircularProgress from '@mui/material/CircularProgress';
-
+/*
+  Renderiza los catálogos y selecciones que administra la página; los callbacks envían códigos.
+  La comparación de hilaza convierte ambos códigos a texto para tolerar números o cadenas.
+  programacionHabilitada determina la presentación bloqueada del panel de tallas.
+*/
 function NuevoTigimoliHilazaTallas({
     tiposHilaza,
     tipoHilazaSeleccionado,
     onCambiarTipoHilaza,
-    aplicandoHilaza,
     tallas,
     tallasSeleccionadas,
     onCambiarTalla,
@@ -33,10 +35,6 @@ function NuevoTigimoliHilazaTallas({
 
             <div className="nuevo-tigimoli-hilaza-tallas">
 
-                {/* =================================================
-                    TIPO DE HILAZA
-                    ================================================= */}
-
                 <div className="nuevo-tigimoli-hilaza-panel">
                     
                     <div>
@@ -45,36 +43,22 @@ function NuevoTigimoliHilazaTallas({
                         </span>
                     </div>
 
+                    <h2>Tipo de Hilaza</h2>
 
-                    <h2>
-                        Tipo de Hilaza
-                    </h2>
-
-                    <p>
-                        Seleccione la hilaza que se utilizará para la programación.
-                    </p>
+                    <p>Seleccione la hilaza que se utilizará para la programación.</p>
 
 
                     <div className="tallas-selector">
 
                         {tiposHilaza.map((tipo) => {
-
-                            const seleccionada =
-                                String(tipoHilazaSeleccionado) ===
-                                String(tipo.codigo);
-
+                            const seleccionada = String(tipoHilazaSeleccionado) === String(tipo.codigo);
                             return (
 
                                 <button
                                     key={tipo.codigo}
                                     type="button"
                                     className={`talla-option ${seleccionada ? 'selected' : ''}`}
-                                    onClick={() =>
-                                        onCambiarTipoHilaza(
-                                            tipo.codigo
-                                        )
-                                    }
-                                    disabled={aplicandoHilaza}
+                                    onClick={() => onCambiarTipoHilaza(tipo.codigo)}
                                 >
                                     {tipo.nombre}
                                 </button>
@@ -84,38 +68,11 @@ function NuevoTigimoliHilazaTallas({
                         })}
 
                     </div>
-
-
-                    {aplicandoHilaza && (
-
-                        <div className="nuevo-tigimoli-applying">
-
-                            <CircularProgress
-                                size={18}
-                                thickness={4}
-                            />
-
-                            <span>
-                                Aplicando parámetros...
-                            </span>
-
-                        </div>
-
-                    )}
-
+                    
                 </div>
 
-
-                {/* =================================================
-                    TALLAS
-                    ================================================= */}
-
                 <div
-                    className={
-                        !programacionHabilitada
-                            ? 'nuevo-tigimoli-tallas-panel disabled'
-                            : 'nuevo-tigimoli-tallas-panel'
-                    }
+                    className={!programacionHabilitada ? 'nuevo-tigimoli-tallas-panel disabled' : 'nuevo-tigimoli-tallas-panel'}
                 >
 
                     <div>
@@ -124,24 +81,15 @@ function NuevoTigimoliHilazaTallas({
                         </span>
                     </div>
 
+                    <h2>Tallas</h2>
 
-                    <h2>
-                        Tallas
-                    </h2>
-
-                    <p>
-                        Seleccione las tallas que harán parte de la distribución.
-                    </p>
-
+                    <p>Seleccione las tallas que harán parte de la distribución.</p>
 
                     <div className="tallas-selector">
 
                         {tallas.map((talla) => {
 
-                            const seleccionada =
-                                tallasSeleccionadas.includes(
-                                    talla.codigo
-                                );
+                            const seleccionada = tallasSeleccionadas.includes(talla.codigo);
 
                             return (
 
@@ -149,11 +97,7 @@ function NuevoTigimoliHilazaTallas({
                                     key={talla.codigo}
                                     type="button"
                                     className={`talla-option ${seleccionada ? 'selected' : ''}`}
-                                    onClick={() =>
-                                        onCambiarTalla(
-                                            talla.codigo
-                                        )
-                                    }
+                                    onClick={() => onCambiarTalla(talla.codigo)}
                                 >
                                     {talla.nombre}
                                 </button>

@@ -30,6 +30,7 @@ import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDown
 
 import logoMoliplus from '../assets/logo-moliplus-solo.png';
 
+// abierto controla el panel completo; los grupos mantienen su propia apertura y navegan al inicio al cerrarse.
 function Sidebar({ abierto }) {
 
     const [parametrosAbiertos, setParametrosAbiertos] = useState(true);
@@ -49,10 +50,7 @@ function Sidebar({ abierto }) {
         '/ordeprod'
     ];
 
-    /*
-    Abre o cierra el grupo de parámetros. Si la pantalla actual
-    pertenece al grupo que se está cerrando, regresa al inicio.
-    */
+    //Abre o cierra el grupo de parámetros. Si la pantalla actual pertenece al grupo que se está cerrando, regresa al inicio.
     function cambiarParametros() {
 
         if (parametrosAbiertos && rutasParametros.includes(location.pathname)) {
@@ -65,10 +63,7 @@ function Sidebar({ abierto }) {
 
     }
 
-    /*
-    Abre o cierra el grupo de operaciones. Si la pantalla actual
-    pertenece al grupo que se está cerrando, regresa al inicio.
-    */
+    //Abre o cierra el grupo de operaciones. Si la pantalla actual pertenece al grupo que se está cerrando, regresa al inicio.
     function cambiarOperaciones() {
 
         if (operacionesAbiertas && rutasOperaciones.includes(location.pathname)) {

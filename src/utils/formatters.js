@@ -25,6 +25,17 @@ export function formatearFecha(fecha) {
         return '-';
     }
 
+    const fechaFormatear = new Date(fecha);
+
+    if (
+        Number.isNaN(
+            fechaFormatear.getTime()
+        )
+    ) {
+        return '-';
+    }
+
+    // El idioma define la presentación; la zona horaria es la del entorno del navegador.
     return new Intl.DateTimeFormat(
         'es-CO',
         {
@@ -32,7 +43,7 @@ export function formatearFecha(fecha) {
             timeStyle: 'short'
         }
     ).format(
-        new Date(fecha)
+        fechaFormatear
     );
 
 }

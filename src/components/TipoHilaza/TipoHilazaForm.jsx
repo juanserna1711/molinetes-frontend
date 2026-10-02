@@ -31,6 +31,7 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
         nomTipoHilaza: tipoHilaza?.nombre.toUpperCase() ?? ''
     });
 
+    // La consulta diferida de duplicados solo se ejecuta al crear y se reprograma cuando cambia el código.
     useEffect(() => {
 
         const codigo = formData.codTipoHilaza;
@@ -66,9 +67,7 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
     }, [formData.codTipoHilaza, tipoHilaza]);
 
-    /*
-      Actualiza los datos del formulario y limpia los errores del campo.
-    */
+    // Actualiza los datos del formulario y limpia los errores del campo.
     function handleChange(event) {
 
         const { name, value } = event.target;
@@ -81,25 +80,13 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
             setCodigoDuplicado(false);
         }
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'nomTipoHilaza'
-                ? value.toUpperCase()
-                : value
-        }));
-
-        setFieldErrors(prev => ({
-            ...prev,
-            [name]: null
-        }));
-
+        setFormData(prev => ({...prev, [name]: name === 'nomTipoHilaza' ? value.toUpperCase() : value}));
+        setFieldErrors(prev => ({...prev, [name]: null}));
         setError(null);
 
     }
 
-    /*
-      Valida el formulario, solicita el guardado y muestra los errores recibidos.
-    */
+    // Valida el formulario, solicita el guardado y muestra los errores recibidos.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -111,11 +98,8 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
             return;
         }
 
-        const data = {
-            ...formData,
-            codTipoHilaza:
-                Number(formData.codTipoHilaza)
-        };
+        // El formulario transforma el código a número; la página decide crear o actualizar al recibir onSubmit.
+        const data = {...formData, codTipoHilaza:Number(formData.codTipoHilaza)};
 
         try {
             setLoading(true);
@@ -131,12 +115,10 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
             const mensaje = error.response?.data?.message || 'No fue posible guardar el tipo de hilaza.';
             const campo = error.response?.data?.field;
 
+            // El campo enviado por el backend determina dónde presentar el error de negocio.
             if (campo) {
 
-                setFieldErrors({
-                    [campo]: mensaje
-                });
-
+                setFieldErrors({[campo]: mensaje});
                 setError(null);
 
             } else {
@@ -151,21 +133,17 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
 
     }
 
-    /*
-      Comprueba los campos obligatorios e identifica los errores de captura.
-    */
+    // Comprueba los campos obligatorios e identifica los errores de captura.
     function validarFormulario() {
 
         const errores = {};
 
         if (!formData.codTipoHilaza) {
-            errores.codTipoHilaza =
-                'Completa este campo.';
+            errores.codTipoHilaza = 'Completa este campo.';
         }
 
         if (!formData.nomTipoHilaza.trim()) {
-            errores.nomTipoHilaza =
-                'Completa este campo.';
+            errores.nomTipoHilaza = 'Completa este campo.';
         }
 
         setFieldErrors(errores);
@@ -239,7 +217,6 @@ function TipoHilazaForm({ onClose, onSubmit, tipoHilaza }) {
                     )}
 
                 </div>
-
 
                 {error && (
 
