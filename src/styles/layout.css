@@ -187,6 +187,42 @@
 
 
 /* =========================================================
+   BUTTON LOGOUT
+   ========================================================= */
+
+.topbar-logout-button {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+    color: #66768a;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.topbar-logout-button:hover {
+    background: #f5f7fa;
+    color: #ed1685;
+}
+
+.topbar-logout-button svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* =========================================================
    LÍNEAS DECORATIVAS DEL HEADER
    ========================================================= */
 

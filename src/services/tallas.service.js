@@ -14,66 +14,46 @@
   Descripcion:
 =============================================================================*/
 
-import axios from 'axios';
-
-/*
-  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
-  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
-*/
-const API_URL = import.meta.env.VITE_API_URL;
+import api from './api.js';
 
 // Consulta las tallas utilizando los filtros recibidos.
 export async function consultarTallas(params = {}) {
-    const response = await axios.get(`${API_URL}/tallas`, {
-        params
-    });
+    const response = await api.get(`/tallas`, {params});
 
     return response.data;
 }
 
 // Registra una nueva talla con la información recibida.
 export async function crearTalla(data) {
-    const response = await axios.post(
-        `${API_URL}/tallas`,
-        data
-    );
+    const response = await api.post(`/tallas`, data);
 
     return response.data;
 }
 
 // Actualiza la información de la talla seleccionada.
 export async function actualizarTalla(codigo, data) {
-    const response = await axios.put(
-        `${API_URL}/tallas/${codigo}`,
-        data
-    );
+    const response = await api.put(`/tallas/${codigo}`, data);
 
     return response.data;
 }
 
 // Activa el registro correspondiente al código recibido.
 export async function activarTalla(codigo) {
-    const response = await axios.patch(
-        `${API_URL}/tallas/${codigo}/activar`
-    );
+    const response = await api.patch(`/tallas/${codigo}/activar`);
 
     return response.data;
 }
 
 // Desactiva el registro correspondiente al código recibido.
 export async function desactivarTalla(codigo) {
-    const response = await axios.patch(
-        `${API_URL}/tallas/${codigo}/desactivar`
-    );
+    const response = await api.patch(`/tallas/${codigo}/desactivar`);
 
     return response.data;
 }
 
 // Elimina la talla correspondiente al código recibido.
 export async function eliminarTalla(codigo) {
-    const response = await axios.delete(
-        `${API_URL}/tallas/${codigo}`
-    );
+    const response = await api.delete(`/tallas/${codigo}`);
 
     return response.data;
 }

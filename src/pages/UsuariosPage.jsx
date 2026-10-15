@@ -15,6 +15,7 @@
 =============================================================================*/
 
 import { useEffect, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -46,6 +47,7 @@ function UsuariosPage() {
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(2);
 
     /*
       =========================================================
@@ -54,10 +56,16 @@ function UsuariosPage() {
     */
 
     function solicitarEliminarUsuario(usuario) {
+        if (!permisos.elimina) {
+            return;
+        }
         setUsuarioAEliminar(usuario);
     }
 
     function editarUsuario(usuario) {
+        if (!permisos.actualiza){
+            return;
+        }
         setUsuarioSeleccionado(usuario);
         setMostrarFormulario(true);
     }
@@ -95,10 +103,7 @@ function UsuariosPage() {
       =========================================================
     */
 
-    /*
-      Interpreta texto numérico como código y el resto como nombre.
-      La recarga después de una operación reutiliza estos criterios de búsqueda.
-    */
+    // Prepara los filtros para la consulta.
     function obtenerFiltros() {
         const filtros = {};
         const valor = busqueda.trim();
@@ -123,7 +128,6 @@ function UsuariosPage() {
       BÚSQUEDA AUTOMÁTICA
       =========================================================
     */
-
 
     useEffect(() => {
 
@@ -155,7 +159,6 @@ function UsuariosPage() {
 
     }, [busqueda, estado]);
 
-
     // Consulta los registros y actualiza el listado y los mensajes de la página.
     async function cargarUsuarios(filtros = {}) {
 
@@ -181,7 +184,11 @@ function UsuariosPage() {
         }
     }
 
-    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
+    /*
+      =========================================================
+      FORMULARIO
+      =========================================================
+    */
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -192,21 +199,28 @@ function UsuariosPage() {
     // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarUsuario(usuario, data) {
         await actualizarUsuarioService(usuario.codigo, data);
+
         cerrarFormulario();
+
         await cargarUsuarios(obtenerFiltros());
         mostrarSnackbar('Usuario actualizado correctamente.', 'success');
     }
 
-    /*
-      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
-      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
-    */
+    //Crea o actualiza el registro y recarga el listado al completar la operación.
     async function guardarUsuario(data) {
         if (usuarioSeleccionado) {
+            if (!permisos.actualiza){
+                return;
+            }
             await actualizarUsuario(usuarioSeleccionado, data);
         } else {
+            if (!permisos.insercion){
+                return;
+            }
             await crearUsuarioService(data);
+
             cerrarFormulario();
+
             await cargarUsuarios(obtenerFiltros());
             mostrarSnackbar('Usuario creado correctamente.', 'success');
         }
@@ -256,8 +270,6 @@ function UsuariosPage() {
                 await eliminarUsuarioService(usuarioAEliminar.codigo);
                 await cargarUsuarios(obtenerFiltros());
     
-                setUsuarioAEliminar(null);
-    
                 mostrarSnackbar('Usuario eliminado correctamente.', 'success');
             } catch (error) {
                 console.error(error);
@@ -265,12 +277,11 @@ function UsuariosPage() {
                 mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el usuario.', 'error');
             } finally {
                 setEliminando(false);
+                setUsuarioAEliminar(null);
             }
         }
     
-
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
-
 
     return (
 
@@ -284,6 +295,7 @@ function UsuariosPage() {
                     <p>Administración de usuarios y estado operativo.</p>
                 </div>
 
+                {permisos.insercion && (
                 <button
                     type="button"
                     className="primary-button"
@@ -292,6 +304,7 @@ function UsuariosPage() {
                     <AddIcon />
                     Nuevo Usuario
                 </button>
+                )}
 
             </div>
 
@@ -304,14 +317,19 @@ function UsuariosPage() {
                         type="text"
                         placeholder="Buscar por código o nombre..."
                         value={busqueda}
-                        onChange={(event) => {setBusqueda(event.target.value);}}
+                        onChange={(event) => {
+                            setBusqueda(event.target.value);
+                        }}
                         maxLength={60}
                     />
                 </div>
+
                 <div className="filter-field">      
                 <select
                     value={estado}
-                    onChange={(event) => {setEstado(event.target.value);}}
+                    onChange={(event) => {
+                        setEstado(event.target.value);
+                    }}
                 >
                     <option value="">Todos los estados</option>
                     <option value="A">Activos</option>
@@ -347,7 +365,9 @@ function UsuariosPage() {
                         <div className="state-content">
                             <h2>No fue posible cargar los usuarios</h2>
 
-                            <p>{error}</p>
+                            <p>
+                                {error}
+                            </p>
 
                             <button
                                 type="button"
@@ -392,6 +412,8 @@ function UsuariosPage() {
                             onDeactivate={desactivarUsuario}
                             onDelete={solicitarEliminarUsuario}
                             operation={operacion}
+                            puedeActualizar={permisos.actualiza}
+                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -401,7 +423,7 @@ function UsuariosPage() {
                         <UsuarioForm
                             key={usuarioSeleccionado ? `editar-${usuarioSeleccionado.codigo}` : 'crear-usuario'}
                             usuario={usuarioSeleccionado}
-                            onClose={() => {setMostrarFormulario(false); setUsuarioSeleccionado(null);}}
+                            onClose={cerrarFormulario}
                             onSubmit={guardarUsuario}
                         />
                     </aside>

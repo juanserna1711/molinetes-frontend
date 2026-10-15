@@ -15,6 +15,7 @@
 =============================================================================*/
 
 import { useEffect, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,6 +43,7 @@ function RendTallasPage() {
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(6);
 
 
     /*
@@ -51,20 +53,27 @@ function RendTallasPage() {
     */
 
     function editarRendTalla(rendtalla) {
+        if(!permisos.actualiza){
+            return;
+        }
         setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
     }
 
     function agregarRendTalla(rendtalla) {
-        /*
-          La talla no tiene rendimiento.
-          Abrimos el mismo formulario de nuevo rendimiento, pero enviamos la talla seleccionada para que aparezca automáticamente en el selector.
-         */
+        if (!permisos.insercion){
+            return;
+        }
+        
+        //La talla no tiene rendimiento. Abrimos el mismo formulario de nuevo rendimiento, pero enviamos la talla seleccionada para que aparezca automáticamente en el selector.
         setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
     }
 
     function solicitarEliminarRendTalla(rendtalla) {
+        if (!permisos.elimina){
+            return;
+        }
         setRendTallaAEliminar(rendtalla);
     }
 
@@ -175,12 +184,18 @@ function RendTallasPage() {
         try {
 
             if (modo === 'editar') {
+                if (!permisos.actualiza){
+                    return;
+                }
 
                 await actualizarRendTallaService(data.codTalla, data);
 
                 mostrarSnackbar('Rendimiento actualizado correctamente.', 'success');
 
             } else {
+                if (!permisos.insercion){
+                    return;
+                }
 
                 await crearRendTallaService(data);
 
@@ -242,16 +257,13 @@ function RendTallasPage() {
 
                 <div className="page-header-info">
 
-                    <h1>
-                        Gestión de Rendimiento
-                    </h1>
+                    <h1>Gestión de Rendimiento</h1>
 
-                    <p>
-                        Administración de parámetros de rendimiento con la talla asociada.
-                    </p>
+                    <p>Administración de parámetros de rendimiento con la talla asociada.</p>
 
                 </div>
 
+                {permisos.insercion &&(
                 <button
                     type="button"
                     className="primary-button"
@@ -260,38 +272,32 @@ function RendTallasPage() {
                         setMostrarFormulario(true);
                     }}
                 >
-
                     <AddIcon />
-
                     Nuevo Rendimiento
-
                 </button>
+                )}
 
             </div>
 
             <div className="filters">
 
                 <div className="search-box">
-
                     <SearchOutlinedIcon />
 
                     <input
                         type="text"
                         placeholder="Buscar por talla..."
                         value={busqueda}
-                        onChange={(event) =>
+                        onChange={(event) => {
                             setBusqueda(event.target.value)
-                        }
+                        }}
                         maxLength={60}
                     />
-
                 </div>
 
-                </div>
+            </div>
 
-            <div
-                className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}
-            >
+            <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
 
                 {loading && (
                     <div className="state-container loading-state">
@@ -343,84 +349,58 @@ function RendTallasPage() {
                         <div className="state-content">
 
                             <h2>
-                                {hayFiltros
-                                    ? 'No se encontraron tallas'
-                                    : 'No hay tallas registradas'}
+                                {hayFiltros ? 'No se encontraron tallas' : 'No hay tallas registradas'}
                             </h2>
 
                             <p>
-                                {hayFiltros
-                                    ? 'No hay tallas que coincidan con los criterios de búsqueda.'
-                                    : 'Aún no existen tallas registradas en el sistema.'}
+                                {hayFiltros ? 'No hay tallas que coincidan con los criterios de búsqueda.' : 'Aún no existen tallas registradas en el sistema.'}
                             </p>
 
                         </div>
 
                     </div>
                 )}
-                {!loading &&
-                    !error &&
-                    rendtallas.length > 0 && (
 
+                {!loading && !error && rendtallas.length > 0 && (
                         <div className="table-section">
-
                             <RendTallasTable
                                 rendtallas={rendtallas}
                                 onEdit={editarRendTalla}
                                 onAdd={agregarRendTalla}
                                 onDelete={solicitarEliminarRendTalla}
-
+                                puedeInsertar={permisos.insercion}
+                                puedeActualizar={permisos.actualiza}
+                                puedeEliminar={permisos.elimina}
                             />
-
                         </div>
-
                     )}
 
-
                 {mostrarFormulario && (
-
                     <aside className="form-section">
-
                         <RendTallaForm
-                            key={
-                                rendtallaSeleccionada
-                                    ? `rendimiento-${rendtallaSeleccionada.codigo}`
-                                    : 'nuevo-rendimiento'
-                            }
+                            key={rendtallaSeleccionada ? `rendimiento-${rendtallaSeleccionada.codigo}` : 'nuevo-rendimiento'}
                             rendtallas={rendtallas}
                             rendtalla={rendtallaSeleccionada}
                             onClose={cerrarFormulario}
                             onSubmit={guardarRendTalla}
                         />
-
                     </aside>
-
                 )}
 
             </div>
 
             {rendtallaAEliminar && (
-
                 <ConfirmModal
-
                     title="Eliminar rendimiento"
-
                     message={
                         `¿Está seguro de que desea eliminar el rendimiento ` +
                         `asociado a la talla "${rendtallaAEliminar.nombre}"? ` +
                         `Esta acción no se puede deshacer.`
                     }
-
                     onConfirm={confirmarEliminarRendimiento}
-
-                    onCancel={() =>
-                        setRendTallaAEliminar(null)
-                    }
-
+                    onCancel={() => setRendTallaAEliminar(null)}
                     loading={eliminando}
-
                 />
-
             )}
 
             <Snackbar

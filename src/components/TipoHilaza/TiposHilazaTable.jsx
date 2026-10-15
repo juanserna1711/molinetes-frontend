@@ -19,22 +19,25 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Entrega el registro completo a la página para editarlo o solicitar confirmación de eliminación.
-function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
-
+function TiposHilazaTable({
+    tiposHilaza, 
+    onEdit, 
+    onDelete,
+    puedeActualizar,
+    puedeEliminar
+}) {
+    const mostrarAcciones = puedeActualizar || puedeEliminar;
     return (
-
         <div className="table-container">
 
             <table className="table">
 
                 <thead>
-
                     <tr>
                         <th>Código</th>
                         <th>Nombre Tipo de Hilaza</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -51,10 +54,12 @@ function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
                                 {tipoHilaza.nombre}
                             </td>
 
+                            {mostrarAcciones && (
                             <td>
 
                                 <div className="actions">
 
+                                    {puedeActualizar && (
                                     <button
                                         type="button"
                                         className="table-action edit"
@@ -63,7 +68,9 @@ function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
                                     >
                                         <EditOutlinedIcon />
                                     </button>
+                                    )}
 
+                                    {puedeEliminar && (
                                     <button
                                         type="button"
                                         className="table-action delete"
@@ -72,10 +79,12 @@ function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
                                     >
                                         <DeleteOutlinedIcon />
                                     </button>
+                                    )}
 
                                 </div>
 
                             </td>
+                            )}
 
                         </tr>
 
@@ -86,9 +95,7 @@ function TiposHilazaTable({tiposHilaza, onEdit, onDelete}) {
             </table>
 
         </div>
-
     );
-
 }
 
 export default TiposHilazaTable;

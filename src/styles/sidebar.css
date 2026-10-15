@@ -21,7 +21,7 @@
     position: sticky;
     top: 0;
     width: 250px;
-    height: 100vh;
+    height: 100dvh;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -44,10 +44,15 @@
    ========================================================= */
 
 .sidebar-navigation {
-    display: flex;
-    flex-direction: column;
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* =========================================================
@@ -185,15 +190,12 @@
    ========================================================= */
 
 .sidebar-decoration {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 65px;
-    height: 190px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    flex-shrink: 0;
+    padding-top: 16px;
     pointer-events: none;
     z-index: 1;
 }
@@ -232,6 +234,24 @@
     transition: opacity 0.15s ease;
 }
 
+.sidebar-navigation {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.sidebar-navigation::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-navigation::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
 .sidebar-footer-line {
     width: 110px;
     height: 3px;
@@ -248,4 +268,30 @@
     font-size: 12px;
     font-style: italic;
     line-height: 1.45;
+}
+
+@media (max-height: 750px) {
+    .sidebar {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+    .sidebar-group + .sidebar-group {
+        margin-top: 8px;
+    }
+    .sidebar-item {
+        min-height: 42px;
+    }
+    .sidebar-wave {
+        max-height: 100px;
+    }
+    .sidebar-decoration {
+        padding-top: 10px;
+    }
+    .sidebar-footer-line {
+        margin-bottom: 6px;
+    }
+    .sidebar-footer-text {
+        font-size: 11px;
+        line-height: 1.3;
+    }
 }

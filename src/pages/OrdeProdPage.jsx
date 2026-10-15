@@ -17,6 +17,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { usePermisos } from '../hooks/usePermisos.js';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
@@ -48,11 +49,12 @@ function OrdeProdPage() {
     const [ordenFiltro, setOrdenFiltro] = useState('');
     const [tipoHilazaFiltro, setTipoHilazaFiltro] = useState('');
     const [fechaInicio, setFechaInicio] = useState(hoy);
-    const [fechaFin, setFechaFin] = useState('');
+    const [fechaFin, setFechaFin] = useState(hoy);
     const [pagina, setPagina] = useState(1);
     const registrosPagina = 10;
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [imprimiendoOrden, setImprimiendoOrden] = useState(null); // Identifica la fila cuyo PDF está en preparación.
+    const permisos = usePermisos(8);
 
     // Carga los tipos de hilaza disponibles para el filtro.
     useEffect(() => {
@@ -437,6 +439,7 @@ function OrdeProdPage() {
                             ordenes={ordenes}
                             imprimiendoOrden={imprimiendoOrden}
                             onDetalle={manejarDetalle}
+                            puedeVerReporte={permisos.reporte}
                         />
 
                     </div>

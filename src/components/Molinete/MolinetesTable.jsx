@@ -18,7 +18,14 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Los callbacks reciben la fila completa para que la página abra edición o confirme el borrado.
-function MolinetesTable({molinetes, onEdit, onDelete}) {
+function MolinetesTable({
+    molinetes, 
+    onEdit,
+    onDelete,
+    puedeActualizar,
+    puedeEliminar
+}) {
+    const mostrarAcciones = puedeActualizar || puedeEliminar;
     return (
         <div className="table-container">
 
@@ -30,7 +37,7 @@ function MolinetesTable({molinetes, onEdit, onDelete}) {
                         <th>Nombre Molinete</th>
                         <th>RPM</th>
                         <th>Perimetro</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
                 </thead>
 
@@ -57,10 +64,12 @@ function MolinetesTable({molinetes, onEdit, onDelete}) {
                                     {molinete.perimetro}
                                 </td>
 
+                                {mostrarAcciones && (
                                 <td>
 
                                     <div className="actions">
 
+                                        {puedeActualizar && (
                                         <button
                                             type="button"
                                             className="table-action edit"
@@ -69,7 +78,9 @@ function MolinetesTable({molinetes, onEdit, onDelete}) {
                                         >
                                             <EditOutlinedIcon />
                                         </button>
-
+                                        )}
+                                        
+                                        {puedeEliminar && (
                                         <button
                                             type="button"
                                             className="table-action delete"
@@ -78,10 +89,12 @@ function MolinetesTable({molinetes, onEdit, onDelete}) {
                                         >
                                             <DeleteOutlinedIcon />
                                         </button>
+                                        )}
 
                                     </div>
 
                                 </td>
+                                )}
 
                             </tr>
                         );

@@ -16,6 +16,7 @@
 =============================================================================*/
 
 import { useEffect, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -44,6 +45,7 @@ function TiposHilazaPage() {
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(4);
 
     /*
       =========================================================
@@ -52,10 +54,16 @@ function TiposHilazaPage() {
     */
 
     function solicitarEliminarTipoHilaza(tipoHilaza) {
+        if (!permisos.elimina){
+            return;
+        }
         setTipoHilazaAEliminar(tipoHilaza);
     }
 
     function editarTipoHilaza(tipoHilaza) {
+        if (!permisos.actualiza){
+            return;
+        }
         setTipoHilazaSeleccionado(tipoHilaza);
         setMostrarFormulario(true);
     }
@@ -94,31 +102,21 @@ function TiposHilazaPage() {
       FILTROS
       =========================================================
     */
-    /*
-      Interpreta texto numérico como código y el resto como nombre.
-      La recarga después de una operación reutiliza estos criterios de búsqueda.
-    */
-    function obtenerFiltros() {
 
+    // Prepara los filtros para la consulta.
+    function obtenerFiltros() {
         const filtros = {};
         const valor = busqueda.trim();
 
         if (valor !== '') {
-
             if (!isNaN(valor)) {
-
                 filtros.codigo = Number(valor);
-
             } else {
-
                 filtros.nombre = valor;
-
             }
-
         }
 
         return filtros;
-
     }
 
     /*
@@ -177,7 +175,11 @@ function TiposHilazaPage() {
 
     }
 
-    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
+    /*
+      =========================================================
+      FORMULARIO
+      =========================================================
+    */
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -187,62 +189,55 @@ function TiposHilazaPage() {
 
     // Guarda los cambios del registro seleccionado y actualiza el listado.
     async function actualizarTipoHilaza(tipoHilaza, data) {
-
         await actualizarTipoHilazaService(tipoHilaza.codigo, data);
+
         cerrarFormulario();
+
         await cargarTiposHilaza(obtenerFiltros());
         mostrarSnackbar('Tipo de hilaza actualizado correctamente.', 'success');
-
     }
 
 
-    /*
-      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
-      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
-    */
+    //Crea o actualiza el registro y recarga el listado al completar la operación.
     async function guardarTipoHilaza(data) {
-
         if (tipoHilazaSeleccionado) {
-
+            if (!permisos.actualiza){
+                return;
+            }
             await actualizarTipoHilaza(tipoHilazaSeleccionado, data);
-
         } else {
-
+            if (!permisos.insercion){
+                return;
+            }
             await crearTipoHilazaService(data);
+
             cerrarFormulario();
+
             await cargarTiposHilaza(obtenerFiltros());
             mostrarSnackbar('Tipo de hilaza creado correctamente.', 'success');
-
         }
-
     }
 
     // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarTipoHilaza() {
-
         if (!tipoHilazaAEliminar) return;
 
         try {
-
             setEliminando(true);
+
             await eliminarTipoHilazaService(tipoHilazaAEliminar.codigo);
             await cargarTiposHilaza(obtenerFiltros());
 
             mostrarSnackbar('Tipo de hilaza eliminado correctamente.', 'success');
-
         } catch (error) {
-
             console.error(error);
 
+
             mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el tipo de hilaza.', 'error');
-
         } finally {
-
             setEliminando(false);
             setTipoHilazaAEliminar(null);
-
         }
-
     }
 
     const hayFiltros = busqueda.trim() !== '';
@@ -250,10 +245,6 @@ function TiposHilazaPage() {
     return (
 
         <section className="page">
-
-            {/* =================================================
-                CABECERA
-                ================================================= */}
 
             <div className="page-header">
 
@@ -265,6 +256,7 @@ function TiposHilazaPage() {
 
                 </div>
 
+                {permisos.insercion && (
                 <button
                     type="button"
                     className="primary-button"
@@ -274,83 +266,56 @@ function TiposHilazaPage() {
 
                     Nuevo Tipo de Hilaza
                 </button>
+                )}
 
             </div>
-
-            {/* =================================================
-                FILTROS
-                ================================================= */}
 
             <div className="filters">
 
                 <div className="search-box">
-
                     <SearchOutlinedIcon />
 
                     <input
                         type="text"
                         placeholder="Buscar por código o nombre..."
                         value={busqueda}
-                        onChange={(event) => {setBusqueda(event.target.value);}}
+                        onChange={(event) => {
+                            setBusqueda(event.target.value);
+                        }}
                         maxLength={60}
                     />
-
                 </div>
-
             </div>
 
-            {/* =================================================
-                ÁREA DE TRABAJO
-                ================================================= */}
-
-            <div
-                className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}
-            >
-
-            {/* =================================================
-                LOADING
-                ================================================= */}
+            <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
 
             {loading && (
-
                 <div className="state-container loading-state">
-
                     <CircularProgress
                         size={30}
                         thickness={4}
                     />
 
                     <div className="state-content">
-
                         <h2>Cargando tipos de hilaza</h2>
-
                         <p>Consultando la información...</p>
-
                     </div>
-
                 </div>
-
             )}
 
-            {/* =================================================
-                ERROR
-                ================================================= */}
-
             {!loading && error && (
-
                 <div className="state-container error-state">
 
                     <div className="state-icon error-icon">
-
                         <ErrorOutlineOutlinedIcon />
-
                     </div>
 
                     <div className="state-content">
-
                         <h2>No fue posible cargar los tipos de hilaza</h2>
 
-                        <p>{error}</p>
+                        <p>
+                            {error}
+                        </p>
 
                         <button
                             type="button"
@@ -359,25 +324,16 @@ function TiposHilazaPage() {
                         >
                             Reintentar
                         </button>
-
                     </div>
 
                 </div>
-
             )}
 
-            {/* =================================================
-                SIN REGISTROS
-                ================================================= */}
-
             {!loading && !error && tiposHilaza.length === 0 && (
-
                 <div className="state-container empty-state">
 
                     <div className="state-icon empty-icon">
-
                         <SearchOffOutlinedIcon />
-
                     </div>
 
                     <div className="state-content">
@@ -393,61 +349,42 @@ function TiposHilazaPage() {
                     </div>
 
                 </div>
-
             )}
 
                 {!loading && !error && tiposHilaza.length > 0 && (
-
                     <div className="table-section">
-
                         <TiposHilazaTable
                             tiposHilaza={tiposHilaza}
                             onEdit={editarTipoHilaza}
                             onDelete={solicitarEliminarTipoHilaza}
+                            puedeActualizar={permisos.actualiza}
+                            puedeEliminar={permisos.elimina}
                         />
-
                     </div>
-
                 )}
 
                 {mostrarFormulario && (
-
                     <aside className="form-section">
-
                         <TipoHilazaForm
                             key={tipoHilazaSeleccionado ? `editar-${tipoHilazaSeleccionado.codigo}` : 'crear-tipoHilaza'}
                             tipoHilaza={tipoHilazaSeleccionado}
                             onClose={cerrarFormulario}
                             onSubmit={guardarTipoHilaza}
                         />
-
                     </aside>
-
                 )}
 
             </div>
 
-            {/* =================================================
-                CONFIRMACIÓN DE ELIMINACIÓN
-                ================================================= */}
-
             {tipoHilazaAEliminar && (
-
                 <ConfirmModal
                     title="Eliminar tipo de hilaza"
-                    message={
-                        `¿Está seguro de que desea eliminar el tipo de hilaza "${tipoHilazaAEliminar.nombre}"? Esta acción no se puede deshacer.`
-                    }
+                    message={`¿Está seguro de que desea eliminar el tipo de hilaza "${tipoHilazaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
                     onConfirm={confirmarEliminarTipoHilaza}
                     onCancel={() => setTipoHilazaAEliminar(null)}
                     loading={eliminando}
                 />
-
             )}
-
-            {/* =================================================
-                SNACKBAR
-                ================================================= */}
 
             <Snackbar
                 message={snackbar.message}
@@ -455,9 +392,7 @@ function TiposHilazaPage() {
             />
 
         </section>
-
     );
-
 }
 
 export default TiposHilazaPage;

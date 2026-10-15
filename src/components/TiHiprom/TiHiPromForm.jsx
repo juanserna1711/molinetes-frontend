@@ -36,8 +36,7 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
         codTipoHilaza: tihiprom?.codigoTipoHilaza ?? '',
         codTalla: tihiprom?.codigoTalla ?? '',
         pesoTiHiProm: tihiprom?.peso ?? '',
-        anchoTiHiProm: tihiprom?.ancho ?? '',
-        usuarioTiHiProm: 4
+        anchoTiHiProm: tihiprom?.ancho ?? ''
     });
 
     // Comprueba la pareja hilaza-talla tras 500 ms; en edición conserva la identidad del registro.
@@ -107,13 +106,12 @@ function TiHiPromForm({ onClose, onSubmit, tihiprom, tiposHilaza, tallas }) {
             return;
         }
 
-        // Convierte identificadores, medidas y usuario antes de delegar en la página según modo.
+        // Convierte identificadores y medidas antes de delegar en la página según modo.
         const data = {
             codTipoHilaza: Number(formData.codTipoHilaza),
             codTalla: Number(formData.codTalla),
             pesoTiHiProm: Number(formData.pesoTiHiProm),
-            anchoTiHiProm: Number(formData.anchoTiHiProm),
-            usuarioTiHiProm: Number(formData.usuarioTiHiProm)
+            anchoTiHiProm: Number(formData.anchoTiHiProm)
         };
 
         try {

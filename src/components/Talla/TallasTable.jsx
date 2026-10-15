@@ -26,8 +26,11 @@ function TallasTable({
     onActivate,
     onDeactivate,
     onDelete,
-    operation
+    operation,
+    puedeActualizar,
+    puedeEliminar
 }) {
+    const mostrarAcciones = puedeActualizar || puedeEliminar;
     return (
         <div className="table-container">
 
@@ -38,7 +41,7 @@ function TallasTable({
                         <th>Código</th>
                         <th>Nombre Talla</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
                 </thead>
 
@@ -47,9 +50,7 @@ function TallasTable({
                     {tallas.map((talla) => {
 
                         const estaActiva = talla.estado === 'A';
-
                         const operacionEstado = estaActiva ? `desactivar-${talla.codigo}` : `activar-${talla.codigo}`;
-
                         const procesandoEstado = operation === operacionEstado;
 
                         return (
@@ -65,38 +66,54 @@ function TallasTable({
 
                                 <td>
 
-                                    <button
-                                        type="button"
-                                        className={`status-button ${ estaActiva ? 'status-active' : 'status-inactive'}`}
-                                        onClick={() => {
-                                            if (estaActiva) {
-                                                onDeactivate(talla.codigo);
-                                            } else {
-                                                onActivate(talla.codigo);
-                                            }
-                                        }}
-                                        disabled={procesandoEstado}
-                                        title={estaActiva ? 'Desactivar talla' : 'Activar talla'}
-                                    >
+                                    {puedeActualizar ? (
+                                        <button
+                                            type="button"
+                                            className={`status-button ${estaActiva ? 'status-active' : 'status-inactive'}`}
+                                            onClick={() => {
+                                                if (estaActiva) {
+                                                    onDeactivate(talla.codigo);
+                                                } else {
+                                                    onActivate(talla.codigo);
+                                                }
+                                            }}
+                                            disabled={procesandoEstado}
+                                            title={estaActiva ? 'Desactivar talla' : 'Activar talla'}
+                                        >
 
-                                        {estaActiva ? (
-                                            <CheckCircleOutlineOutlinedIcon />
-                                        ) : (
-                                            <RadioButtonUncheckedIcon />
-                                        )}
+                                            {estaActiva ? (<CheckCircleOutlineOutlinedIcon />) : (<RadioButtonUncheckedIcon />)}
 
-                                        <span>
-                                            {estaActiva ? 'Activo' : 'Inactivo'}
+                                            <span>
+                                                {estaActiva ? 'Activo' : 'Inactivo'}
+                                            </span>
+
+                                        </button>
+
+                                    ) : (
+
+                                        <span
+                                            className={`status-button status-readonly ${estaActiva ? 'status-active' : 'status-inactive'}`}
+                                            title="Estado de la talla"
+                                        >
+
+                                            {estaActiva ? (<CheckCircleOutlineOutlinedIcon />) : (<RadioButtonUncheckedIcon />)}
+
+                                            <span>
+                                                {estaActiva ? 'Activo' : 'Inactivo'}
+                                            </span>
+
                                         </span>
 
-                                    </button>
+                                    )}
 
                                 </td>
 
+                                {mostrarAcciones && (
                                 <td>
 
                                     <div className="actions">
 
+                                        {puedeActualizar && (
                                         <button
                                             type="button"
                                             className="table-action edit"
@@ -105,7 +122,9 @@ function TallasTable({
                                         >
                                             <EditOutlinedIcon />
                                         </button>
+                                        )}
 
+                                        {puedeEliminar && (
                                         <button
                                             type="button"
                                             className="table-action delete"
@@ -114,10 +133,12 @@ function TallasTable({
                                         >
                                             <DeleteOutlinedIcon />
                                         </button>
+                                        )}
 
                                     </div>
 
                                 </td>
+                                )}
 
                             </tr>
                         );
