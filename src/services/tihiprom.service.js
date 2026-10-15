@@ -37,10 +37,3 @@ export async function actualizarTiHiProm(tipoHilaza, talla, data) {
 
     return response.data;
 }
-
-// Elimina la información correspondiente al tipo de hilaza y talla seleccionados.
-export async function eliminarTiHiProm(tipoHilaza, talla) {
-    const response = await api.delete(`/tihiprom/${tipoHilaza}/${talla}`);
-
-    return response.data;
-}

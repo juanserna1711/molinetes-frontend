@@ -26,13 +26,11 @@ import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import {
     consultarModulos,
     crearModulo as crearModuloService,
-    actualizarModulo as actualizarModuloService,
-    eliminarModulo as eliminarModuloService
+    actualizarModulo as actualizarModuloService
 } from '../services/modulos.service';
 
 import ModulosTable from '../components/Modulo/ModulosTable';
 import ModuloForm from '../components/Modulo/ModuloForm';
-import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
 
@@ -44,8 +42,6 @@ function ModulosPage() {
     const [busqueda, setBusqueda] = useState('');
     const [zona, setZona] = useState('');
     const [moduloSeleccionado, setModuloSeleccionado] = useState(null);
-    const [moduloAEliminar, setModuloAEliminar] = useState(null);
-    const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
     const permisos = usePermisos(9);
@@ -56,16 +52,8 @@ function ModulosPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
-    function solicitarEliminarModulo(modulo) {
-        if (!permisos.elimina){
-            return;
-        }        
-        setModuloAEliminar(modulo);
-    }
-
     function editarModulo(modulo) {
-        if (!permisos.elimina) {
+        if (!permisos.actualiza) {
             return;
         }
         setModuloSeleccionado(modulo);
@@ -228,27 +216,6 @@ function ModulosPage() {
         }
     }
 
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarModulo() {
-        if (!moduloAEliminar) return;
-
-        try {
-            setEliminando(true);
-
-            await eliminarModuloService(moduloAEliminar.codigo);
-            await cargarModulos(obtenerFiltros());
-
-            mostrarSnackbar('Módulo eliminado correctamente.', 'success');
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el módulo.', 'error');
-        } finally {
-            setEliminando(false);
-            setModuloAEliminar(null);
-        }
-    }
-
 
     const hayFiltros = busqueda.trim() !== '' || zona !== '';
     const zonasModulos = [...new Set(modulos.map(modulo => modulo.zona).filter(Boolean))];
@@ -357,7 +324,7 @@ function ModulosPage() {
                         <button
                             type="button"
                             className="primary-button"
-                            onClick={() => cargarTallas(obtenerFiltros())}
+                            onClick={() => cargarModulos(obtenerFiltros())}
                         >
                             Reintentar
                         </button>
@@ -394,9 +361,7 @@ function ModulosPage() {
                     <ModulosTable
                         modulos={modulos}
                         onEdit={editarModulo}
-                        onDelete={solicitarEliminarModulo}
                         puedeActualizar={permisos.actualiza}
-                        puedeEliminar={permisos.elimina}
                     />
                 </div>
             )}
@@ -413,16 +378,6 @@ function ModulosPage() {
             )}
 
             </div>
-
-            {moduloAEliminar && (
-                <ConfirmModal
-                    title="Eliminar módulo"
-                    message={`¿Está seguro de que desea eliminar el módulo "${moduloAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarModulo}
-                    onCancel={() => setModuloAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}

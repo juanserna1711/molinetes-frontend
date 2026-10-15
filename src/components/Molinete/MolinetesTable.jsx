@@ -15,17 +15,14 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Los callbacks reciben la fila completa para que la página abra edición o confirme el borrado.
 function MolinetesTable({
     molinetes, 
     onEdit,
-    onDelete,
-    puedeActualizar,
-    puedeEliminar
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -77,17 +74,6 @@ function MolinetesTable({
                                             title="Editar"
                                         >
                                             <EditOutlinedIcon />
-                                        </button>
-                                        )}
-                                        
-                                        {puedeEliminar && (
-                                        <button
-                                            type="button"
-                                            className="table-action delete"
-                                            onClick={() => onDelete(molinete)}
-                                            title="Eliminar"
-                                        >
-                                            <DeleteOutlinedIcon />
                                         </button>
                                         )}
 

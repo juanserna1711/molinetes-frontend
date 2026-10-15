@@ -26,12 +26,10 @@ import {
     crearUsuario as crearUsuarioService,
     actualizarUsuario as actualizarUsuarioService,
     activarUsuario as activarUsuarioService,
-    desactivarUsuario as desactivarUsuarioService,
-    eliminarUsuario as eliminarUsuarioService
+    desactivarUsuario as desactivarUsuarioService
 } from '../services/usuarios.service';
 import UsuariosTable from '../components/Usuario/UsuariosTable';
 import UsuarioForm from '../components/Usuario/UsuarioForm';
-import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
 function UsuariosPage() {
@@ -42,8 +40,6 @@ function UsuariosPage() {
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [eliminando, setEliminando] = useState(false);
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
@@ -54,14 +50,6 @@ function UsuariosPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
-    function solicitarEliminarUsuario(usuario) {
-        if (!permisos.elimina) {
-            return;
-        }
-        setUsuarioAEliminar(usuario);
-    }
-
     function editarUsuario(usuario) {
         if (!permisos.actualiza){
             return;
@@ -259,27 +247,6 @@ function UsuariosPage() {
             setOperacion(null);
         }
     }
-
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarUsuario() {
-            if (!usuarioAEliminar) return;
-    
-            try {
-                setEliminando(true);
-    
-                await eliminarUsuarioService(usuarioAEliminar.codigo);
-                await cargarUsuarios(obtenerFiltros());
-    
-                mostrarSnackbar('Usuario eliminado correctamente.', 'success');
-            } catch (error) {
-                console.error(error);
-    
-                mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el usuario.', 'error');
-            } finally {
-                setEliminando(false);
-                setUsuarioAEliminar(null);
-            }
-        }
     
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
@@ -410,10 +377,8 @@ function UsuariosPage() {
                             onEdit={editarUsuario}
                             onActivate={activarUsuario}
                             onDeactivate={desactivarUsuario}
-                            onDelete={solicitarEliminarUsuario}
                             operation={operacion}
                             puedeActualizar={permisos.actualiza}
-                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -430,16 +395,6 @@ function UsuariosPage() {
                 )}
 
             </div>
-
-            {usuarioAEliminar && (
-                <ConfirmModal
-                    title="Eliminar usuario"
-                    message={`¿Está seguro de que desea eliminar el usuario "${usuarioAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarUsuario}
-                    onCancel={() => setUsuarioAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}

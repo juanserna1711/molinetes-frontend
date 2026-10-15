@@ -44,10 +44,3 @@ export async function actualizarRegla(codigo, data) {
 
     return response.data;
 }
-
-// Elimina la regla correspondiente al código recibido.
-export async function eliminarRegla(codigo) {
-    const response = await api.delete(`/reglas/${codigo}`);
-
-    return response.data;
-}

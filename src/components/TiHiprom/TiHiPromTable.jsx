@@ -16,18 +16,15 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {formatearFecha} from '../../utils/formatters';
 
 // La pareja hilaza-talla identifica cada fila; los callbacks reciben el registro con ambos códigos.
 function TiHiPromTable({
     tihiprom, 
-    onEdit, 
-    onDelete,
-    puedeActualizar,
-    puedeEliminar
+    onEdit,
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -92,17 +89,6 @@ function TiHiPromTable({
                                         title="Editar promedio"
                                     >
                                         <EditOutlinedIcon />
-                                    </button>
-                                    )}
-
-                                    {puedeEliminar && (
-                                    <button
-                                        type="button"
-                                        className="table-action delete"
-                                        onClick={() => onDelete(registro)}
-                                        title="Eliminar promedio"
-                                    >
-                                        <DeleteOutlinedIcon />
                                     </button>
                                     )}
 

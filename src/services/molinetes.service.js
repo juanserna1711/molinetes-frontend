@@ -36,10 +36,3 @@ export async function actualizarMolinete(codigo, data) {
 
     return response.data;
 }
-
-
-// Elimina el molinete correspondiente al código recibido.
-export async function eliminarMolinete(codigo) {
-    const response = await api.delete(`/molinetes/${codigo}`);
-    return response.data;
-}

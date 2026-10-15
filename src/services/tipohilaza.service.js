@@ -36,10 +36,3 @@ export async function actualizarTipoHilaza(codigo, data) {
 
     return response.data;
 }
-
-// Elimina el tipo de hilaza correspondiente al código recibido.
-export async function eliminarTipoHilaza(codigo) {
-    const response = await api.delete(`/tipohilaza/${codigo}`);
-
-    return response.data;
-}

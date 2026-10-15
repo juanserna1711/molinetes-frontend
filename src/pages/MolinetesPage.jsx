@@ -25,13 +25,11 @@ import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import {
     consultarMolinetes,
     crearMolinete as crearMolineteService,
-    actualizarMolinete as actualizarMolineteService,
-    eliminarMolinete as eliminarMolineteService
+    actualizarMolinete as actualizarMolineteService
 } from '../services/molinetes.service';
 
 import MolinetesTable from '../components/Molinete/MolinetesTable';
 import MolineteForm from '../components/Molinete/MolineteForm';
-import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
 function MolinetesPage() {
@@ -41,8 +39,6 @@ function MolinetesPage() {
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
     const [molineteSeleccionado, setMolineteSeleccionado] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [molineteAEliminar, setMolineteAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
     const permisos = usePermisos(3);
@@ -52,14 +48,6 @@ function MolinetesPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
-    function solicitarEliminarMolinete(molinete) {
-        if (!permisos.elimina){
-            return;
-        }
-        setMolineteAEliminar(molinete);
-    }
-
     function editarMolinete(molinete) {
         if(!permisos.actualiza){
             return;
@@ -214,28 +202,6 @@ function MolinetesPage() {
         }
     }
 
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarMolinete() {
-        if (!molineteAEliminar) return;
-
-        try {
-            setEliminando(true);
-
-            await eliminarMolineteService(molineteAEliminar.codigo);
-            await cargarMolinetes(obtenerFiltros());
-
-            mostrarSnackbar('Molinete eliminado correctamente.', 'success');
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el molinete.', 'error');
-
-        } finally {
-            setEliminando(false);
-            setMolineteAEliminar(null);
-        }
-    }
-    
     const hayFiltros = busqueda.trim() !== '';
 
     return (
@@ -348,9 +314,7 @@ function MolinetesPage() {
                         <MolinetesTable
                             molinetes={molinetes}
                             onEdit={editarMolinete}
-                            onDelete={solicitarEliminarMolinete}
                             puedeActualizar={permisos.actualiza}
-                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -367,16 +331,6 @@ function MolinetesPage() {
                 )}
 
             </div>
-
-            {molineteAEliminar && (
-                <ConfirmModal
-                    title="Eliminar molinete"
-                    message={`¿Está seguro de que desea eliminar el molinete "${molineteAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarMolinete}
-                    onCancel={() => setMolineteAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}

@@ -5,7 +5,7 @@
   Fecha_creacion: 08/Octubre/2026
 
   Descripcion responsabilidad:
-  Renderiza los registros de módulos y permite solicitar edición o eliminación.
+  Renderiza los registros de módulos y permite solicitar edición.
 
   Historial_modificaciones:
 
@@ -15,16 +15,13 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 function ModulosTable({
     modulos,
     onEdit,
-    onDelete,
-    puedeActualizar,
-    puedeEliminar
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -80,17 +77,6 @@ function ModulosTable({
                                         title="Editar"
                                     >
                                         <EditOutlinedIcon />
-                                    </button>
-                                    )}
-
-                                    {puedeEliminar && (
-                                    <button
-                                        type="button"
-                                        className="table-action delete"
-                                        onClick={() => onDelete(modulo)}
-                                        title="Eliminar"
-                                    >
-                                        <DeleteOutlinedIcon />
                                     </button>
                                     )}
 

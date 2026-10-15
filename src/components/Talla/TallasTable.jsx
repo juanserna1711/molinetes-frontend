@@ -5,7 +5,7 @@
   Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
-  Renderiza los registros de tallas y permite solicitar edición, cambio de estado o eliminación.
+  Renderiza los registros de tallas y permite solicitar edición, cambio de estado.
 
   Historial_modificaciones:
 
@@ -15,7 +15,6 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
@@ -25,12 +24,10 @@ function TallasTable({
     onEdit,
     onActivate,
     onDeactivate,
-    onDelete,
     operation,
-    puedeActualizar,
-    puedeEliminar
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -121,17 +118,6 @@ function TallasTable({
                                             title="Editar"
                                         >
                                             <EditOutlinedIcon />
-                                        </button>
-                                        )}
-
-                                        {puedeEliminar && (
-                                        <button
-                                            type="button"
-                                            className="table-action delete"
-                                            onClick={() => onDelete(talla)}
-                                            title="Eliminar"
-                                        >
-                                            <DeleteOutlinedIcon />
                                         </button>
                                         )}
 
