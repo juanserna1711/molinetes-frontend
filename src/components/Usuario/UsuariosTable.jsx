@@ -26,8 +26,11 @@ function UsuariosTable({
     onActivate,
     onDeactivate,
     onDelete,
-    operation
+    operation,
+    puedeActualizar,
+    puedeEliminar
 }) {
+    const mostrarAcciones = puedeActualizar || puedeEliminar;
     return (
         <div className="table-container">
 
@@ -39,7 +42,7 @@ function UsuariosTable({
                         <th>Nombre Usuario</th>
                         <th>Contraseña Usuario</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
                 </thead>
 
@@ -68,6 +71,7 @@ function UsuariosTable({
 
                                 <td>
 
+                                    {puedeActualizar ? (
                                     <button
                                         type="button"
                                         className={`status-button ${estaActivo ? 'status-active' : 'status-inactive'}`}
@@ -82,24 +86,39 @@ function UsuariosTable({
                                         title={estaActivo ? 'Desactivar usuario' : 'Activar usuario'}
                                     >
 
-                                        {estaActivo ? (
-                                            <CheckCircleOutlineOutlinedIcon />
-                                        ) : (
-                                            <RadioButtonUncheckedIcon />
-                                        )}
+                                        {estaActivo ? (<CheckCircleOutlineOutlinedIcon />) : (<RadioButtonUncheckedIcon />)}
 
                                         <span>
                                             {estaActivo ? 'Activo' : 'Inactivo'}
                                         </span>
 
                                     </button>
+                                
+                                ) : (
+
+                                        <span
+                                            className={`status-button status-readonly ${estaActivo ? 'status-active' : 'status-inactive'}`}
+                                            title="Estado del usuario"
+                                        >
+
+                                            {estaActivo ? (<CheckCircleOutlineOutlinedIcon />) : (<RadioButtonUncheckedIcon />)}
+
+                                            <span>
+                                                {estaActivo ? 'Activo' : 'Inactivo'}
+                                            </span>
+
+                                        </span>
+
+                                    )}
 
                                 </td>
 
+                                {mostrarAcciones && (
                                 <td>
 
                                     <div className="actions">
 
+                                        {puedeActualizar && (
                                         <button
                                             type="button"
                                             className="table-action edit"
@@ -108,7 +127,9 @@ function UsuariosTable({
                                         >
                                             <EditOutlinedIcon />
                                         </button>
+                                        )}
 
+                                        {puedeEliminar && (
                                         <button
                                             type="button"
                                             className="table-action delete"
@@ -117,10 +138,12 @@ function UsuariosTable({
                                         >
                                             <DeleteOutlinedIcon />
                                         </button>
+                                        )}
 
                                     </div>
 
                                 </td>
+                                )}
 
                             </tr>
                         );

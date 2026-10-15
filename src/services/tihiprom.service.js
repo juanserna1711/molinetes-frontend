@@ -14,55 +14,33 @@
   Descripcion:
 =============================================================================*/
 
-import axios from 'axios';
-
-/*
-  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
-  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
-*/
-const API_URL = import.meta.env.VITE_API_URL;
+import api from './api.js';
 
 // Consulta los promedios por tipo de hilaza utilizando los filtros recibidos.
 export async function consultarTiHiProm(params = {}) {
-    const response = await axios.get(`${API_URL}/tihiprom`, {
-        params
-    });
+    const response = await api.get(`/tihiprom`, {params});
 
     return response.data;
 }
 
 // Registra nueva información de promedio por tipo de hilaza.
 export async function crearTiHiProm(data) {
-    const response = await axios.post(
-        `${API_URL}/tihiprom`,
-        data
-    );
+    const response = await api.post(`/tihiprom`, data);
 
     return response.data;
 }
 
 // Actualiza la información correspondiente al tipo de hilaza y talla seleccionados.
-export async function actualizarTiHiProm(
-    tipoHilaza,
-    talla,
-    data
-) {
-    const response = await axios.put(
-        `${API_URL}/tihiprom/${tipoHilaza}/${talla}`,
-        data
-    );
+export async function actualizarTiHiProm(tipoHilaza, talla, data) {
+    const response = await api.put(
+        `/tihiprom/${tipoHilaza}/${talla}`, data);
 
     return response.data;
 }
 
 // Elimina la información correspondiente al tipo de hilaza y talla seleccionados.
-export async function eliminarTiHiProm(
-    tipoHilaza,
-    talla
-) {
-    const response = await axios.delete(
-        `${API_URL}/tihiprom/${tipoHilaza}/${talla}`
-    );
+export async function eliminarTiHiProm(tipoHilaza, talla) {
+    const response = await api.delete(`/tihiprom/${tipoHilaza}/${talla}`);
 
     return response.data;
 }

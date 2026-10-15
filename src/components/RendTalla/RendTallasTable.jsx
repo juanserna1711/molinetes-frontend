@@ -20,7 +20,16 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { formatearFecha } from '../../utils/formatters.js';
 
 // La presencia de ancho determina si la fila ofrece agregar rendimiento o editar y eliminar el existente.
-function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
+function RendTallasTable({
+    rendtallas, 
+    onEdit, 
+    onAdd, 
+    onDelete, 
+    puedeInsertar,
+    puedeActualizar, 
+    puedeEliminar
+}) {
+    const mostrarAcciones = puedeInsertar || puedeActualizar || puedeEliminar;
     return (
         <div className="table-container">
 
@@ -35,7 +44,7 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
                         <th>Metros</th>
                         <th>Rendimiento</th>
                         <th>Fecha Generación</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
                 </thead>
 
@@ -43,8 +52,7 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
 
                     {rendtallas.map((rendtalla) => {
 
-                        /* Una TALLA puede existir sin información de RENDTALL.
-                        Si ancho es null, significa que todavía no tiene rendimiento asociado.*/
+                        //Si ancho es null, significa que todavía no tiene rendimiento asociado.*/
                         const tieneRendimiento = rendtalla.ancho !== null && rendtalla.ancho !== undefined;
 
                         return (
@@ -78,13 +86,16 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
                                     {tieneRendimiento ? formatearFecha(rendtalla.fechaGeneracion) : '-'}
                                 </td>
 
+                                {mostrarAcciones && (
                                 <td>
 
                                     <div className="actions">
 
+                                        
                                         {tieneRendimiento ? (
 
                                             <>
+                                            {puedeActualizar && (
                                                 <button
                                                     type="button"
                                                     className="table-action edit"
@@ -93,7 +104,9 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
                                                 >
                                                     <EditOutlinedIcon />
                                                 </button>
+                                            )}
 
+                                            {puedeEliminar &&(        
                                                 <button
                                                     type="button"
                                                     className="table-action delete"
@@ -102,10 +115,13 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
                                                 >
                                                     <DeleteOutlinedIcon />
                                                 </button>
+                                            )}
                                             </>
 
                                         ) : (
 
+                                            <>
+                                            {puedeInsertar && (
                                             <button
                                                 type="button"
                                                 className="table-action add"
@@ -114,12 +130,15 @@ function RendTallasTable({rendtallas, onEdit, onAdd, onDelete}) {
                                             >
                                                 <AddOutlinedIcon />
                                             </button>
+                                            )}
+                                            </>
 
                                         )}
 
                                     </div>
 
                                 </td>
+                                )}
 
                             </tr>
                         );

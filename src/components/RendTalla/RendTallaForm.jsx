@@ -35,8 +35,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
         codTalla: rendtalla?.codigo ?? '',
         anchoRendtall: rendtalla?.ancho ?? '',
         pesoRendtall: rendtalla?.pesoM2 ?? '',
-        rolloRendtall: rendtalla?.pesoRollo ?? '',
-        usuarioRendtall: 4
+        rolloRendtall: rendtalla?.pesoRollo ?? ''
     });
 
     //La vista previa convierte las entradas a números para calcular rendimiento y metros.
@@ -59,8 +58,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
                 codTalla: '',
                 anchoRendtall: '',
                 pesoRendtall: '',
-                rolloRendtall: '',
-                usuarioRendtall: 4
+                rolloRendtall: ''
             });
             setModo('crear');
             setFieldErrors({});
@@ -84,8 +82,7 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             codTalla: tallaSeleccionada.codigo,
             anchoRendtall: tallaSeleccionada.ancho ?? '',
             pesoRendtall: tallaSeleccionada.pesoM2 ?? '',
-            rolloRendtall: tallaSeleccionada.pesoRollo ?? '',
-            usuarioRendtall: 4
+            rolloRendtall: tallaSeleccionada.pesoRollo ?? ''
         });
 
         setModo(
@@ -120,13 +117,12 @@ function RendTallaForm({ onClose, onSubmit, rendtalla, rendtallas }) {
             return;
         }
 
-        // Envía medidas, talla y usuario como números; modo indica a la página qué operación ejecutar.
+        // Envía medidas y talla como números; modo indica a la página qué operación ejecutar.
         const data = {
             codTalla: Number(formData.codTalla),
             anchoRendtall: Number(formData.anchoRendtall),
             pesoRendtall: Number(formData.pesoRendtall),
-            rolloRendtall: Number(formData.rolloRendtall),
-            usuarioRendtall: Number(formData.usuarioRendtall)
+            rolloRendtall: Number(formData.rolloRendtall)
         };
 
         try {

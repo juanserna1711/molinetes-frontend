@@ -20,6 +20,7 @@
 =============================================================================*/
 
 import { useEffect, useMemo, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos.js';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -55,6 +56,9 @@ function NuevoTigimoliPage() {
     const [loading, setLoading] = useState(true);
     const [guardando, setGuardando] = useState(false); // Evita editar la programación mientras se envía la orden.
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(7);
+    const mostrarAcciones = (permisos.insercion)
+
 
     /* =========================================================
        SNACKBAR
@@ -164,7 +168,7 @@ function NuevoTigimoliPage() {
                 if (esRib) {
 
                     ancho = Number(talla.ancho);
-                    pesoCalculo = Number(talla.peso);
+                    pesoCalculo = Number(talla.pesoM2);
 
                 } else {
 
@@ -183,7 +187,7 @@ function NuevoTigimoliPage() {
                 const rendimiento = ancho > 0 && pesoCalculo > 0 && pesoRollo > 0 ? 1000 / ((ancho * 2 / 100) * pesoCalculo): 0;
                 const metrosRollo = pesoRollo * rendimiento;
 
-                return {...talla, rendimiento, metrosRollo};
+                return {...talla, rendimientoCalculado: rendimiento, metrosRolloCalculado: metrosRollo};
             });
 
             const codigosTallasAsociadas = new Set(asociaciones.map((registro) => registro.codigoTalla));
@@ -338,7 +342,7 @@ function NuevoTigimoliPage() {
 
                     cantidadTallas += 1;
                     totalRollos += rollos;
-                    totalMetros += rollos * Number(talla.metrosRollo || 0);
+                    totalMetros += rollos * Number(talla.metrosRolloCalculado || 0);
 
                 }
 
@@ -348,7 +352,7 @@ function NuevoTigimoliPage() {
             const rpm = Number(rpmProgramacion[molinete.codigo] ?? molinete.rpm ?? 0);
             const perimetro = Number(molinete.perimetro || 0);
             // El avance RPM × perímetro / 100 permite expresar el tiempo estimado en minutos.
-            const tiempoGiro = rpm > 0 && perimetro > 0 && totalMetros > 0 ? totalMetros/((rpm * perimetro) / 100) : 0;
+            const tiempoGiro = rpm > 0 && perimetro > 0 && totalMetros > 0 ? totalMetros / ((rpm * perimetro) / 100): 0;
 
             resultados[molinete.codigo] = {
                 totalRollos,
@@ -393,6 +397,10 @@ function NuevoTigimoliPage() {
 
     // Valida selección, detalles con rollos y RPM antes de registrar la orden mediante el servicio.
     async function guardarProgramacion() {
+
+        if (!permisos.insercion){
+            return;
+        }
 
         if (!tipoHilazaSeleccionado) {
 
@@ -468,8 +476,7 @@ function NuevoTigimoliPage() {
                 codigosTallas,
                 cantidadesRollos,
                 rpmsMolinetes,
-                codTipoHilaza: Number(tipoHilazaSeleccionado),
-                usuario: 4
+                codTipoHilaza: Number(tipoHilazaSeleccionado)
             });
 
             setCodigoOrden(response.codigoOrden);
@@ -538,6 +545,7 @@ function NuevoTigimoliPage() {
 
         setTipoHilazaSeleccionado('');
         setTallasSeleccionadas([]);
+        setTallas([]);
         setDistribucion({});
         setMolinetesHabilitados(molinetes.map((molinete) => molinete.codigo));
         setRpmProgramacion(Object.fromEntries(molinetes.map((molinete) => [molinete.codigo, molinete.rpm])));
@@ -731,6 +739,7 @@ function NuevoTigimoliPage() {
                 ACCIONES
                 ================================================= */}
 
+            
             <footer className="nuevo-tigimoli-actions">
 
                 <button
@@ -743,6 +752,8 @@ function NuevoTigimoliPage() {
 
                     Limpiar datos
                 </button>
+
+                {mostrarAcciones && (
 
                 <div className="nuevo-tigimoli-actions-main">
 
@@ -794,6 +805,7 @@ function NuevoTigimoliPage() {
                     </button>
 
                 </div>
+                )}
 
             </footer>
 

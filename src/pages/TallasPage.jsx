@@ -15,12 +15,12 @@
 =============================================================================*/
 
 import { useEffect, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos.js';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
-
 import {
     consultarTallas,
     crearTalla as crearTallaService,
@@ -29,10 +29,8 @@ import {
     desactivarTalla as desactivarTallaService,
     eliminarTalla as eliminarTallaService
 } from '../services/tallas.service';
-
 import TallasTable from '../components/Talla/TallasTable';
 import TallaForm from '../components/Talla/TallaForm';
-
 import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
@@ -49,6 +47,7 @@ function TallasPage() {
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(1);
 
     /*
       =========================================================
@@ -56,12 +55,17 @@ function TallasPage() {
       =========================================================
     */
 
-
     function solicitarEliminarTalla(talla) {
+        if (!permisos.elimina) {
+            return;
+        }
         setTallaAEliminar(talla);
     }
 
     function editarTalla(talla) {
+        if (!permisos.actualiza) {
+            return;
+        }
         setTallaSeleccionada(talla);
         setMostrarFormulario(true);
     }
@@ -71,7 +75,6 @@ function TallasPage() {
       SNACKBAR
       =========================================================
     */
-
 
     function mostrarSnackbar(message, type = 'success') {
         setSnackbar({message, type});
@@ -94,17 +97,13 @@ function TallasPage() {
 
     }, [snackbar.message]);
 
-
     /*
       =========================================================
       FILTROS
       =========================================================
     */
 
-    /*
-      Interpreta texto numérico como código y el resto como nombre.
-      La recarga después de una operación reutiliza estos criterios de búsqueda.
-    */
+    // Prepara los filtros de código, nombre y estado para la consulta.
     function obtenerFiltros() {
         const filtros = {};
         const valor = busqueda.trim();
@@ -130,7 +129,6 @@ function TallasPage() {
       =========================================================
     */
 
-
     useEffect(() => {
 
         const filtros = {};
@@ -141,8 +139,7 @@ function TallasPage() {
 
             if (!isNaN(valor)) {
 
-                filtros.codigo =
-                    Number(valor);
+                filtros.codigo = Number(valor);
 
             } else {
 
@@ -171,7 +168,6 @@ function TallasPage() {
             setError(null);
 
             const resultado = await consultarTallas(filtros);
-            
 
             setTallas(resultado.data);
 
@@ -188,7 +184,11 @@ function TallasPage() {
         }
     }
 
-    // Descarta la selección de edición al cerrar para que una nueva creación empiece sin ese registro.
+    /*
+      =========================================================
+      FORMULARIO
+      =========================================================
+    */
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -206,14 +206,17 @@ function TallasPage() {
         mostrarSnackbar('Talla actualizada correctamente.', 'success');
     }
 
-    /*
-      La selección actual decide entre crear y editar; después se recarga con los filtros vigentes.
-      Los errores del servicio quedan disponibles para el formulario que espera esta promesa.
-    */
+    //Crea o actualiza el registro y recarga el listado al completar la operación.
     async function guardarTalla(data) {
         if (tallaSeleccionada) {
+            if (!permisos.actualiza) {
+                return;
+            }
             await actualizarTalla(tallaSeleccionada, data);
         } else {
+            if (!permisos.insercion) {
+                return;
+            }
             await crearTallaService(data);
 
             cerrarFormulario();
@@ -260,7 +263,7 @@ function TallasPage() {
     // Elimina el registro confirmado y comunica el resultado de la operación.
     async function confirmarEliminarTalla() {
         if (!tallaAEliminar) return;
-
+        
         try {
             setEliminando(true);
 
@@ -278,9 +281,7 @@ function TallasPage() {
         }
     }
     
-
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
-
 
     return (
 
@@ -294,6 +295,7 @@ function TallasPage() {
                     <p>Administración de tallas y estado operativo.</p>
                 </div>
 
+                {permisos.insercion &&(
                 <button
                     type="button"
                     className="primary-button"
@@ -302,6 +304,7 @@ function TallasPage() {
                     <AddIcon />
                     Nueva Talla
                 </button>
+                )}
 
             </div>
 
@@ -409,6 +412,8 @@ function TallasPage() {
                             onDeactivate={desactivarTalla}
                             onDelete={solicitarEliminarTalla}
                             operation={operacion}
+                            puedeActualizar={permisos.actualiza}
+                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -418,10 +423,7 @@ function TallasPage() {
                         <TallaForm
                             key={tallaSeleccionada ? `editar-${tallaSeleccionada.codigo}` : 'crear-talla'}
                             talla={tallaSeleccionada}
-                            onClose={() => {
-                                setMostrarFormulario(false);
-                                setTallaSeleccionada(null);
-                            }}
+                            onClose={cerrarFormulario}
                             onSubmit={guardarTalla}
                         />
                     </aside>
@@ -438,7 +440,6 @@ function TallasPage() {
                     loading={eliminando}
                 />
             )}
-
 
             <Snackbar
                 message={snackbar.message}

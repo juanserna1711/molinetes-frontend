@@ -16,6 +16,7 @@
 =============================================================================*/
 
 import { useEffect, useState } from 'react';
+import { usePermisos } from '../hooks/usePermisos.js';
 import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -47,6 +48,7 @@ function TiHiPromPage() {
     const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const permisos = usePermisos(5);
 
     /*
       =========================================================
@@ -56,11 +58,17 @@ function TiHiPromPage() {
 
     // La tabla entrega el registro; el formulario hijo recibe la selección y delega el guardado en esta página.
     function editarTiHiProm(registro) {
+        if (!permisos.actualiza){
+            return;
+        }
         setTiHiPromSeleccionado(registro);
         setMostrarFormulario(true);
     }
 
     function solicitarEliminarTiHiProm(registro) {
+        if (!permisos.elimina){
+            return;
+        }
         setTiHiPromAEliminar(registro);
     }
 
@@ -71,9 +79,7 @@ function TiHiPromPage() {
     */
 
     function mostrarSnackbar(message, type = 'success') {
-
         setSnackbar({message, type});
-
     }
 
 
@@ -83,7 +89,7 @@ function TiHiPromPage() {
             return;
         }
 
-        // Reemplaza el temporizador al cambiar el mensaje y lo cancela al desmontar el componente.
+        // Cada mensaje programa su cierre; la limpieza cancela el temporizador anterior.
         const timer = setTimeout(() => {
 
             setSnackbar({message: '', type: 'success'});
@@ -100,12 +106,9 @@ function TiHiPromPage() {
       FILTROS
       =========================================================
     */
-    /*
-      Omite selecciones vacías y convierte los códigos para las recargas
-      posteriores al guardado, borrado o reintento.
-    */
+    
+      // Prepara los filtros para la consulta.
     function obtenerFiltros() {
-
         const filtros = {};
 
         if (tipoHilazaFiltro !== '') {
@@ -117,7 +120,6 @@ function TiHiPromPage() {
         }
 
         return filtros;
-
     }
 
     /*
@@ -216,7 +218,6 @@ function TiHiPromPage() {
       =========================================================
     */
 
-    // Limpia la selección para que la siguiente apertura de creación no reutilice el registro editado.
     function cerrarFormulario() {
 
         setMostrarFormulario(false);
@@ -224,24 +225,21 @@ function TiHiPromPage() {
 
     }
 
-    /*
-      El modo enviado por el formulario decide crear o actualizar la pareja hilaza-talla.
-      Tras guardar, cierra el panel y recarga respetando los filtros actuales.
-    */
+    //El modo enviado por el formulario decide crear o actualizar la pareja hilaza-talla.
     async function guardarTiHiProm(data, modo) {
-
         try {
-
             if (modo === 'editar') {
-
+                if (!permisos.actualiza){
+                    return;
+                }
                 await actualizarTiHiPromService(data.codTipoHilaza, data.codTalla, data);
-
                 mostrarSnackbar('Promedio por tipo de hilaza actualizado correctamente.', 'success');
 
             } else {
-
+                if(!permisos.insercion){
+                    return;
+                }
                 await crearTiHiPromService(data);
-
                 mostrarSnackbar('Promedio por tipo de hilaza creado correctamente.', 'success');
 
             }
@@ -254,7 +252,7 @@ function TiHiPromPage() {
 
             console.error(error);
 
-            // Se relanza para que el formulario pueda mostrar los errores recibidos por campo o de negocio.
+            // Se relanza para que el formulario pueda mostrar los errores recibidos por campo.
             throw error;
 
         }
@@ -296,151 +294,117 @@ function TiHiPromPage() {
 
     }
 
-    // Distingue una búsqueda sin coincidencias de un catálogo sin registros en el estado vacío.
     const hayFiltros = tipoHilazaFiltro !== '' || tallaFiltro !== '';
 
     return (
 
         <section className="page">
 
-            {/* =================================================
-                CABECERA
-                ================================================= */}
-
             <div className="page-header">
 
                 <div className="page-header-info">
-
                     <h1>Promedios por Tipo de Hilaza</h1>
 
                     <p>Administración de peso, ancho y promedio asociados a cada tipo de hilaza y talla.</p>
-
                 </div>
 
+                {permisos.insercion && (
                 <button
                     type="button"
                     className="primary-button"
                     onClick={() => {setTiHiPromSeleccionado(null); setMostrarFormulario(true);}}
                 >
-
                     <AddIcon />
-
                     Nuevo Promedio
-
                 </button>
+                )}
 
             </div>
-
-            {/* =================================================
-                FILTROS
-                ================================================= */}
 
             <div className="filters">
 
-            <div className="filter-field">
-            <select
-                className="filter-select filter-select-hilaza"
-                value={tipoHilazaFiltro}
-                onChange={(event) => setTipoHilazaFiltro(event.target.value)}
-            >
+                <div className="filter-field">
+                <select
+                    className="filter-select filter-select-hilaza"
+                    value={tipoHilazaFiltro}
+                    onChange={(event) => setTipoHilazaFiltro(event.target.value)}
+                >
 
-                <option value="">
-                    Todos los tipos de hilaza
-                </option>
-
-                {tiposHilaza.map((tipoHilaza) => (
-
-                    <option
-                        key={tipoHilaza.codigo}
-                        value={tipoHilaza.codigo}
-                    >
-                        {tipoHilaza.nombre}
+                    <option value="">
+                        Todos los tipos de hilaza
                     </option>
 
-                ))}
+                    {tiposHilaza.map((tipoHilaza) => (
 
-            </select>
-            </div>
+                        <option
+                            key={tipoHilaza.codigo}
+                            value={tipoHilaza.codigo}
+                        >
+                            {tipoHilaza.nombre}
+                        </option>
 
-            <div className="filter-field">
-            <select
-                className="filter-select filter-select-talla"
-                value={tallaFiltro}
-                onChange={(event) => setTallaFiltro(event.target.value)}
-            >
+                    ))}
 
-                <option value="">
-                    Todas las tallas
-                </option>
+                </select>
+                </div>
 
-                {tallas.map((talla) => (
+                <div className="filter-field">
+                <select
+                    className="filter-select filter-select-talla"
+                    value={tallaFiltro}
+                    onChange={(event) => setTallaFiltro(event.target.value)}
+                >
 
-                    <option
-                        key={talla.codigo}
-                        value={talla.codigo}
-                    >
-                        {talla.nombre}
+                    <option value="">
+                        Todas las tallas
                     </option>
 
-                ))}
+                    {tallas.map((talla) => (
 
-            </select>
+                        <option
+                            key={talla.codigo}
+                            value={talla.codigo}
+                        >
+                            {talla.nombre}
+                        </option>
+
+                    ))}
+
+                </select>
+                </div>
+
             </div>
 
-        </div>
-
-            {/* =================================================
-                ÁREA DE TRABAJO
-                ================================================= */}
-
-            <div
-                className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}
-            >
+            <div className={`page-workspace ${mostrarFormulario ? 'form-open' : ''}`}>
                 
-            {/* =================================================
-                LOADING
-                ================================================= */}
-
             {loading && (
-
                 <div className="state-container loading-state">
-
                     <CircularProgress
                         size={30}
                         thickness={4}
                     />
 
                     <div className="state-content">
-
                         <h2>Cargando promedios</h2>
-
                         <p>Consultando la información...</p>
-
                     </div>
-
                 </div>
-
             )}
 
-            {/* =================================================
-                ERROR
-                ================================================= */}
-
             {!loading && error && (
-
                 <div className="state-container error-state">
 
                     <div className="state-icon error-icon">
-
                         <ErrorOutlineOutlinedIcon />
-
                     </div>
 
                     <div className="state-content">
 
                         <h2>No fue posible cargar los promedios</h2>
 
-                        <p>{error}</p>
+                        <p>
+                            {error}
+                        </p>
 
                         <button
                             type="button"
@@ -449,25 +413,16 @@ function TiHiPromPage() {
                         >
                             Reintentar
                         </button>
-
                     </div>
 
                 </div>
-
             )}
 
-            {/* =================================================
-                SIN REGISTROS
-                ================================================= */}
-
             {!loading && !error && tihiprom.length === 0 && (
-
                 <div className="state-container empty-state">
 
                     <div className="state-icon empty-icon">
-
                         <SearchOffOutlinedIcon />
-
                     </div>
 
                     <div className="state-content">
@@ -483,27 +438,22 @@ function TiHiPromPage() {
                     </div>
 
                 </div>
-
             )}
 
                 {!loading && !error && tihiprom.length > 0 && (
-
                     <div className="table-section">
-
                         <TiHiPromTable
                             tihiprom={tihiprom}
                             onEdit={editarTiHiProm}
                             onDelete={solicitarEliminarTiHiProm}
+                            puedeActualizar={permisos.actualiza}
+                            puedeEliminar={permisos.elimina}
                         />
-
                     </div>
-
                 )}
 
                 {mostrarFormulario && (
-
                     <aside className="form-section">
-
                         <TiHiPromForm
                             key={tihipromSeleccionado ? `editar-${tihipromSeleccionado.codigoTipoHilaza}-${tihipromSeleccionado.codigoTalla}` : 'crear-tihiprom'}
                             tiposHilaza={tiposHilaza}
@@ -512,19 +462,12 @@ function TiHiPromPage() {
                             onClose={cerrarFormulario}
                             onSubmit={guardarTiHiProm}
                         />
-
                     </aside>
-
                 )}
 
             </div>
 
-            {/* =================================================
-                CONFIRMACIÓN DE ELIMINACIÓN
-                ================================================= */}
-
             {tihipromAEliminar && (
-
                 <ConfirmModal
                     title="Eliminar promedio"
                     message={
@@ -537,12 +480,7 @@ function TiHiPromPage() {
                     onCancel={() => setTiHiPromAEliminar(null)}
                     loading={eliminando}
                 />
-
             )}
-
-            {/* =================================================
-                SNACKBAR
-                ================================================= */}
 
             <Snackbar
                 message={snackbar.message}
@@ -550,9 +488,7 @@ function TiHiPromPage() {
             />
 
         </section>
-
     );
-
 }
 
 export default TiHiPromPage;

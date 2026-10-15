@@ -17,6 +17,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext.jsx';
+import { PermisosProvider } from './contexts/PermisosContext.jsx';
 
 import App from './App.jsx'
 
@@ -31,11 +33,16 @@ import './styles/confirmmodal.css';
 import './styles/login.css';
 import './styles/pagination.css';
 import './styles/nuevoTigimoli.css';
+import './styles/reglas.css'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <BrowserRouter>
-        <App />
+        <BrowserRouter basename="/moliplus">
+            <AuthProvider>
+                <PermisosProvider>
+                    <App />
+                </PermisosProvider>
+            </AuthProvider>
         </BrowserRouter>
-    </StrictMode>,
+    </StrictMode>
 )

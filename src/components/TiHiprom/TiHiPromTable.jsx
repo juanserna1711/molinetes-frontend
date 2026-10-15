@@ -20,7 +20,14 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {formatearFecha} from '../../utils/formatters';
 
 // La pareja hilaza-talla identifica cada fila; los callbacks reciben el registro con ambos códigos.
-function TiHiPromTable({tihiprom, onEdit, onDelete}) {
+function TiHiPromTable({
+    tihiprom, 
+    onEdit, 
+    onDelete,
+    puedeActualizar,
+    puedeEliminar
+}) {
+    const mostrarAcciones = puedeActualizar || puedeEliminar;
     return (
         <div className="table-container">
 
@@ -34,7 +41,7 @@ function TiHiPromTable({tihiprom, onEdit, onDelete}) {
                         <th>Ancho</th>
                         <th>Promedio</th>
                         <th>Fecha Generación</th>
-                        <th>Acciones</th>
+                        {mostrarAcciones && (<th>Acciones</th>)}
                     </tr>
                 </thead>
 
@@ -72,10 +79,12 @@ function TiHiPromTable({tihiprom, onEdit, onDelete}) {
                                 {formatearFecha(registro.fechaGeneracion)}
                             </td>
 
+                            {mostrarAcciones && (
                             <td>
 
                                 <div className="actions">
 
+                                    {puedeActualizar && (
                                     <button
                                         type="button"
                                         className="table-action edit"
@@ -84,7 +93,9 @@ function TiHiPromTable({tihiprom, onEdit, onDelete}) {
                                     >
                                         <EditOutlinedIcon />
                                     </button>
+                                    )}
 
+                                    {puedeEliminar && (
                                     <button
                                         type="button"
                                         className="table-action delete"
@@ -93,10 +104,12 @@ function TiHiPromTable({tihiprom, onEdit, onDelete}) {
                                     >
                                         <DeleteOutlinedIcon />
                                     </button>
+                                    )}
 
                                 </div>
 
                             </td>
+                            )}
 
                         </tr>
 

@@ -15,11 +15,13 @@
 =============================================================================*/
 
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
+import { useAuth } from '../contexts/AuthContext.jsx';
 import Sidebar from './Sidebar';
 
 import logoMoliplus from '../assets/logo-moliplus.png';
@@ -28,9 +30,33 @@ import logoTextilesPacifico from '../assets/logo-textiles-pacifico.png';
 // Combina children y la ruta anidada del Outlet; el estado local solo controla la apertura del menú.
 function Layout({ children }) {
     const [sidebarAbierto, setSidebarAbierto] = useState(true);
+    const navigate = useNavigate();
+
+    const {
+        usuario,
+        logout
+    } = useAuth();
 
     function alternarSidebar() {
         setSidebarAbierto((estado) => !estado);
+    }
+
+    async function manejarLogout() {
+
+        try {
+
+            await logout();
+
+            navigate('/login', {
+                replace: true
+            });
+
+        } catch (error) {
+
+            console.error('No fue posible cerrar la sesión.', error);
+
+        }
+
     }
 
     return (
@@ -104,17 +130,21 @@ function Layout({ children }) {
                         <div className="topbar-user-info">
 
                             <span className="topbar-user-name">
-                                Usuario
-                            </span>
-
-                            <span className="topbar-user-role">
-                                Operador
+                                {usuario?.nombre}
                             </span>
 
                         </div>
 
-                    </div>
+                        <button
+                            type="button"
+                            className="topbar-logout-button"
+                            onClick={manejarLogout}
+                            title="Cerrar sesión"
+                        >
+                            <LogoutOutlinedIcon />
+                        </button>
 
+                    </div>
                     </div>
 
                 </header>

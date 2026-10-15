@@ -21,7 +21,7 @@ import { formatearFecha } from '../../utils/formatters';
 
 
 // La página consulta el detalle y genera el PDF; imprimiendoOrden bloquea solo el botón de esa fila.
-function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle}) {
+function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle, puedeVerReporte}) {
     return (
 
         <div className="table-container">
@@ -32,11 +32,11 @@ function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle}) {
 
                     <tr>
                         <th>Orden</th>
-                        <th>Tipo de Hilaza</th>
+                        <th>Tipo Hilaza</th>
                         <th>Fecha</th>
                         <th>Usuario</th>
                         <th>Molinetes</th>
-                        <th>Acciones</th>
+                        {puedeVerReporte&&(<th>Acciones</th>)}
                     </tr>
 
                 </thead>
@@ -69,6 +69,7 @@ function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle}) {
                                 {orden.cantidadMolinetes}
                             </td>
 
+                            {puedeVerReporte &&(
                             <td>
 
                                 <div className="actions">
@@ -98,6 +99,7 @@ function OrdeProdTable({ordenes, imprimiendoOrden, onDetalle}) {
                                 </div>
 
                             </td>
+                            )}
 
                         </tr>
 

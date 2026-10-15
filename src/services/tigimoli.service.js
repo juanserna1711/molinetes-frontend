@@ -17,14 +17,7 @@
   únicamente el registro del cálculo.
 =============================================================================*/
 
-import axios from 'axios';
-
-/*
-  Las funciones entregan el cuerpo de respuesta del backend sin transformar sus datos.
-  Los errores de Axios se propagan para que la página o el formulario gestione el mensaje.
-*/
-const API_URL = import.meta.env.VITE_API_URL;
-
+import api from './api.js';
 
 /*
   Envía el cálculo preparado por la página, conservando el orden de las listas paralelas.
@@ -32,10 +25,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 */
 export async function crearTigimoli(data) {
 
-    const response = await axios.post(
-        `${API_URL}/tigimoli`,
-        data
-    );
+    const response = await api.post(`/tigimoli`, data);
 
     return response.data;
 }

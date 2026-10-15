@@ -1,0 +1,282 @@
+/*=============================================================================
+  Nombre responsabilidad: Estilos de la matriz de permisos
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 09/Octubre/2026
+
+  Descripcion responsabilidad:
+  Define la presentación de filtros, acciones, matriz y estados visuales
+  utilizados en la gestión de reglas y permisos.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
+/* =========================================================
+   AUTOCOMPLETE DE FILTROS
+   ========================================================= */
+
+.reglas-autocomplete {
+    width: 100%;
+}
+
+.reglas-autocomplete .MuiOutlinedInput-root {
+    height: 40px;
+    padding: 0 34px 0 12px;
+
+    background-color: #ffffff;
+    border-radius: 7px;
+
+    color: #344054;
+    font-size: 13px;
+}
+
+/* El borde lo controla solamente el fieldset principal. */
+.reglas-autocomplete .MuiOutlinedInput-notchedOutline {
+    border-color: #d9dee6;
+    border-width: 1px;
+}
+
+.reglas-autocomplete .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #b8c0cb;
+}
+
+.reglas-autocomplete .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #7b8798;
+    border-width: 1px;
+}
+
+.reglas-autocomplete .MuiOutlinedInput-root.Mui-focused {
+    box-shadow: 0 0 0 3px rgba(38, 54, 77, 0.08);
+}
+
+/* Limpia completamente el input interno. */
+.reglas-autocomplete .MuiAutocomplete-input {
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    background: transparent !important;
+
+    color: #344054;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.reglas-autocomplete .MuiAutocomplete-input::placeholder {
+    color: #98a2b3;
+    opacity: 1;
+}
+
+/* Evita que estilos genéricos de .filter-field input interfieran con MUI. */
+.filter-field .reglas-autocomplete input {
+    width: auto;
+    height: auto;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+}
+
+/* Iconos del autocomplete. */
+.reglas-autocomplete .MuiAutocomplete-endAdornment {
+    right: 6px;
+}
+
+.reglas-autocomplete .MuiIconButton-root {
+    padding: 4px;
+}
+
+.reglas-autocomplete .MuiSvgIcon-root {
+    width: 18px;
+    height: 18px;
+}
+
+/* Estado deshabilitado. */
+.reglas-autocomplete .MuiOutlinedInput-root.Mui-disabled {
+    background-color: #f3f4f6;
+}
+
+/* =========================================================
+   MATRIZ
+   ========================================================= */
+
+.reglas-matrix {
+    width: 100%;
+}
+
+.reglas-matrix-wrapper {
+    margin-top: 0;
+}
+
+.reglas-matrix-table {
+    min-width: 950px;
+}
+
+
+/* =========================================================
+   COLUMNAS
+   ========================================================= */
+
+.reglas-user-column {
+    min-width: 170px;
+}
+
+.reglas-module-column {
+    min-width: 240px;
+}
+
+.reglas-permission-column {
+    width: 110px;
+}
+
+.reglas-user-cell strong,
+.reglas-module-cell strong {
+    display: block;
+    color: #26364d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.reglas-user-cell span,
+.reglas-module-cell span {
+    display: block;
+    margin-top: 3px;
+    color: #8b95a3;
+    font-size: 11px;
+}
+
+.reglas-row.modified {
+    background-color: #fff6fb;
+}
+
+/* =========================================================
+   CHECKS DE PERMISOS
+   ========================================================= */
+
+.reglas-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.reglas-check input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.reglas-check-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    border: 1px solid #cfd5dd;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    transition: 0.2s ease;
+}
+
+.reglas-check-box svg {
+    width: 17px;
+    height: 17px;
+
+    opacity: 0;
+    transform: scale(0.7);
+
+    transition: 0.2s ease;
+}
+
+.reglas-check:hover .reglas-check-box {
+    border-color: #ed1685;
+}
+
+.reglas-check.active .reglas-check-box {
+    background: #ed1685;
+    border-color: #ed1685;
+    color: #ffffff;
+}
+
+.reglas-check.active .reglas-check-box svg {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.reglas-check:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .reglas-header-actions {
+        width: 100%;
+    }
+
+    .reglas-save-button,
+    .reglas-discard-button {
+        flex: 1;
+    }
+
+    .reglas-filters {
+        align-items: stretch;
+    }
+
+    .reglas-filter-group {
+        min-width: 100%;
+    }
+
+    .reglas-filter-summary {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .reglas-matrix-header {
+        padding: 16px;
+    }
+
+    .reglas-filters {
+        padding: 14px;
+    }
+
+    .reglas-matrix-table th,
+    .reglas-matrix-table td {
+        padding: 11px 10px;
+    }
+
+    .reglas-check-box {
+        width: 26px;
+        height: 26px;
+    }
+
+    .reglas-save-button,
+    .reglas-discard-button {
+        width: 100%;
+    }
+}
