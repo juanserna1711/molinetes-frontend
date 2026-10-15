@@ -37,8 +37,8 @@ function Sidebar({ abierto }) {
 
     const [parametrosAbiertos, setParametrosAbiertos] = useState(true);
     const [operacionesAbiertas, setOperacionesAbiertas] = useState(true);
-    const [configuracionesAbiertas, setConfiguracionesAbiertas] = useState(true);
-    const {permisosPorModulo, loadingPermisos} = usePermisosContext();
+    const [seguridadAbiertas, setSeguridadAbiertas] = useState(true);
+    const {permisosPorModulo} = usePermisosContext();
     const navigate = useNavigate();
     const location = useLocation();
     const rutasParametros = [
@@ -53,7 +53,7 @@ function Sidebar({ abierto }) {
         '/nuevo-tigimoli',
         '/ordeprod'
     ];
-    const rutasConfiguraciones = [
+    const rutasSeguridad = [
         '/modulos'
     ];
 
@@ -83,16 +83,16 @@ function Sidebar({ abierto }) {
 
     }
 
-    //Abre o cierra el grupo de configuraciones. Si la pantalla actual pertenece al grupo que se está cerrando, regresa al inicio.
-    function cambiarConfiguraciones() {
+    //Abre o cierra el grupo de seguridad. Si la pantalla actual pertenece al grupo que se está cerrando, regresa al inicio.
+    function cambiarSeguridad() {
 
-        if (configuracionesAbiertas && rutasConfiguraciones.includes(location.pathname)) {
+        if (seguridadAbiertas && rutasSeguridad.includes(location.pathname)) {
 
             navigate('/inicio');
 
         }
 
-        setConfiguracionesAbiertas(!configuracionesAbiertas);
+        setSeguridadAbiertas(!seguridadAbiertas);
 
     }
 
@@ -100,22 +100,6 @@ function Sidebar({ abierto }) {
 
         return permisosPorModulo[codigoModulo]?.consulta === true;
     }
-
-    const mostrarParametros =
-        puedeConsultar(1) ||
-        puedeConsultar(2) ||
-        puedeConsultar(3) ||
-        puedeConsultar(4) ||
-        puedeConsultar(5) ||
-        puedeConsultar(6);
-
-    const mostrarOperaciones =
-        puedeConsultar(7) ||
-        puedeConsultar(8);
-
-    const mostrarConfiguraciones =
-        puedeConsultar(9) ||
-        puedeConsultar(10);
 
     return (
         <aside className={`sidebar ${abierto ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -125,8 +109,6 @@ function Sidebar({ abierto }) {
                 {/* =================================================
                     PARÁMETROS
                 ================================================== */}
-
-                {mostrarParametros && (
                 <div className="sidebar-group">
 
                     <button
@@ -147,12 +129,15 @@ function Sidebar({ abierto }) {
 
                         <div className="sidebar-group-items">
 
-                            {puedeConsultar(1) && (
                             <NavLink
                                 to="/tallas"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                aria-disabled={!puedeConsultar(1)}
+                                onClick={(event) => {
+                                    if (!puedeConsultar(1)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(1) ? 'disabled' : ''}`}
                             >
                                 <SettingsOutlinedIcon />
 
@@ -160,14 +145,16 @@ function Sidebar({ abierto }) {
                                     Gestión de Tallas
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(2) && (
                             <NavLink
                                 to="/usuarios"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                aria-disabled={!puedeConsultar(2)}
+                                onClick={(event) => {
+                                    if (!puedeConsultar(2)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(2) ? 'disabled' : ''}`}
                             >
                                 <GroupsOutlinedIcon />
 
@@ -175,14 +162,10 @@ function Sidebar({ abierto }) {
                                     Gestión de Usuarios
                                 </span>
                             </NavLink>
-                            )}
-
-                            {puedeConsultar(3) && (
+ 
                             <NavLink
                                 to="/molinetes"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(3) ? 'disabled' : ''}`}
                             >
                                 <PrecisionManufacturingOutlinedIcon />
 
@@ -190,14 +173,10 @@ function Sidebar({ abierto }) {
                                     Gestión de Molinetes
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(4) && (
                             <NavLink
                                 to="/tipos-hilaza"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(4) ? 'disabled' : ''}`}
                             >
                                 <TextureOutlinedIcon />
 
@@ -205,14 +184,10 @@ function Sidebar({ abierto }) {
                                     Gestión de Tipos de Hilaza
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(5) && (
                             <NavLink
                                 to="/tipos-hilaza-prom"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(5) ? 'disabled' : ''}`}
                             >
                                 <FunctionsOutlinedIcon />
 
@@ -220,14 +195,10 @@ function Sidebar({ abierto }) {
                                     Promedios por Tipo de Hilaza
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(6) && (
                             <NavLink
                                 to="/rendimiento-tallas"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(6) ? 'disabled' : ''}`}
                             >
                                 <StraightenIcon />
 
@@ -235,21 +206,17 @@ function Sidebar({ abierto }) {
                                     Gestión de Rendimiento
                                 </span>
                             </NavLink>
-                            )}
 
                         </div>
 
                     )}
 
                 </div>
-                )}
 
 
                 {/* =================================================
                     OPERACIONES
                 ================================================== */}
-
-                {mostrarOperaciones && (
                 <div className="sidebar-group">
 
                     <button
@@ -271,10 +238,9 @@ function Sidebar({ abierto }) {
 
                         <div className="sidebar-group-items">
 
-                            {puedeConsultar(7) && (
                             <NavLink
                                 to="/nuevo-tigimoli"
-                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(7) ? 'disabled' : ''}`}
                             >
                                 <CalculateOutlinedIcon />
 
@@ -282,14 +248,10 @@ function Sidebar({ abierto }) {
                                     Tiempo de Giro
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(8) && (
                             <NavLink
                                 to="/ordeprod"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(8) ? 'disabled' : ''}`}
                             >
                                 <HistoryOutlinedIcon />
 
@@ -297,47 +259,40 @@ function Sidebar({ abierto }) {
                                     Consulta de Órdenes de Producción
                                 </span>
                             </NavLink>
-                            )}
 
                         </div>
 
                     )}
 
                 </div>
-                )}
 
                 {/* =================================================
-                    CONFIGURACION
+                    SEGURIDAD
                 ================================================== */}
-
-                {mostrarConfiguraciones && (
                 <div className="sidebar-group">
 
                     <button
                         type="button"
                         className="sidebar-group-button"
-                        onClick={cambiarConfiguraciones}
+                        onClick={cambiarSeguridad}
                     >
                         <span>
-                            Configuraciones
+                            Seguridad
                         </span>
 
                         <KeyboardArrowDownOutlinedIcon
-                            className={configuracionesAbiertas ? 'sidebar-group-arrow open' : 'sidebar-group-arrow'}
+                            className={seguridadAbiertas ? 'sidebar-group-arrow open' : 'sidebar-group-arrow'}
                         />
                     </button>
 
 
-                    {configuracionesAbiertas && (
+                    {seguridadAbiertas && (
 
                         <div className="sidebar-group-items">
 
-                            {puedeConsultar(9) && (
                             <NavLink
                                 to="/modulos"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(9) ? 'disabled' : ''}`}
                             >
                                 <ViewModuleIcon />
 
@@ -345,14 +300,10 @@ function Sidebar({ abierto }) {
                                     Modulos
                                 </span>
                             </NavLink>
-                            )}
 
-                            {puedeConsultar(10) && (
                             <NavLink
                                 to="/reglas"
-                                className={({ isActive }) =>
-                                    `sidebar-item ${isActive ? 'active' : ''}`
-                                }
+                                className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''} ${!puedeConsultar(10) ? 'disabled' : ''}`}
                             >
                                 <VpnKeyIcon />
 
@@ -360,16 +311,13 @@ function Sidebar({ abierto }) {
                                     Reglas
                                 </span>
                             </NavLink>
-                            )}
 
                         </div>
 
                     )}
 
                 </div>
-                )}
             </nav>
-
 
             {/* =====================================================
                 ELEMENTO DECORATIVO

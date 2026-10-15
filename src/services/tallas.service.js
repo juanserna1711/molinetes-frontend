@@ -50,10 +50,3 @@ export async function desactivarTalla(codigo) {
 
     return response.data;
 }
-
-// Elimina la talla correspondiente al código recibido.
-export async function eliminarTalla(codigo) {
-    const response = await api.delete(`/tallas/${codigo}`);
-
-    return response.data;
-}

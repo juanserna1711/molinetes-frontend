@@ -5,7 +5,7 @@
   Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
-  Renderiza los registros de usuarios y permite solicitar edición, cambio de estado o eliminación.
+  Renderiza los registros de usuarios y permite solicitar edición, cambio de estado.
 
   Historial_modificaciones:
 
@@ -15,22 +15,19 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
-// Los cambios de estado envían el código; edición y eliminación entregan el registro completo a la página.
+// Los cambios de estado envían el código; edición entregan el registro completo a la página.
 function UsuariosTable({
     usuarios,
     onEdit,
     onActivate,
     onDeactivate,
-    onDelete,
     operation,
-    puedeActualizar,
-    puedeEliminar
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -126,17 +123,6 @@ function UsuariosTable({
                                             title="Editar"
                                         >
                                             <EditOutlinedIcon />
-                                        </button>
-                                        )}
-
-                                        {puedeEliminar && (
-                                        <button
-                                            type="button"
-                                            className="table-action delete"
-                                            onClick={() => onDelete(usuario)}
-                                            title="Eliminar"
-                                        >
-                                            <DeleteOutlinedIcon />
                                         </button>
                                         )}
 

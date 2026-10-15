@@ -25,12 +25,10 @@ import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import {
     consultarTiposHilaza,
     crearTipoHilaza as crearTipoHilazaService,
-    actualizarTipoHilaza as actualizarTipoHilazaService,
-    eliminarTipoHilaza as eliminarTipoHilazaService
+    actualizarTipoHilaza as actualizarTipoHilazaService
 } from '../services/tipohilaza.service';
 import TiposHilazaTable from '../components/TipoHilaza/TiposHilazaTable';
 import TipoHilazaForm from '../components/TipoHilaza/TipoHilazaForm';
-import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
 
@@ -41,8 +39,6 @@ function TiposHilazaPage() {
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
     const [tipoHilazaSeleccionado, setTipoHilazaSeleccionado] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [tipoHilazaAEliminar, setTipoHilazaAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
     const permisos = usePermisos(4);
@@ -52,13 +48,6 @@ function TiposHilazaPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
-    function solicitarEliminarTipoHilaza(tipoHilaza) {
-        if (!permisos.elimina){
-            return;
-        }
-        setTipoHilazaAEliminar(tipoHilaza);
-    }
 
     function editarTipoHilaza(tipoHilaza) {
         if (!permisos.actualiza){
@@ -218,28 +207,6 @@ function TiposHilazaPage() {
         }
     }
 
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarTipoHilaza() {
-        if (!tipoHilazaAEliminar) return;
-
-        try {
-            setEliminando(true);
-
-            await eliminarTipoHilazaService(tipoHilazaAEliminar.codigo);
-            await cargarTiposHilaza(obtenerFiltros());
-
-            mostrarSnackbar('Tipo de hilaza eliminado correctamente.', 'success');
-        } catch (error) {
-            console.error(error);
-
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el tipo de hilaza.', 'error');
-        } finally {
-            setEliminando(false);
-            setTipoHilazaAEliminar(null);
-        }
-    }
-
     const hayFiltros = busqueda.trim() !== '';
 
     return (
@@ -356,9 +323,7 @@ function TiposHilazaPage() {
                         <TiposHilazaTable
                             tiposHilaza={tiposHilaza}
                             onEdit={editarTipoHilaza}
-                            onDelete={solicitarEliminarTipoHilaza}
                             puedeActualizar={permisos.actualiza}
-                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -375,16 +340,6 @@ function TiposHilazaPage() {
                 )}
 
             </div>
-
-            {tipoHilazaAEliminar && (
-                <ConfirmModal
-                    title="Eliminar tipo de hilaza"
-                    message={`¿Está seguro de que desea eliminar el tipo de hilaza "${tipoHilazaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarTipoHilaza}
-                    onCancel={() => setTipoHilazaAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}

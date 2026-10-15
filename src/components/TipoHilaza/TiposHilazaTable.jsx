@@ -5,8 +5,7 @@
   Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Renderiza los registros de tipos de hilaza y permite solicitar edición
-  o eliminación.
+  Renderiza los registros de tipos de hilaza y permite solicitar edición.
 
   Historial_modificaciones:
 
@@ -16,17 +15,13 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
-// Entrega el registro completo a la página para editarlo o solicitar confirmación de eliminación.
 function TiposHilazaTable({
     tiposHilaza, 
-    onEdit, 
-    onDelete,
-    puedeActualizar,
-    puedeEliminar
+    onEdit,
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeActualizar;
     return (
         <div className="table-container">
 
@@ -67,17 +62,6 @@ function TiposHilazaTable({
                                         title="Editar"
                                     >
                                         <EditOutlinedIcon />
-                                    </button>
-                                    )}
-
-                                    {puedeEliminar && (
-                                    <button
-                                        type="button"
-                                        className="table-action delete"
-                                        onClick={() => onDelete(tipoHilaza)}
-                                        title="Eliminar"
-                                    >
-                                        <DeleteOutlinedIcon />
                                     </button>
                                     )}
 

@@ -136,7 +136,17 @@ function ReglasPage() {
 
     useEffect(() => {
 
-        cargarReglas(obtenerFiltros());
+        const filtros = {};
+
+        if (usuarioSeleccionado !== '') {
+            filtros.usuario = Number(usuarioSeleccionado);
+        }
+
+        if (moduloSeleccionado !== '') {
+            filtros.modulo = Number(moduloSeleccionado);
+        }
+
+        cargarReglas(filtros);
 
     }, [usuarioSeleccionado, moduloSeleccionado]);
 

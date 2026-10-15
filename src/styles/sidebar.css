@@ -270,6 +270,33 @@
     line-height: 1.45;
 }
 
+/* =========================================================
+   ITEM DESHABILITADO
+   ========================================================= */
+
+.sidebar-item.disabled {
+    color: #7f8fa3;
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.sidebar-item.disabled svg {
+    color: #7f8fa3;
+    opacity: 0.55;
+}
+
+.sidebar-item.disabled:hover {
+    background: transparent;
+    color: #7f8fa3;
+    border-color: transparent;
+}
+
+.sidebar-item.disabled:hover svg {
+    color: #7f8fa3;
+    transform: none;
+}
+
 @media (max-height: 750px) {
     .sidebar {
         padding-top: 16px;

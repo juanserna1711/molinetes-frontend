@@ -15,21 +15,18 @@
 =============================================================================*/
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { formatearFecha } from '../../utils/formatters.js';
 
-// La presencia de ancho determina si la fila ofrece agregar rendimiento o editar y eliminar el existente.
+// La presencia de ancho determina si la fila ofrece agregar rendimiento o editar el existente.
 function RendTallasTable({
-    rendtallas, 
+    rendtallas,
     onEdit, 
-    onAdd, 
-    onDelete, 
+    onAdd,
     puedeInsertar,
-    puedeActualizar, 
-    puedeEliminar
+    puedeActualizar
 }) {
-    const mostrarAcciones = puedeInsertar || puedeActualizar || puedeEliminar;
+    const mostrarAcciones = puedeInsertar || puedeActualizar;
     return (
         <div className="table-container">
 
@@ -103,17 +100,6 @@ function RendTallasTable({
                                                     title="Editar rendimiento"
                                                 >
                                                     <EditOutlinedIcon />
-                                                </button>
-                                            )}
-
-                                            {puedeEliminar &&(        
-                                                <button
-                                                    type="button"
-                                                    className="table-action delete"
-                                                    onClick={() => onDelete(rendtalla)}
-                                                    title="Eliminar rendimiento"
-                                                >
-                                                    <DeleteOutlinedIcon />
                                                 </button>
                                             )}
                                             </>

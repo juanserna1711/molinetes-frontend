@@ -24,13 +24,11 @@ import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import {
     consultarRendTallas,
     crearRendTalla as crearRendTallaService,
-    actualizarRendTalla as actualizarRendTallaService,
-    eliminarRendTalla as eliminarRendTallaService
+    actualizarRendTalla as actualizarRendTallaService
 } from '../services/rendtallas.service';
 import RendTallasTable from '../components/RendTalla/RendTallasTable';
 import RendTallaForm from '../components/RendTalla/RendTallaForm';
 import Snackbar from '../components/Snackbar';
-import ConfirmModal from '../components/ConfirmModal';
 
 function RendTallasPage() {
 
@@ -39,8 +37,6 @@ function RendTallasPage() {
     const [error, setError] = useState(null);
     const [busqueda, setBusqueda] = useState('');
     const [rendtallaSeleccionada, setRendTallaSeleccionada] = useState(null);
-    const [rendtallaAEliminar, setRendTallaAEliminar] = useState(null);
-    const [eliminando, setEliminando] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
     const permisos = usePermisos(6);
@@ -68,13 +64,6 @@ function RendTallasPage() {
         //La talla no tiene rendimiento. Abrimos el mismo formulario de nuevo rendimiento, pero enviamos la talla seleccionada para que aparezca automáticamente en el selector.
         setRendTallaSeleccionada(rendtalla);
         setMostrarFormulario(true);
-    }
-
-    function solicitarEliminarRendTalla(rendtalla) {
-        if (!permisos.elimina){
-            return;
-        }
-        setRendTallaAEliminar(rendtalla);
     }
 
     /*
@@ -216,37 +205,6 @@ function RendTallasPage() {
         }
     }
 
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarRendimiento() {
-
-        if (!rendtallaAEliminar) {
-            return;
-        }
-
-        try {
-
-            setEliminando(true);
-
-            await eliminarRendTallaService(rendtallaAEliminar.codigo);
-            await cargarRendTallas(obtenerFiltros());
-
-            setRendTallaAEliminar(null);
-
-            mostrarSnackbar('Rendimiento eliminado correctamente.', 'success');
-
-        } catch (error) {
-
-            console.error(error);
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar el rendimiento.', 'error');
-
-        } finally {
-
-            setEliminando(false);
-
-        }
-    }
-
     const hayFiltros = busqueda.trim() !== '';
 
     return (
@@ -367,10 +325,8 @@ function RendTallasPage() {
                                 rendtallas={rendtallas}
                                 onEdit={editarRendTalla}
                                 onAdd={agregarRendTalla}
-                                onDelete={solicitarEliminarRendTalla}
                                 puedeInsertar={permisos.insercion}
                                 puedeActualizar={permisos.actualiza}
-                                puedeEliminar={permisos.elimina}
                             />
                         </div>
                     )}
@@ -388,20 +344,6 @@ function RendTallasPage() {
                 )}
 
             </div>
-
-            {rendtallaAEliminar && (
-                <ConfirmModal
-                    title="Eliminar rendimiento"
-                    message={
-                        `¿Está seguro de que desea eliminar el rendimiento ` +
-                        `asociado a la talla "${rendtallaAEliminar.nombre}"? ` +
-                        `Esta acción no se puede deshacer.`
-                    }
-                    onConfirm={confirmarEliminarRendimiento}
-                    onCancel={() => setRendTallaAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}

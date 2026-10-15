@@ -36,10 +36,3 @@ export async function actualizarModulo(codigo, data) {
 
     return response.data;
 }
-
-// Elimina el módulo correspondiente al código recibido.
-export async function eliminarModulo(codigo) {
-    const response = await api.delete(`/modulos/${codigo}`);
-
-    return response.data;
-}

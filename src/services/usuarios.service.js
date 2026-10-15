@@ -51,10 +51,3 @@ export async function desactivarUsuario(codigo) {
 
     return response.data;
 }
-
-// Elimina el usuario correspondiente al código recibido.
-export async function eliminarUsuario(codigo) {
-    const response = await api.delete(`/usuarios/${codigo}`);
-    
-    return response.data;
-}

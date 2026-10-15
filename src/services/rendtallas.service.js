@@ -37,10 +37,3 @@ export async function actualizarRendTalla(codigo, data) {
 
     return response.data;
 }
-
-// Elimina el rendimiento por talla correspondiente al código recibido.
-export async function eliminarRendTalla(codigo) {
-    const response = await api.delete(`/rendtallas/${codigo}`);
-
-    return response.data;
-}

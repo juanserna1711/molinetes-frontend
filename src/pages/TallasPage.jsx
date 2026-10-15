@@ -26,12 +26,10 @@ import {
     crearTalla as crearTallaService,
     actualizarTalla as actualizarTallaService,
     activarTalla as activarTallaService,
-    desactivarTalla as desactivarTallaService,
-    eliminarTalla as eliminarTallaService
+    desactivarTalla as desactivarTallaService
 } from '../services/tallas.service';
 import TallasTable from '../components/Talla/TallasTable';
 import TallaForm from '../components/Talla/TallaForm';
-import ConfirmModal from '../components/ConfirmModal';
 import Snackbar from '../components/Snackbar';
 
 function TallasPage() {
@@ -42,8 +40,6 @@ function TallasPage() {
     const [busqueda, setBusqueda] = useState('');
     const [estado, setEstado] = useState('');
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);// La selección enlaza la fila de la tabla con el formulario; null representa creación.
-    const [tallaAEliminar, setTallaAEliminar] = useState(null);// Retiene el registro hasta que el usuario confirme o cancele la eliminación.
-    const [eliminando, setEliminando] = useState(false);
     const [operacion, setOperacion] = useState(null); // Identifica acción y fila para bloquear su control mientras se procesa.
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
@@ -54,13 +50,6 @@ function TallasPage() {
       FUNCIONES DE LA TABLA
       =========================================================
     */
-
-    function solicitarEliminarTalla(talla) {
-        if (!permisos.elimina) {
-            return;
-        }
-        setTallaAEliminar(talla);
-    }
 
     function editarTalla(talla) {
         if (!permisos.actualiza) {
@@ -260,27 +249,6 @@ function TallasPage() {
         }
     }
 
-    // Elimina el registro confirmado y comunica el resultado de la operación.
-    async function confirmarEliminarTalla() {
-        if (!tallaAEliminar) return;
-        
-        try {
-            setEliminando(true);
-
-            await eliminarTallaService(tallaAEliminar.codigo);
-            await cargarTallas(obtenerFiltros());
-
-            mostrarSnackbar('Talla eliminada correctamente.', 'success');
-        } catch (error) {
-            console.error(error);
-
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible eliminar la talla.', 'error');
-        } finally {
-            setEliminando(false);
-            setTallaAEliminar(null);
-        }
-    }
-    
     const hayFiltros = busqueda.trim() !== '' || estado !== '';
 
     return (
@@ -410,10 +378,8 @@ function TallasPage() {
                             onEdit={editarTalla}
                             onActivate={activarTalla}
                             onDeactivate={desactivarTalla}
-                            onDelete={solicitarEliminarTalla}
                             operation={operacion}
                             puedeActualizar={permisos.actualiza}
-                            puedeEliminar={permisos.elimina}
                         />
                     </div>
                 )}
@@ -430,16 +396,6 @@ function TallasPage() {
                 )}
 
             </div>
-
-            {tallaAEliminar && (
-                <ConfirmModal
-                    title="Eliminar talla"
-                    message={`¿Está seguro de que desea eliminar la talla "${tallaAEliminar.nombre}"? Esta acción no se puede deshacer.`}
-                    onConfirm={confirmarEliminarTalla}
-                    onCancel={() => setTallaAEliminar(null)}
-                    loading={eliminando}
-                />
-            )}
 
             <Snackbar
                 message={snackbar.message}
