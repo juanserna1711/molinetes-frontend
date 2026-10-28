@@ -189,7 +189,7 @@ function OrpratriModal({
                     >
                         <SaveOutlinedIcon />
 
-                        Guardar orden
+                        Guardar
                     </button>
 
                 </div>

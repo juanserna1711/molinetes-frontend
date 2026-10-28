@@ -500,7 +500,7 @@ pdf.text(
        TAMAÑO DINÁMICO
        ========================================================= */
     // Reduce ligeramente el tamaño cuando existen muchas tallas para intentar mantener el reporte en una sola página.
-    let tamanioFuente = 7.2;
+    let tamanioFuente = 8;
     let paddingCelda = 1.5;
 
     if (tallasUsadas.length >= 6) {
@@ -578,65 +578,71 @@ pdf.text(
 
 
     /* =========================================================
-    ATRIBUTOS DE LA ORDEN
-    ========================================================= */
+       ATRIBUTOS DE LA ORDEN
+       ========================================================= */
 
-    pdf.setFont(
-        'helvetica',
-        'normal'
+    autoTable(
+        pdf,
+        {
+            startY: finalY + 6,
+
+            head: [
+                [
+                    'Lotes / Hojas de Ruta',
+                    'Máquinas'
+                ]
+            ],
+
+            body: [
+                [
+                    lote,
+                    maquina
+                ]
+            ],
+
+            theme: 'grid',
+
+            styles: {
+                font: 'helvetica',
+                fontSize: tamanioFuente,
+                cellPadding: paddingCelda + 1,
+                halign: 'center',
+                valign: 'middle',
+                textColor: COLORES.primario,
+                lineColor: COLORES.borde,
+                lineWidth: .15
+            },
+
+            headStyles: {
+                fillColor: COLORES.primario,
+                textColor: COLORES.blanco,
+                fontStyle: 'bold',
+                halign: 'center'
+            },
+
+            bodyStyles: {
+                fontStyle: 'bold',
+                halign: 'center',
+                fillColor: COLORES.grisClaro
+            },
+
+            columnStyles: {
+                0: {
+                    cellWidth: (anchoPagina - 14) / 2
+                },
+                1: {
+                    cellWidth: (anchoPagina - 14) / 2
+                }
+            },
+
+            margin: {
+                left: 7,
+                right: 7
+            }
+        }
     );
 
-    pdf.setFontSize(8);
-
-    pdf.setTextColor(
-        ...COLORES.grisTexto
-    );
-
-
-    // Etiqueta Lotes / Hojas de ruta
-    pdf.text(
-        'Lotes / Hojas de ruta',
-        10,
-        finalY + 8
-    );
-
-
-    // Etiqueta Máquinas
-    pdf.text(
-        'Máquinas',
-        anchoPagina - 10,
-        finalY + 8,
-        {align: 'right'}
-    );
-
-
-    pdf.setFont(
-        'helvetica',
-        'bold'
-    );
-
-    pdf.setFontSize(10);
-
-    pdf.setTextColor(
-        ...COLORES.primario
-    );
-
-
-    // Valor Lotes / Hojas de ruta
-    pdf.text(
-        lote,
-        10,
-        finalY + 13
-    );
-
-
-    // Valor Máquinas
-    pdf.text(
-        maquina,
-        anchoPagina - 10,
-        finalY + 13,
-        {align: 'right'}
-    );
+    const finalYAtributos = pdf.lastAutoTable?.finalY || finalY;
 
 
     /* =========================================================
@@ -661,7 +667,7 @@ pdf.text(
                 : '-'
         }`,
         10,
-        finalY + 21
+        finalYAtributos + 7
     );
 
     /* =========================================================
