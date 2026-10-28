@@ -25,6 +25,7 @@ import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import {consultarOrdeProd, consultarDetalleOrdeProd} from '../services/ordeprod.service.js';
 import {consultarTiposHilaza} from '../services/tipohilaza.service.js';
+import {consultarOrpratri} from '../services/orpratri.service.js';
 import OrdeProdTable from '../components/OrdeProd/OrdeProdTable.jsx';
 import {generarOrdenTrabajoPdf} from '../utils/generarOrdenTrabajoPdf.js';
 import logoMoliplus from '../assets/logo-moliplus.png';
@@ -233,18 +234,34 @@ function OrdeProdPage() {
 
             setImprimiendoOrden(registro.codigoOrden);
 
-            const resultado = await consultarDetalleOrdeProd(registro.codigoOrden);
+            const [
+                resultadoOrden,
+                resultadoAtributos
+            ] = await Promise.all([
+                consultarDetalleOrdeProd(registro.codigoOrden),
+                consultarOrpratri(registro.codigoOrden)
+            ]);
+
+            const atributosOrden =
+                resultadoAtributos.data?.[0] || null;
 
             await generarOrdenTrabajoPdf(
-                resultado.data,
-                {logoMoliplus, logoTextiles}
+                resultadoOrden.data,
+                {
+                    logoMoliplus,
+                    logoTextiles,
+                    atributosOrden
+                }
             );
 
         } catch (error) {
 
             console.error(error);
 
-            setError(error.response?.data?.message || 'No fue posible consultar la Orden de Trabajo.');
+            setError(
+                error.response?.data?.message ||
+                'No fue posible consultar la Orden de Trabajo.'
+            );
 
         } finally {
 

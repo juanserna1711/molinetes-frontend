@@ -32,7 +32,14 @@ const COLORES = {
 };
 
 // Genera el archivo PDF correspondiente a una Orden de Trabajo.
-export async function generarOrdenTrabajoPdf(datosOrden, {logoMoliplus = null, logoTextiles = null} = {}) {
+export async function generarOrdenTrabajoPdf(
+    datosOrden,
+    {
+        logoMoliplus = null,
+        logoTextiles = null,
+        atributosOrden = null
+    } = {}
+) {
 
     if (!Array.isArray(datosOrden) || datosOrden.length === 0) {
         throw new Error( 'La Orden de Trabajo no contiene información para imprimir.');
@@ -119,26 +126,45 @@ export async function generarOrdenTrabajoPdf(datosOrden, {logoMoliplus = null, l
        ========================================================= */
 
     if (logoMoliplus) {
+
+        const propiedadesLogoMoliplus = pdf.getImageProperties(logoMoliplus);
+
+        const altoLogoMoliplus = 18;
+
+        const anchoLogoMoliplus =
+            (propiedadesLogoMoliplus.width * altoLogoMoliplus) /
+            propiedadesLogoMoliplus.height;
+
         pdf.addImage(
             logoMoliplus,
             'PNG',
             12,
             5,
-            43,
-            18,
+            anchoLogoMoliplus,
+            altoLogoMoliplus,
             undefined,
             'FAST'
         );
     }
 
+
     if (logoTextiles) {
+
+        const propiedadesLogoTextiles = pdf.getImageProperties(logoTextiles);
+
+        const altoLogoTextiles = 18;
+
+        const anchoLogoTextiles =
+            (propiedadesLogoTextiles.width * altoLogoTextiles) /
+            propiedadesLogoTextiles.height;
+
         pdf.addImage(
             logoTextiles,
             'PNG',
-            anchoPagina - 55,
+            anchoPagina - 12 - anchoLogoTextiles,
             5,
-            43,
-            18,
+            anchoLogoTextiles,
+            altoLogoTextiles,
             undefined,
             'FAST'
         );
@@ -191,14 +217,16 @@ export async function generarOrdenTrabajoPdf(datosOrden, {logoMoliplus = null, l
    INFORMACIÓN GENERAL
    ========================================================= */
 
-pdf.setFontSize(8);
+pdf.setFontSize(9);
 pdf.setFont(
     'helvetica',
     'normal'
 );
+
 pdf.setTextColor(
     ...COLORES.grisTexto
 );
+
 
 // Tipo de Hilaza - izquierda
 pdf.text(
@@ -208,6 +236,7 @@ pdf.text(
     {align: 'left'}
 );
 
+
 // Fecha - centro
 pdf.text(
     'Fecha',
@@ -216,6 +245,7 @@ pdf.text(
     {align: 'center'}
 );
 
+
 // Usuario - derecha
 pdf.text(
     'Usuario',
@@ -223,21 +253,28 @@ pdf.text(
     36,
     {align: 'right'}
 );
+
+
 pdf.setFont(
     'helvetica',
     'bold'
 );
+
+pdf.setFontSize(11);
+
 pdf.setTextColor(
     ...COLORES.primario
 );
+
 
 // Valor Tipo de Hilaza - izquierda
 pdf.text(
     orden.nombreTipoHilaza || '-',
     14,
-    40,
+    41,
     {align: 'left'}
 );
+
 
 // Valor Fecha - centro
 pdf.text(
@@ -249,15 +286,16 @@ pdf.text(
         )
         : '-',
     anchoPagina / 2,
-    40,
+    41,
     {align: 'center'}
 );
+
 
 // Valor Usuario - derecha
 pdf.text(
     orden.nombreUsuario || '-',
     anchoPagina - 14,
-    40,
+    41,
     {align: 'right'}
 );
 
@@ -481,7 +519,7 @@ pdf.text(
     autoTable(
         pdf,
         {
-            startY: 46,
+            startY: 48,
             head: [encabezadoSuperior, encabezadoDetalle], body,
             theme: 'grid',
             styles: {
@@ -533,21 +571,97 @@ pdf.text(
        PIE DEL REPORTE
        ========================================================= */
 
-    // Ubica el pie debajo del final de la tabla, cuya altura depende del detalle.
     const finalY = pdf.lastAutoTable?.finalY || 40;
+
+    const lote = atributosOrden?.lote || '-';
+    const maquina = atributosOrden?.maquina || '-';
+
+
+    /* =========================================================
+    ATRIBUTOS DE LA ORDEN
+    ========================================================= */
 
     pdf.setFont(
         'helvetica',
         'normal'
     );
-    pdf.setFontSize(7);
+
+    pdf.setFontSize(8);
+
     pdf.setTextColor(
         ...COLORES.grisTexto
     );
+
+
+    // Etiqueta Lotes / Hojas de ruta
     pdf.text(
-        `Orden generada el ${orden.fechaGeneracion ? new Date(orden.fechaGeneracion).toLocaleString('es-CO'): '-'}`,
+        'Lotes / Hojas de ruta',
         10,
-        finalY + 7
+        finalY + 8
+    );
+
+
+    // Etiqueta Máquinas
+    pdf.text(
+        'Máquinas',
+        anchoPagina - 10,
+        finalY + 8,
+        {align: 'right'}
+    );
+
+
+    pdf.setFont(
+        'helvetica',
+        'bold'
+    );
+
+    pdf.setFontSize(10);
+
+    pdf.setTextColor(
+        ...COLORES.primario
+    );
+
+
+    // Valor Lotes / Hojas de ruta
+    pdf.text(
+        lote,
+        10,
+        finalY + 13
+    );
+
+
+    // Valor Máquinas
+    pdf.text(
+        maquina,
+        anchoPagina - 10,
+        finalY + 13,
+        {align: 'right'}
+    );
+
+
+    /* =========================================================
+    PIE DEL REPORTE
+    ========================================================= */
+
+    pdf.setFont(
+        'helvetica',
+        'normal'
+    );
+
+    pdf.setFontSize(7);
+
+    pdf.setTextColor(
+        ...COLORES.grisTexto
+    );
+
+    pdf.text(
+        `Orden generada el ${
+            orden.fechaGeneracion
+                ? new Date(orden.fechaGeneracion).toLocaleString('es-CO')
+                : '-'
+        }`,
+        10,
+        finalY + 21
     );
 
     /* =========================================================

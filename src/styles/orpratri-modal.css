@@ -1,0 +1,318 @@
+/*=============================================================================
+  Nombre responsabilidad: Presentación visual: orpratri modal
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 27/Octubre/2026
+
+  Descripcion responsabilidad:
+  Define la superposición, contenido, campos y acciones del modal utilizado
+  para registrar los atributos adicionales de la Orden de Trabajo.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
+
+/* =========================================================
+   SUPERPOSICIÓN
+   ========================================================= */
+
+.orpratri-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: rgba(38, 54, 77, .42);
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.orpratri-modal {
+    width: 100%;
+    max-width: 680px;
+    overflow: hidden;
+    border: 1px solid #e2e7ed;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 12px 32px rgba(38, 54, 77, .18);
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.orpratri-modal-header {
+    padding: 24px 26px 20px;
+    border-bottom: 1px solid #edf0f3;
+}
+
+
+.orpratri-modal-title {
+    position: relative;
+    padding-left: 13px;
+}
+
+
+.orpratri-modal-title::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 0;
+    width: 3px;
+    border-radius: 3px;
+    background-color: #ed1685;
+}
+
+
+.orpratri-modal-overline {
+    display: block;
+    margin-bottom: 4px;
+    color: #ed1685;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+
+.orpratri-modal-title h2 {
+    margin: 0;
+    color: #26364d;
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+
+.orpratri-modal-title p {
+    margin: 6px 0 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.orpratri-modal-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    padding: 24px 26px;
+}
+
+
+.orpratri-field {
+    position: relative;
+    min-width: 0;
+}
+
+
+.orpratri-field-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 7px;
+}
+
+
+.orpratri-field-title svg {
+    width: 17px;
+    height: 17px;
+    color: #ed1685;
+}
+
+
+.orpratri-field-title label {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+.orpratri-field textarea {
+    width: 100%;
+    min-height: 105px;
+    resize: vertical;
+    padding: 10px 11px;
+    border: 1px solid #d9dee6;
+    border-radius: 7px;
+    outline: none;
+    background-color: #ffffff;
+    color: #344054;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+
+.orpratri-field textarea:hover {
+    border-color: #b8c0cb;
+}
+
+
+.orpratri-field textarea:focus {
+    border-color: #ed1685;
+    box-shadow: 0 0 0 3px rgba(237, 22, 133, .08);
+}
+
+
+.orpratri-field textarea::placeholder {
+    color: #98a2b3;
+}
+
+
+.orpratri-field-counter {
+    display: block;
+    margin-top: 5px;
+    color: #98a2b3;
+    font-size: 9px;
+    text-align: right;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.orpratri-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 26px 22px;
+    border-top: 1px solid #edf0f3;
+}
+
+
+.orpratri-secondary-button,
+.orpratri-primary-button {
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 105px;
+    padding: 0 15px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        opacity .15s ease;
+}
+
+
+/* =========================================================
+   BOTÓN SECUNDARIO
+   ========================================================= */
+
+.orpratri-secondary-button {
+    border: 1px solid #d9dee6;
+    background-color: #ffffff;
+    color: #475467;
+}
+
+
+.orpratri-secondary-button:hover {
+    background-color: #f5f7fa;
+    border-color: #c7ced8;
+}
+
+
+/* =========================================================
+   BOTÓN PRINCIPAL
+   ========================================================= */
+
+.orpratri-primary-button {
+    border: none;
+    background:
+        linear-gradient(
+            135deg,
+            #ed1685 0%,
+            #f02191 100%
+        );
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(237, 22, 133, .18);
+}
+
+
+.orpratri-primary-button:hover:not(:disabled) {
+    box-shadow: 0 4px 11px rgba(237, 22, 133, .25);
+}
+
+
+.orpratri-primary-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+.orpratri-primary-button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .orpratri-modal-fields {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .orpratri-overlay {
+        padding: 14px;
+    }
+
+
+    .orpratri-modal-header,
+    .orpratri-modal-fields {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+
+    .orpratri-modal-actions {
+        flex-direction: column-reverse;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+
+    .orpratri-secondary-button,
+    .orpratri-primary-button {
+        width: 100%;
+    }
+
+}

@@ -41,6 +41,8 @@ import { consultarTiHiProm } from '../services/tihiprom.service.js';
 import { crearTigimoli } from '../services/tigimoli.service.js';
 import logoMoliplus from '../assets/logo-moliplus.png';
 import logoTextiles from '../assets/logo-textiles-pacifico.png';
+import OrpratriModal from '../components/NuevoTigimoli/OrpratriModal.jsx';
+import { crearOrpratri, consultarOrpratri } from '../services/orpratri.service.js';
 
 function NuevoTigimoliPage() {
 
@@ -56,6 +58,9 @@ function NuevoTigimoliPage() {
     const [loading, setLoading] = useState(true);
     const [guardando, setGuardando] = useState(false); // Evita editar la programación mientras se envía la orden.
     const [snackbar, setSnackbar] = useState({message: '', type: 'success'});
+    const [modalOrpratriAbierto, setModalOrpratriAbierto] = useState(false);
+    const [payloadPendiente, setPayloadPendiente] = useState(null);
+    const [codigoOrdenPendiente, setCodigoOrdenPendiente] = useState(null);
     const permisos = usePermisos(7);
     const mostrarAcciones = (permisos.insercion)
 
@@ -467,27 +472,99 @@ function NuevoTigimoliPage() {
 
         }
 
+        /*
+          Conserva la programación validada mientras el operador registra
+          los atributos necesarios para generar la Orden de Trabajo.
+        */
+        setPayloadPendiente({
+            codigosMolinetes,
+            codigosTallas,
+            cantidadesRollos,
+            rpmsMolinetes,
+            codTipoHilaza: Number(tipoHilazaSeleccionado)
+        });
+
+        setCodigoOrdenPendiente(null);
+        setModalOrpratriAbierto(true);
+
+
+    }
+
+    /* =========================================================
+    ATRIBUTOS ORDEN DE PRODUCCIÓN
+    ========================================================= */
+
+    /*
+      Cierra el modal únicamente cuando todavía no se ha persistido la orden.
+      Si ORDEPROD ya fue creada y ORPRATRI falló, el operador debe completar
+      los atributos para evitar dejar el proceso incompleto.
+    */
+    function cerrarModalOrpratri() {
+
+        if (guardando || codigoOrdenPendiente !== null) {
+            return;
+        }
+
+        setModalOrpratriAbierto(false);
+        setPayloadPendiente(null);
+
+    }
+
+
+    /*
+      Guarda primero la programación y obtiene el código generado de la orden.
+      Luego registra los lotes y/o hojas de ruta y las máquinas asociadas.
+      Si la orden ya fue creada en un intento anterior, reutiliza su código
+      para no generar una orden duplicada.
+    */
+    async function confirmarOrpratri({lote, maquina}) {
+
+        if (!payloadPendiente) {
+            return;
+        }
+
         try {
 
             setGuardando(true);
 
-            const response = await crearTigimoli({
-                codigosMolinetes,
-                codigosTallas,
-                cantidadesRollos,
-                rpmsMolinetes,
-                codTipoHilaza: Number(tipoHilazaSeleccionado)
+            let ordenGenerada = codigoOrdenPendiente;
+
+            if (!ordenGenerada) {
+
+                const response = await crearTigimoli(payloadPendiente);
+
+                ordenGenerada = response.codigoOrden;
+
+                setCodigoOrdenPendiente(ordenGenerada);
+
+            }
+
+            await crearOrpratri({
+                codOrden: ordenGenerada,
+                lote,
+                maquina
             });
 
-            setCodigoOrden(response.codigoOrden);
+            setCodigoOrden(ordenGenerada);
 
-            mostrarSnackbar(`Orden de Trabajo #${response.codigoOrden} generada correctamente.`, 'success');
+            setModalOrpratriAbierto(false);
+            setPayloadPendiente(null);
+            setCodigoOrdenPendiente(null);
+
+            mostrarSnackbar(
+                `Orden de Trabajo #${ordenGenerada} generada correctamente.`,
+                'success'
+            );
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(error.response?.data?.message || 'No fue posible generar la Orden de Trabajo.', 'error');
+            mostrarSnackbar(
+                error.response?.data?.message ||
+                'No fue posible completar la Orden de Trabajo.',
+                'error'
+            );
 
         } finally {
 
@@ -504,19 +581,40 @@ function NuevoTigimoliPage() {
     // Consulta el detalle persistido por codigoOrden para que el PDF represente la orden guardada.
     async function imprimirOrden() {
 
-        if (!codigoOrden) {return;}
+        if (!codigoOrden) {
+            return;
+        }
 
         try {
 
-            const response = await consultarDetalleOrdeProd(codigoOrden);
+            const [
+                respuestaOrden,
+                respuestaAtributos
+            ] = await Promise.all([
+                consultarDetalleOrdeProd(codigoOrden),
+                consultarOrpratri(codigoOrden)
+            ]);
 
-            await generarOrdenTrabajoPdf(response.data,{logoMoliplus,logoTextiles});
+            const atributosOrden = respuestaAtributos.data?.[0] || null;
+
+            await generarOrdenTrabajoPdf(
+                respuestaOrden.data,
+                {
+                    logoMoliplus,
+                    logoTextiles,
+                    atributosOrden
+                }
+            );
 
         } catch (error) {
 
             console.error(error);
 
-            mostrarSnackbar(error.response?.data?.message ||'No fue posible generar la Orden de Trabajo.','error');
+            mostrarSnackbar(
+                error.response?.data?.message ||
+                'No fue posible generar la Orden de Trabajo.',
+                'error'
+            );
 
         }
 
@@ -808,6 +906,16 @@ function NuevoTigimoliPage() {
                 )}
 
             </footer>
+
+            {/* =================================================
+                ATRIBUTOS ORDEN DE PRODUCCIÓN
+                ================================================= */}
+
+            <OrpratriModal
+                open={modalOrpratriAbierto}
+                onCerrar={cerrarModalOrpratri}
+                onConfirmar={confirmarOrpratri}
+            />
 
             {/* =================================================
                 SNACKBAR
